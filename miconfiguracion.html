@@ -2,54 +2,93 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Configurar Turnos - TurnoX</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurnoX - Configuración de Turnos (Lun-Dom)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    :root{
+      --morado:#533482;
+      --morado-osc:#452a7a;
+      --claro:#F4EDFF;
+      --gris:#e7e7e7;
+      --texto:#2b2b2b;
+      --verde:#d8ffd8;
+      --rojo:#ffd8d8;
+    }
+    *{box-sizing:border-box}
     body{
-      margin:0; padding:20px;
-      font-family:Arial, sans-serif;
-      background:#f5f5f5; color:#333;
+      margin:0; padding:24px;
+      font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--morado);
+      color:#fff;
     }
-    h1{ font-size:20px; margin-bottom:20px; }
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+    .topbar .left{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    }
     button{
-      padding:8px 14px; border:none; border-radius:6px;
-      font-weight:600; cursor:pointer;
+      background:#fff; color:var(--morado);
+      border:none; border-radius:10px; padding:10px 14px;
+      font-weight:700; cursor:pointer;
+      transition:.15s transform,.15s background,.15s color;
     }
-    #guardarBtn{
-      background:#533482; color:#fff; margin-bottom:20px;
-    }
-    #guardarBtn:hover{ background:#452a7a; }
-    #backBtn{
-      background:#ccc; margin-bottom:20px;
-    }
+    button:hover{ transform:translateY(-2px); background:var(--claro); }
+    h1{ margin:0; font-size:22px; }
+    .note{opacity:.9; font-size:14px}
+
     .week{
       display:grid; gap:16px;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(220px,1fr));
     }
-    @media (max-width:900px){ .week{grid-template-columns:repeat(2,1fr)} }
-    @media (max-width:600px){ .week{grid-template-columns:1fr} }
+    @media (max-width:1100px){ .week{grid-template-columns:repeat(3,1fr)} }
+    @media (max-width:720px){ .week{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:520px){ .week{grid-template-columns:1fr} }
+
     .day{
-      background:#fff; border:1px solid #ddd; border-radius:10px;
-      padding:12px;
+      background:#ffffff10; border:1px solid #ffffff30; border-radius:14px;
+      padding:14px;
+      backdrop-filter: blur(2px);
     }
-    .day h2{ margin:0 0 10px 0; font-size:16px; }
-    .slots{ display:flex; flex-wrap:wrap; gap:6px; }
+    .day h2{
+      margin:0 0 10px 0; font-size:18px; font-weight:700;
+    }
+
+    .prof{
+      background:#fff; color:var(--texto);
+      border-radius:12px; padding:10px; margin:10px 0; border:1px solid var(--gris);
+    }
+    .prof h3{ margin:0 0 8px 0; font-size:15px; color:var(--morado) }
+
+    .slots{ display:flex; flex-wrap:wrap; gap:8px; }
     .slot{
-      padding:6px 10px; border-radius:6px; border:1px solid #ccc;
-      font-size:13px; cursor:pointer;
-      background:#e0ffe0;
+      padding:6px 10px; border-radius:8px; border:1px solid var(--gris);
+      font-weight:700; font-size:13px; cursor:pointer;
+      background:var(--verde);
     }
     .slot.off{
-      background:#ffe0e0; text-decoration:line-through;
+      background:var(--rojo);
+      text-decoration:line-through;
     }
+
+    .legend{ display:flex; gap:12px; align-items:center; font-size:12px; margin-top:4px; opacity:.9 }
+    .legend .chip{ width:12px; height:12px; border-radius:4px; border:1px solid var(--gris); background:var(--verde) }
+    .legend .chip.b{ background:var(--rojo); }
   </style>
 </head>
 <body>
-  <button id="backBtn">← Volver al panel</button>
-  <h1>Configurar Turnos (Lunes a Domingo)</h1>
-  <button id="guardarBtn">💾 Guardar cambios</button>
+  <div class="topbar">
+    <div class="left">
+      <button id="backBtn">← Volver al panel</button>
+      <h1 id="title">Configurar Turnos (Lun–Dom)</h1>
+    </div>
+    <button id="guardarBtn">💾 Guardar cambios</button>
+  </div>
 
+  <div id="msg" class="note"></div>
   <div id="week" class="week"></div>
 
   <script>
@@ -58,7 +97,7 @@
 
     // USERNAME desde querystring
     let params = new URLSearchParams(window.location.search);
-    let username = params.get("username") || "prueba1";
+    let username = params.get("username") || "demo";
 
     const diasES = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
     let turnos = {}; // { "Lunes":[{hora:"09:00",estado:"1"},...] }
@@ -68,14 +107,19 @@
       window.location.href = "/panel";
     };
 
-    // Renderizar la grilla
+    // Renderizar
     function render(){
       const weekDiv = document.getElementById("week");
       weekDiv.innerHTML = "";
       diasES.forEach(dia=>{
         const box = document.createElement("div");
         box.className = "day";
-        box.innerHTML = `<h2>${dia}</h2><div class="slots" id="slots-${dia}"></div>`;
+        box.innerHTML = `<h2>${dia}</h2>
+          <div class="legend">
+            <span class="chip"></span> Disponible
+            <span class="chip b"></span> Bloqueado
+          </div>
+          <div class="slots" id="slots-${dia}"></div>`;
         weekDiv.appendChild(box);
 
         const slotsDiv = box.querySelector(".slots");
@@ -85,26 +129,26 @@
           span.textContent = s.hora;
           span.onclick = ()=>{
             s.estado = (s.estado==="1" ? "0":"1");
-            render(); // volver a pintar
+            render(); // re-pintar
           };
           slotsDiv.appendChild(span);
         });
       });
     }
 
-    // Cargar turnos existentes
+    // Cargar turnos (desde TurnosStandard)
     async function loadTurnos(){
       try{
         const res = await fetch(`${API_URL}?action=getTurnosStandard&username=${encodeURIComponent(username)}`);
         const data = await res.json();
         if (data.status==="ok"){
-          turnos = data.turnos; // mismo formato {dia:[{hora,estado}]}
+          turnos = data.turnos;
         }else{
-          alert("Error cargando turnos: "+data.msg);
+          document.getElementById("msg").textContent = "Error cargando turnos: "+data.msg;
         }
       }catch(err){
         console.error(err);
-        alert("Error cargando turnos.");
+        document.getElementById("msg").textContent = "Error de red al cargar turnos.";
       }
       render();
     }
@@ -118,7 +162,7 @@
         });
         const data = await res.json();
         if (data.status==="ok"){
-          alert("Cambios guardados correctamente ✅");
+          alert("Cambios guardados ✅");
         }else{
           alert("Error al guardar: "+data.error);
         }
