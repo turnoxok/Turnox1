@@ -44,13 +44,16 @@
       border:none; border-radius:8px;
       background:var(--morado); color:#fff; font-weight:700; cursor:pointer;
     }
+    button:disabled{
+      background:#aaa; cursor:not-allowed;
+    }
   </style>
 </head>
 <body>
   <h1>Configurar mis turnos</h1>
   <div id="msg"></div>
   <div id="week" class="week"></div>
-  <button id="saveBtn">💾 Guardar</button>
+  <button id="saveBtn" disabled>💾 Guardar</button>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec";
@@ -64,6 +67,12 @@
     const diasOrden = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
     let turnosGlobal = [];
     let profesionalId = null;
+    let huboCambios = false;
+
+    function marcarCambios(){
+      huboCambios = true;
+      document.getElementById("saveBtn").disabled = false;
+    }
 
     function renderWeek(turnos){
       const weekDiv = document.getElementById("week");
@@ -74,14 +83,15 @@
         dayBox.innerHTML = `<h2>${dia}</h2><div class="slots"></div>`;
         const slotsDiv = dayBox.querySelector(".slots");
 
-        const slots = turnos.filter(t=>t.diaSemana===dia);
+        const slots = turnos.filter(t=>t.diaSemana.toLowerCase()===dia.toLowerCase());
         slots.forEach(t=>{
           const span = document.createElement("span");
-          span.className="slot"+(t.visible==1?"":" off");
+          span.className="slot"+(Number(t.visible)===1?"":" off");
           span.textContent=t.hora;
           span.onclick=()=>{
-            t.visible = t.visible==1?0:1;
+            t.visible = Number(t.visible)===1?0:1;
             span.classList.toggle("off");
+            marcarCambios();
           };
           slotsDiv.appendChild(span);
         });
@@ -96,6 +106,8 @@
       formData.append("turnos", JSON.stringify(turnosGlobal));
       await fetch(API_URL, {method:"POST", body:formData});
       alert("Turnos guardados correctamente.");
+      document.getElementById("saveBtn").disabled = true;
+      huboCambios = false;
     }
 
     async function init(){
@@ -107,13 +119,12 @@
           profesionalId = data.profesionalId;
 
           let turnos = data.turnos;
-          // 🔑 Normalizar a array si viene como objeto
           if (!Array.isArray(turnos)) {
             let arr = [];
             Object.keys(turnos).forEach(dia=>{
               turnos[dia].forEach(t=>{
                 arr.push({
-                  diaSemana: dia,
+                  diaSemana: t.diaSemana || dia,
                   hora: t.hora,
                   visible: t.visible
                 });
