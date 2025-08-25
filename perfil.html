@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Guardar Logo Externo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .card { max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; text-align: center; }
+    input[type="url"] { width: 90%; padding: 8px; margin: 15px 0; font-size: 16px; }
+    button { padding: 10px 20px; border: none; background: #28a745; color: #fff; font-size: 16px; border-radius: 5px; cursor: pointer; }
+    button:disabled { background: #999; }
+    .preview img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Guardar Logo Externo</h2>
+    <input type="url" id="logoUrl" placeholder="Pega aquí el link del logo" required>
+    <button id="saveBtn" disabled>Guardar Logo</button>
+    <div class="preview" id="preview"></div>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("userId");
+    const logoInput = document.getElementById("logoUrl");
+    const saveBtn = document.getElementById("saveBtn");
+    const status = document.getElementById("status");
+    const preview = document.getElementById("preview");
+
+    if (!userId) {
+      status.innerText = "❌ Falta userId en la URL";
+    }
+
+    // Habilitar botón si hay texto
+    logoInput.addEventListener("input", () => {
+      saveBtn.disabled = !logoInput.value.trim();
+      if (logoInput.value.trim()) {
+        preview.innerHTML = `<img src="${logoInput.value.trim()}" alt="Logo">`;
+      } else {
+        preview.innerHTML = "";
+      }
+    });
+
+    // Guardar logo
+    saveBtn.addEventListener("click", async () => {
+      const logoUrl = logoInput.value.trim();
+      if (!logoUrl || !userId) return;
+
+      status.innerText = "⏳ Guardando logo...";
+
+      try {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbxRK4WyJlagviZGIqibZd8sISBMwW8WzYKCk0Z6qd-JHYwoImVX3MlfdKACo931zGbaxQ/exec", {
+          method: "POST",
+          body: new URLSearchParams({
+            action: "guardarLogoExterno",
+            userId: userId,
+            logoUrl: logoUrl
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.status === "ok") {
+          status.innerHTML = `✅ Logo guardado: <a href="${data.url}" target="_blank">Ver logo</a>`;
+        } else {
+          status.innerText = "❌ Error: " + data.msg;
+        }
+      } catch (err) {
+        console.error(err);
+        status.innerText = "❌ Error de conexión con Apps Script";
+      }
+    });
+  </script>
+</body>
+</html>
