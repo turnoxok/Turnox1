@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Listado de Clientes Únicos</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background: #f5f6fa; }
+  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  th { background: #3498db; color: white; }
+  tr:nth-child(even) { background: #ecf0f1; }
+</style>
+</head>
+<body>
+
+<h1>Listado de Clientes (sin duplicados por DNI)</h1>
+<div id="tablaReservas"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxRK4WyJlagviZGIqibZd8sISBMwW8WzYKCk0Z6qd-JHYwoImVX3MlfdKACo931zGbaxQ/exec";
+
+let username = localStorage.getItem("username");
+
+if(!username){ 
+  alert("No hay usuario logueado"); 
+  window.location.href="login.html"; 
+}
+
+async function cargarReservas(){
+  try {
+    const res = await fetch(`${API_URL}?action=getTurnosUsuario&username=${username}`);
+    const data = await res.json();
+    console.log("Respuesta API:", data);
+
+    let turnos = [];
+    if(data.turnos && typeof data.turnos === "object"){
+      Object.keys(data.turnos).forEach(profId => {
+        if(Array.isArray(data.turnos[profId])){
+          turnos.push(...data.turnos[profId]);
+        }
+      });
+    }
+
+    // 🔹 Filtrar por DNI (solo un registro por cliente)
+    const unicos = {};
+    turnos.forEach(t => {
+      if(t.dni){   // si tiene campo dni
+        unicos[t.dni] = t; // si ya existe se reemplaza por el último turno
+      }
+    });
+
+    renderTabla(Object.values(unicos));
+  } catch (e) {
+    console.error(e);
+    document.getElementById("tablaReservas").innerHTML = "<p>Error al cargar reservas.</p>";
+  }
+}
+
+function renderTabla(turnos){
+  const cont = document.getElementById("tablaReservas");
+
+  if(turnos.length === 0){
+    cont.innerHTML = "<p>No hay clientes para mostrar.</p>";
+    return;
+  }
+
+  let html = "<table><tr>";
+  // Encabezados dinámicos según las claves de los turnos
+  Object.keys(turnos[0]).forEach(key=>{
+    html += `<th>${key}</th>`;
+  });
+  html += "</tr>";
+
+  turnos.forEach(t=>{
+    html += "<tr>";
+    Object.values(t).forEach(val=>{
+      html += `<td>${val}</td>`;
+    });
+    html += "</tr>";
+  });
+
+  html += "</table>";
+  cont.innerHTML = html;
+}
+
+document.addEventListener("DOMContentLoaded", cargarReservas);
+</script>
+
+</body>
+</html>
