@@ -2,61 +2,52 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Configuración de Turnos</title>
+  <title>Mi configuración de turnos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
+    :root{
       --morado:#533482;
-      --claro:#F4EDFF;
       --gris:#e7e7e7;
       --texto:#2b2b2b;
-      --verde:#4CAF50;
-      --rojo:#E53935;
     }
-    body {
+    body{
       margin:0; padding:24px;
-      font-family:Montserrat,system-ui,Segoe UI,Roboto,Arial;
-      background:var(--morado);
-      color:#fff;
+      font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:#f8f8f8; color:var(--texto);
     }
-    h1 { margin:0 0 20px; }
-    .week {
+    h1{margin-bottom:16px}
+    .week{
       display:grid; gap:16px;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(7, minmax(160px,1fr));
     }
     @media (max-width:1100px){ .week{grid-template-columns:repeat(3,1fr)} }
     @media (max-width:720px){ .week{grid-template-columns:repeat(2,1fr)} }
     @media (max-width:520px){ .week{grid-template-columns:1fr} }
-
-    .day {
-      background:#ffffff10; border:1px solid #ffffff30; border-radius:14px;
-      padding:14px; backdrop-filter: blur(2px);
+    .day{
+      background:#fff; border:1px solid #ddd; border-radius:12px;
+      padding:12px;
     }
-    .day h2 { margin:0 0 10px; font-size:18px; font-weight:700; }
-
-    .slots { display:flex; flex-wrap:wrap; gap:8px; }
-    .slot {
+    .day h2{ margin:0 0 8px 0; font-size:16px; color:var(--morado); }
+    .slots{ display:flex; flex-wrap:wrap; gap:6px; }
+    .slot{
       padding:6px 10px; border-radius:8px; border:1px solid var(--gris);
-      font-weight:700; font-size:13px;
+      font-size:13px; font-weight:600; cursor:pointer;
       background:#fff; color:var(--texto);
-      cursor:pointer; transition:.2s;
-    }
-    .slot.activo { background:var(--verde); color:#fff; }
-    .slot.inactivo { background:var(--rojo); color:#fff; }
-
-    button {
-      margin-top:20px; padding:10px 16px;
-      background:#fff; color:var(--morado);
-      border:none; border-radius:10px;
-      font-weight:700; cursor:pointer;
       transition:.2s;
     }
-    button:hover { transform:translateY(-2px); background:var(--claro); }
+    .slot.off{
+      background:#eee; color:#999; text-decoration:line-through;
+    }
+    button{
+      margin-top:20px; padding:10px 20px;
+      border:none; border-radius:8px;
+      background:var(--morado); color:#fff; font-weight:700; cursor:pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>Configuración de Turnos</h1>
+  <h1>Configurar mis turnos</h1>
   <div id="msg"></div>
   <div id="week" class="week"></div>
   <button id="saveBtn">💾 Guardar</button>
@@ -64,86 +55,85 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec";
 
-    // Obtener username desde la URL
     let params = new URLSearchParams(window.location.search);
     let username = params.get("username");
     if (!username) {
       document.getElementById("msg").textContent = "Falta username en la URL.";
     }
 
-    // Días fijos
-    const diasOrden = ["Lunes","Martes","Miércoles","Jueves","Viernes"];
+    const diasOrden = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+    let turnosGlobal = [];
+    let profesionalId = null;
 
-    let turnosGlobal = []; // almacenamos todos los turnos
-
-    // === Render de la semana ===
-    function renderWeek(turnos) {
-      const cont = document.getElementById("week");
-      cont.innerHTML = "";
-
-      diasOrden.forEach(dia => {
+    function renderWeek(turnos){
+      const weekDiv = document.getElementById("week");
+      weekDiv.innerHTML = "";
+      diasOrden.forEach(dia=>{
         const dayBox = document.createElement("div");
-        dayBox.className = "day";
-        dayBox.innerHTML = `<h2>${dia}</h2>`;
+        dayBox.className="day";
+        dayBox.innerHTML = `<h2>${dia}</h2><div class="slots"></div>`;
+        const slotsDiv = dayBox.querySelector(".slots");
 
-        const slotsDiv = document.createElement("div");
-        slotsDiv.className = "slots";
-
-        const turnosDia = turnos.filter(t => t.diaSemana === dia);
-        if (turnosDia.length === 0) {
-          slotsDiv.innerHTML = `<div style="opacity:.7;font-size:13px">Sin horarios</div>`;
-        } else {
-          turnosDia.forEach(t => {
-            const span = document.createElement("span");
-            span.className = "slot " + (t.visible == 1 ? "activo" : "inactivo");
-            span.textContent = t.hora;
-            span.dataset.dia = t.diaSemana;
-            span.dataset.hora = t.hora;
-            span.onclick = () => {
-              // Toggle estado
-              t.visible = t.visible == 1 ? 0 : 1;
-              span.className = "slot " + (t.visible == 1 ? "activo" : "inactivo");
-            };
-            slotsDiv.appendChild(span);
-          });
-        }
-
-        dayBox.appendChild(slotsDiv);
-        cont.appendChild(dayBox);
+        const slots = turnos.filter(t=>t.diaSemana===dia);
+        slots.forEach(t=>{
+          const span = document.createElement("span");
+          span.className="slot"+(t.visible==1?"":" off");
+          span.textContent=t.hora;
+          span.onclick=()=>{
+            t.visible = t.visible==1?0:1;
+            span.classList.toggle("off");
+          };
+          slotsDiv.appendChild(span);
+        });
+        weekDiv.appendChild(dayBox);
       });
     }
 
-    // === Guardar turnos ===
-    async function guardarTurnos() {
+    async function guardarTurnos(){
       const formData = new FormData();
-      formData.append("action", "saveTurnosStandard");
-      formData.append("profesionalId", username); // usamos username como identificador
+      formData.append("action","saveTurnosStandard");
+      formData.append("profesionalId", profesionalId);
       formData.append("turnos", JSON.stringify(turnosGlobal));
-
-      await fetch(API_URL, { method:"POST", body:formData });
+      await fetch(API_URL, {method:"POST", body:formData});
       alert("Turnos guardados correctamente.");
     }
 
-    // === Cargar turnos desde el servidor ===
-    async function init() {
+    async function init(){
       if (!username) return;
       try {
         const res = await fetch(`${API_URL}?action=getTurnosStandard&username=${encodeURIComponent(username)}`);
         const data = await res.json();
-        if (data.status === "ok") {
-          // data.turnos debería venir como array [{profesionalId, diaSemana, hora, visible}, ...]
-          turnosGlobal = data.turnos;
+        if (data.status==="ok"){
+          profesionalId = data.profesionalId;
+
+          let turnos = data.turnos;
+          // 🔑 Normalizar a array si viene como objeto
+          if (!Array.isArray(turnos)) {
+            let arr = [];
+            Object.keys(turnos).forEach(dia=>{
+              turnos[dia].forEach(t=>{
+                arr.push({
+                  diaSemana: dia,
+                  hora: t.hora,
+                  visible: t.visible
+                });
+              });
+            });
+            turnosGlobal = arr;
+          } else {
+            turnosGlobal = turnos;
+          }
           renderWeek(turnosGlobal);
         } else {
-          document.getElementById("msg").textContent = "Error cargando turnos.";
+          document.getElementById("msg").textContent="Error cargando turnos.";
         }
-      } catch (e) {
+      } catch(e){
         console.error(e);
-        document.getElementById("msg").textContent = "No se pudieron cargar los turnos.";
+        document.getElementById("msg").textContent="No se pudieron cargar los turnos.";
       }
     }
 
-    document.getElementById("saveBtn").onclick = guardarTurnos;
+    document.getElementById("saveBtn").onclick=guardarTurnos;
     document.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
