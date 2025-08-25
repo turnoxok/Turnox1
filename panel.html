@@ -2,107 +2,46 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>TurnoX - Sistema PRE-PAGO de Turnos On Line</title>
+  <title>Panel TurnoX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-  <!-- Fuentes -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
-
-  <!-- Iconos -->
   <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-
-  <!-- Open Graph para WhatsApp/Facebook -->
-  <meta property="og:title" content=">TurnoX - Sistema PRE-PAGO de Turnos On Line" />
-  <meta property="og:description" content="Turnero Pro." />
-  <meta property="og:image" content="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:url" content="https://turnox.pro/" />
-  <meta property="og:type" content="website" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="TurnoX - Sistema PRE-PAGO de Turnos On Line" />
-  <meta name="twitter:description" content="Turnero Pro." />
-  <meta name="twitter:image" content="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png" />
   <style>
-    /* Reset y estilos generales */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    /* Copia de estilos de index.html */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
       font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
       background-color: #533482;
       display: flex;
       justify-content: center;
       align-items: center;
-       margin: 0;
-      min-height: 100vh; /* ocupa toda la pantalla */
-    transition: background-color 1s ease-in-out; /* transición suave del fondo */
+      min-height: 100vh;
     }
-
-    /* Contenedor principal */
-    .container {
-      text-align: center;
-      color: #fff;
-    }
-
-    
-.logo {
-  font-size: 3rem;
-      font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 700;
-  font-style: bold;
+    .container { text-align: center; color: #fff; }
+    .logo {
+      font-size: 3rem;
+      font-weight: 700;
       margin-bottom: -2px;
-      letter-spacing: -2px; /* valor negativo junta más las letras */
-  position: relative;
-  display: inline-block;
-  color: transparent;
-  }
-  .logo::before {
-    content: "TurnoX";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      120deg,
-      transparent,
-      rgba(255,255,255,0.9),
-      transparent
-    );
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shine 5s infinite linear;
-  }
-
-@keyframes shine {
-  0%   { background-position: 200% 0; }   /* 👉 arranca a la derecha */
-  100% { background-position: -200% 0; }  /* 👉 termina a la izquierda */
-}
-
-
-
-    .subtitle {
-      font-size: 0.9rem;
-      font-weight: 400;
-      margin-bottom: 40px;
-      color: #ffffffcc;
+      letter-spacing: -2px;
+      position: relative;
+      display: inline-block;
+      color: transparent;
     }
-
-    /* Botones */
+    .logo::before {
+      content: "TurnoX";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.9), transparent);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 5s infinite linear;
+    }
+    @keyframes shine {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
     .btn {
       display: block;
       width: 250px;
@@ -118,34 +57,34 @@
       text-decoration: none;
       transition: background-color 0.3s, transform 0.2s;
     }
-
-    .btn:hover {
-      background-color: #f2f2f2;
-      transform: translateY(-2px);
-    }
-.btn .sub {
-  display: block;
-  font-size:8px;
-  font-weight: 400;
-  color: #CDCDCD; 
-  margin-top:1px;
-}
+    .btn:hover { background-color: #f2f2f2; transform: translateY(-2px); }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="logo">TurnoX</div>
-    <div class="subtitle">www.turnox.pro</div>
-
-    <a href="/register" class="btn">
-  Crear Cuenta
-  <span class="sub"></span>
-</a>
-    <a href="/login" class="btn">Ya tengo una cuenta</a>
-     <a href="/demo" class="btn">Ver Demo</a>
-    
+    <a href="#" class="btn" id="btnConfig">Configuración Turnos</a>
+    <a href="#" class="btn" id="btnCreditos">Créditos</a>
+    <a href="#" class="btn" id="btnClientes">Clientes</a>
+    <a href="#" class="btn" id="btnPerfil">Perfil</a>
+    <a href="#" class="btn" id="btnUsername">Ir a Usuario</a>
+    <a href="#" class="btn" id="btnLogout">Cerrar Sesión</a>
   </div>
 
+  <script>
+    // Obtener username desde localStorage o query param (según tu login)
+    const username = localStorage.getItem("username") || "demo";
 
+    document.getElementById("btnConfig").href = `configuracion.html?username=${username}`;
+    document.getElementById("btnCreditos").href = `creditos.html?username=${username}`;
+    document.getElementById("btnClientes").href = `clientes.html?username=${username}`;
+    document.getElementById("btnPerfil").href = `perfil.html?username=${username}`;
+    document.getElementById("btnUsername").href = `username.html?username=${username}`;
+
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      localStorage.removeItem("username"); // limpiar sesión
+      window.location.href = "index.html";
+    });
+  </script>
 </body>
 </html>
