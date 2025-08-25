@@ -184,7 +184,23 @@
       const res = await fetch(`${API_URL}?action=getTurnosStandard&username=${encodeURIComponent(username)}`);
       const data = await res.json();
       if (data.status === "ok") {
-        renderWeek(data.turnos);
+  let turnos = data.turnos;
+
+  // Si es objeto (por días), lo transformamos a un array plano
+  if (!Array.isArray(turnos)) {
+    let arr = [];
+    Object.keys(turnos).forEach(dia => {
+      turnos[dia].forEach(t => arr.push({
+        diaSemana: dia,
+        hora: t.hora,
+        visible: t.visible
+      }));
+    });
+    turnos = arr;
+  }
+
+  renderWeek(turnos);
+
       } else {
         document.getElementById("msg").textContent = "Error cargando turnos.";
       }
