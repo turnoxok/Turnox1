@@ -98,7 +98,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec";
 
     let params = new URLSearchParams(window.location.search);
-    let username = params.get("username");
+    let username = params.get("profId");
     if (!username) {
       const path = window.location.pathname.replace(/\/+$/,"");
       const last = path.substring(path.lastIndexOf("/")+1);
