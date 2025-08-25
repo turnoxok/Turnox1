@@ -1,78 +1,247 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Turnos configurados</title>
+  <meta charset="UTF-8" />
+  <title>TurnoX - Agenda semanal (Lun-Vie)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background:#f9f9f9;}
-    h1 { color:#333; }
-    .day { margin-bottom: 20px; padding:10px; background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.1);}
-    .day h2 { margin:0 0 10px; color:#533482;}
-    .slots { display:flex; flex-wrap:wrap; gap:8px;}
-    .slot { padding:6px 10px; border-radius:6px; border:1px solid #ccc; background:#eee; font-size:14px;}
-    .slot.unavailable { background:#f8d7da; text-decoration: line-through; color:#721c24;}
-    .slot.available { background:#d4edda; color:#155724;}
+    :root{
+      --morado:#533482;
+      --morado-osc:#452a7a;
+      --claro:#F4EDFF;
+      --gris:#e7e7e7;
+      --texto:#2b2b2b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:24px;
+      font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--morado);
+      color:#fff;
+    }
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+    .topbar .left{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    }
+    button{
+      background:#fff; color:var(--morado);
+      border:none; border-radius:10px; padding:10px 14px;
+      font-weight:700; cursor:pointer;
+      transition:.15s transform,.15s background,.15s color;
+    }
+    button:hover{ transform:translateY(-2px); background:var(--claro); }
+    h1{ margin:0; font-size:22px; }
+    .note{opacity:.9; font-size:14px}
+
+    .week{
+      display:grid; gap:16px;
+      grid-template-columns: repeat(5, minmax(220px,1fr));
+    }
+    @media (max-width:1100px){ .week{grid-template-columns:repeat(3,1fr)} }
+    @media (max-width:720px){ .week{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:520px){ .week{grid-template-columns:1fr} }
+
+    .day{
+      background:#ffffff10; border:1px solid #ffffff30; border-radius:14px;
+      padding:14px;
+      backdrop-filter: blur(2px);
+    }
+    .day h2{
+      margin:0 0 6px 0; font-size:18px; font-weight:700;
+    }
+    .date-tag{ font-size:12px; opacity:.85; margin-bottom:10px }
+
+    .prof{
+      background:#fff; color:var(--texto);
+      border-radius:12px; padding:10px; margin:10px 0; border:1px solid var(--gris);
+    }
+    .prof h3{ margin:0 0 8px 0; font-size:15px; color:var(--morado) }
+
+    .slots{ display:flex; flex-wrap:wrap; gap:8px; }
+    .slot{
+      padding:6px 10px; border-radius:8px; border:1px solid var(--gris);
+      font-weight:700; font-size:13px;
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+    }
+    .slot.bloqueado{
+      opacity:.5; text-decoration:line-through;
+      background:#eee;
+    }
+    .empty{ font-size:13px; opacity:.8 }
+
+    .legend{ display:flex; gap:12px; align-items:center; font-size:12px; margin-top:4px; opacity:.9 }
+    .legend .chip{ width:12px; height:12px; border-radius:4px; border:1px solid var(--gris); background:#fff }
+    .legend .chip.b{ opacity:.5; background:#fff; }
+
+    #guardarBtn{
+      margin-top:24px;
+      display:block;
+    }
   </style>
 </head>
 <body>
-  <h1>Turnos configurados</h1>
-  <div id="turnos"></div>
+  <div class="topbar">
+    <div class="left">
+      <button id="backBtn">← Volver al panel</button>
+      <h1 id="title">Agenda (Lun–Vie)</h1>
+    </div>
+    <div class="note" id="who"></div>
+  </div>
+
+  <div id="msg" class="note"></div>
+  <div id="week" class="week"></div>
+  <button id="guardarBtn">💾 Guardar cambios</button>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec";
-    const username = new URLSearchParams(window.location.search).get("username");
 
-    async function cargarTurnos(){
-      try {
-        const res = await fetch(`${API_URL}?action=getTurnosStandard&username=${username}`);
-        const data = await res.json();
+    let params = new URLSearchParams(window.location.search);
+    let username = params.get("username");
+    if (!username) {
+      const path = window.location.pathname.replace(/\/+$/,"");
+      const last = path.substring(path.lastIndexOf("/")+1);
+      if (last && last !== "" && !last.endsWith(".html")) username = last;
+    }
+    if (!username) document.getElementById("msg").textContent = "Falta username en la URL.";
+    document.getElementById("who").textContent = username ? `Mostrando agenda de: ${username}` : "";
 
-        if (data.status === "ok") {
-          const turnos = Array.isArray(data.turnos) ? data.turnos : [];
-          renderTurnos(turnos);
-        } else {
-          document.getElementById("turnos").innerHTML = "Error cargando turnos.";
-        }
-      } catch (e) {
-        document.getElementById("turnos").innerHTML = "Error de conexión.";
+    document.getElementById("backBtn").onclick = () => { window.location.href = "/panel"; };
+
+    const diasES = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+    function toISODate(d){ return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().split("T")[0]; }
+    function formatES(d){ return d.toLocaleDateString("es-AR",{weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"}); }
+    function getNextMonToFri(){
+      const out = [], today = new Date();
+      for (let add=0; out.length<5 && add<10; add++){
+        const d = new Date(today); d.setDate(today.getDate()+add);
+        if (d.getDay()>=1 && d.getDay()<=5) out.push(d);
       }
+      return out;
     }
 
-    function renderTurnos(turnos){
-      const cont = document.getElementById("turnos");
-      cont.innerHTML = "";
-      const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes"];
+    // guardamos todos los slots en memoria
+    let turnosEditados = [];
 
-      dias.forEach(dia => {
-        const dayDiv = document.createElement("div");
-        dayDiv.className = "day";
-        const h2 = document.createElement("h2");
-        h2.textContent = dia;
-        dayDiv.appendChild(h2);
+    function renderDay(container, dateObj, profData){
+      const fechaISO = toISODate(dateObj);
+      const dayEl = document.createElement("div");
+      dayEl.className = "day";
+      const nice = formatES(dateObj);
+      dayEl.innerHTML = `
+        <h2>${diasES[dateObj.getDay()]}</h2>
+        <div class="date-tag">${nice} — ${fechaISO}</div>
+        <div class="legend">
+          <span class="chip"></span> Disponible
+          <span class="chip b"></span> Bloqueado
+        </div>
+      `;
+      const section = document.createElement("div");
 
+      if (!profData || Object.keys(profData).length===0){
+        section.innerHTML = `<div class="empty">No hay turnos configurados para este día.</div>`;
+        dayEl.appendChild(section);
+        container.appendChild(dayEl);
+        return;
+      }
+
+      Object.keys(profData).forEach(profId=>{
+        const prof = profData[profId];
+        const profBox = document.createElement("div");
+        profBox.className = "prof";
+        const slots = (prof.turnos||[]).slice().sort((a,b)=>a.hora.localeCompare(b.hora));
         const slotsDiv = document.createElement("div");
         slotsDiv.className = "slots";
 
-        const slots = turnos.filter(t => (t.diaSemana||"").toLowerCase() === dia.toLowerCase());
-        slots.sort((a,b)=>a.hora.localeCompare(b.hora));
-
-        if (slots.length === 0) {
-          slotsDiv.textContent = "No hay horarios configurados.";
-        } else {
-          slots.forEach(t => {
-            const span = document.createElement("span");
-            span.className = "slot " + (t.visible == 1 ? "available":"unavailable");
-            span.textContent = t.hora;
-            slotsDiv.appendChild(span);
+        slots.forEach(s=>{
+          const span = document.createElement("span");
+          span.className = "slot " + (s.estado==='bloqueado'?'bloqueado':'');
+          span.textContent = s.hora.padStart(5,"0");
+          // click toggle
+          span.addEventListener("click", ()=>{
+            span.classList.toggle("bloqueado");
+            s.estado = span.classList.contains("bloqueado") ? "bloqueado" : "disponible";
           });
-        }
+          slotsDiv.appendChild(span);
 
-        dayDiv.appendChild(slotsDiv);
-        cont.appendChild(dayDiv);
+          // guardamos referencia para exportar luego
+          turnosEditados.push({
+            fecha: fechaISO,
+            dia: diasES[dateObj.getDay()],
+            profId: profId,
+            profNombre: prof.nombre,
+            hora: s.hora,
+            estado: s.estado
+          });
+        });
+
+        profBox.innerHTML = `<h3>${prof.nombre}</h3>`;
+        profBox.appendChild(slotsDiv);
+        section.appendChild(profBox);
       });
+
+      dayEl.appendChild(section);
+      container.appendChild(dayEl);
     }
 
-    document.addEventListener("DOMContentLoaded", cargarTurnos);
+    async function fetchDay(username, isoDate){
+      const res = await fetch(`${API_URL}?username=${encodeURIComponent(username)}&fecha=${encodeURIComponent(isoDate)}`);
+      return res.json();
+    }
+
+    async function init(){
+      if (!username) return;
+      const weekDiv = document.getElementById("week");
+      weekDiv.innerHTML = "";
+      turnosEditados = [];
+
+      const days = getNextMonToFri();
+      for (const dateObj of days){
+        const iso = toISODate(dateObj);
+        try{
+          const data = await fetchDay(username, iso);
+          if (data.status !== "ok"){
+            const errBox = document.createElement("div");
+            errBox.className = "day";
+            errBox.innerHTML = `<h2>${diasES[dateObj.getDay()]}</h2>
+              <div class="date-tag">${formatES(dateObj)} — ${iso}</div>
+              <div class="empty">Error al cargar</div>`;
+            weekDiv.appendChild(errBox);
+          }else{
+            renderDay(weekDiv, dateObj, data.turnos);
+          }
+        }catch(err){
+          const errBox = document.createElement("div");
+          errBox.className = "day";
+          errBox.innerHTML = `<h2>${diasES[dateObj.getDay()]}</h2>
+            <div class="date-tag">${formatES(dateObj)} — ${iso}</div>
+            <div class="empty">No se pudieron cargar los turnos.</div>`;
+          weekDiv.appendChild(errBox);
+        }
+      }
+    }
+
+    async function guardarCambios(){
+      const formData = new FormData();
+      formData.append("action","saveTurnosSemana");
+      formData.append("username", username);
+      formData.append("turnos", JSON.stringify(turnosEditados));
+      try{
+        await fetch(API_URL,{method:"POST",body:formData});
+        alert("✅ Turnos guardados correctamente");
+      }catch(e){
+        alert("❌ Error al guardar");
+      }
+    }
+
+    document.getElementById("guardarBtn").addEventListener("click", guardarCambios);
+    document.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
 </html>
