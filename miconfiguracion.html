@@ -223,7 +223,7 @@
 
       const formData = new FormData();
       formData.append("action","saveTurnosStandard");
-      formData.append("profesionalId", username); // <-- ojo, si usas otro ID cámbialo aquí
+      formData.append("profesionalId", profesionalId); // <-- ojo, si usas otro ID cámbialo aquí
       formData.append("turnos", JSON.stringify(turnos));
 
       await fetch(API_URL, {method:"POST", body:formData});
