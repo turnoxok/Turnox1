@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mis Turnos</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  #calendarioContainer {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  table {
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    min-width: 40px;
+  }
+
+  td {
+    cursor: pointer;
+  }
+
+  td.pasado {
+    color: #aaa;
+    cursor: default;
+  }
+
+  td.conTurnos {
+    background: #e0f7e9;
+    font-weight: bold;
+  }
+
+  #ticketsContainer {
+    margin-top: 20px;
+  }
+
+  .ticketsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .ticket {
+    background: linear-gradient(145deg, #fdfdfd, #f0f0f0);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: relative;
+  }
+
+  .ticket h3 {
+    background: #5a2d82;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 0 0 15px;
+  }
+
+  .ticket .hora {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #333;
+    color: #fff;
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 8px;
+  }
+
+  .ticket p {
+    margin: 6px 0;
+    font-size: 14px;
+  }
+
+  .ticket p strong {
+    color: #5a2d82;
+  }
+
+  .ticket button {
+    margin-top: 10px;
+    background: #5a2d82;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .ticket button:hover {
+    background: #431e62;
+  }
+</style>
+</head>
+<body>
+
+<h1>Mis Turnos</h1>
+<div id="calendarioContainer"></div>
+<div id="ticketsContainer"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxRK4WyJlagviZGIqibZd8sISBMwW8WzYKCk0Z6qd-JHYwoImVX3MlfdKACo931zGbaxQ/exec";
+
+let username = localStorage.getItem("username");
+
+if(!username){ 
+  alert("No hay usuario logueado"); 
+  window.location.href="login.html"; 
+}
+
+let turnosUsuario = [];
+let turnosPorFecha = {};
+let selectedDate = new Date();
+
+async function cargarTurnosUsuario(){
+  try{
+    const res = await fetch(`${API_URL}?action=getTurnosUsuario&username=${username}`);
+    const data = await res.json();
+    console.log("Respuesta API:", data);
+
+    turnosUsuario = [];
+    turnosPorFecha = {};
+    if(data.turnos && typeof data.turnos === "object"){
+      Object.keys(data.turnos).forEach(profId => {
+        if(Array.isArray(data.turnos[profId])){
+          turnosUsuario.push(...data.turnos[profId]);
+        }
+      });
+    }
+
+    // Agrupar por fecha (normalizando a YYYY-MM-DD)
+    turnosUsuario.forEach(t=>{
+      let fechaSolo = t.fecha;
+      if(fechaSolo.includes("/")){
+        const [dia, mes, anio] = fechaSolo.split("/");
+        fechaSolo = `${anio}-${mes.padStart(2,"0")}-${dia.padStart(2,"0")}`;
+      } else if(fechaSolo.includes("T")) {
+        fechaSolo = fechaSolo.split("T")[0];
+      }
+      if(!turnosPorFecha[fechaSolo]) turnosPorFecha[fechaSolo] = [];
+      turnosPorFecha[fechaSolo].push(t);
+    });
+
+    renderCalendario(selectedDate.getFullYear(), selectedDate.getMonth());
+  }catch(e){ 
+    console.error(e); 
+    document.getElementById("ticketsContainer").innerHTML="<p>Error al cargar turnos.</p>"; 
+  }
+}
+
+function renderCalendario(year, month){
+  const today = new Date();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month+1, 0);
+  const container = document.getElementById("calendarioContainer");
+  container.innerHTML = `<h2>${firstDay.toLocaleString("es-ES",{month:"long",year:"numeric"})}</h2>`;
+
+  let html = "<table><tr>";
+  const diasSemana=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+  diasSemana.forEach(d=>html+=`<th>${d}</th>`); 
+  html+="</tr><tr>";
+
+  for(let i=0; i<firstDay.getDay(); i++){ html+="<td></td>"; }
+
+  for(let d=1; d<=lastDay.getDate(); d++){
+    const fecha = new Date(year, month, d);
+    const fechaStr = fecha.toISOString().split("T")[0];
+    const tieneTurnos = turnosPorFecha[fechaStr] ? true : false;
+
+    let classes = [];
+    if(fecha < new Date(today.getFullYear(), today.getMonth(), today.getDate())){
+      classes.push("pasado");
+    }
+    if(tieneTurnos) classes.push("conTurnos");
+
+    html += `<td class="${classes.join(" ")}" onclick="renderTickets('${fechaStr}')">${d}</td>`;
+    if(fecha.getDay()===6 && d!==lastDay.getDate()) html+="</tr><tr>";
+  }
+  html+="</tr></table>";
+  container.innerHTML += html;
+}
+
+function renderTickets(fechaStr){
+  const ticketsDiv = document.getElementById("ticketsContainer");
+  const turnos = turnosPorFecha[fechaStr] || [];
+  const fechaBonita = fechaStr.split("-").reverse().join("/");
+
+  ticketsDiv.innerHTML=`<h2 style="text-align:center;color:#5a2d82;">Turnos para el día ${fechaBonita}</h2>`;
+
+  if(turnos.length===0){
+    ticketsDiv.innerHTML += `<p style="text-align:center;">En esta fecha no hay turnos.</p>`;
+    return;
+  }
+
+  const grid = document.createElement("div");
+  grid.className="ticketsGrid";
+
+  turnos.forEach(t=>{
+    const div = document.createElement("div");
+    div.className="ticket";
+    div.innerHTML=`
+      <h3>TurnoX</h3>
+      <div class="hora">${t.hora}</div>
+      <p><strong>Comercio:</strong> ${t.profesional || "Ej: Barbería X"}</p>
+      <p><strong>Nombre:</strong> ${t.nombre} ${t.apellido}</p>
+      <p><strong>Dirección:</strong> ${t.direccion || ""}</p>
+      <p><strong>Email:</strong> ${t.email || ""}</p>
+      <p><strong>Teléfono:</strong> ${t.telefono || ""}</p>
+      <p><strong>Comentario:</strong> ${t.comentario || ""}</p>
+      <p><strong>DNI:</strong> ${t.dni}</p>
+      <button onclick="eliminarTurno('${t.fecha}','${t.hora}','${t.profesionalId}','${t.dni}')">Eliminar turno</button>
+    `;
+    grid.appendChild(div);
+  });
+
+  ticketsDiv.appendChild(grid);
+}
+
+async function eliminarTurno(fecha,hora,profId,dni){
+  if(!confirm("Desea eliminar este turno?")) return;
+  try{
+    const res=await fetch(API_URL,{
+      method:"POST",
+      body:new URLSearchParams({action:"deleteReserva",username,fecha,hora,profesionalId:profId,dni})
+    });
+    const result=await res.json();
+    if(result.status==="ok"){ 
+      alert("Turno eliminado");
+      await cargarTurnosUsuario();
+      // normalizar fecha para refrescar
+      let fechaSolo = fecha;
+      if(fechaSolo.includes("/")){
+        const [dia, mes, anio] = fechaSolo.split("/");
+        fechaSolo = `${anio}-${mes.padStart(2,"0")}-${dia.padStart(2,"0")}`;
+      }
+      renderTickets(fechaSolo);
+    }
+    else alert("Error al eliminar turno: "+(result.msg||""));
+  }catch(e){ console.error(e); }
+}
+
+document.addEventListener("DOMContentLoaded", cargarTurnosUsuario);
+</script>
+
+</body>
+</html>
