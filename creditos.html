@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Créditos</title>
+<style>
+  body { font-family: Arial; padding:20px; }
+  button { padding:8px 15px; margin:5px; cursor:pointer; }
+  input { padding:5px; width:80px; text-align:center; }
+</style>
+</head>
+<body>
+  <h2>Usuario: <span id="usernameDisplay"></span></h2>
+  <p>Créditos actuales: <span id="creditosActuales">Cargando...</span></p>
+
+  <label>Cantidad de créditos:
+    <input type="number" id="cantidadCreditos" min="1" value="1">
+  </label>
+  <br><br>
+  <button onclick="comprarCreditos()">💳 Comprar Créditos</button>
+  <button onclick="volverPanel()">⬅ Volver</button>
+
+<script>
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxHgefPPFUXABxH3nMt5HBN-eK2uouIWilZR5I7SpAxRBTexDZ4OD2uKn16O_PZfIBY/exec"; // URL de tu Apps Script
+
+let username, userId;
+
+function init(data) {
+  username = data.username;
+  userId = data.userId;
+  document.getElementById("usernameDisplay").innerText = username;
+
+  // Trae créditos actuales
+  fetch(`${WEBAPP_URL}?action=getCreditos&username=${encodeURIComponent(username)}`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("creditosActuales").innerText = data.creditos;
+    });
+}
+
+function comprarCreditos() {
+  const cantidad = parseInt(document.getElementById("cantidadCreditos").value, 10);
+  if (!cantidad || cantidad <= 0) return alert("Cantidad inválida");
+
+  // Crear preferencia
+  fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}&cantidad=${cantidad}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.url) {
+        window.open(data.url, "_blank"); // abre Mercado Pago
+      } else {
+        alert("Error al generar link de pago");
+      }
+    });
+}
+
+function volverPanel() { window.history.back(); }
+
+// Inicializa
+const urlParams = new URLSearchParams(window.location.search);
+init({
+  username: urlParams.get('username'),
+  userId: urlParams.get('userId')
+});
+</script>
+</body>
+</html>
