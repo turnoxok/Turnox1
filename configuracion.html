@@ -2,211 +2,237 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>TurnoX - Sistema PRE-PAGO de Turnos On Line</title>
+  <title>TurnoX - Agenda semanal (Lun-Vie)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-  <!-- Fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Iconos -->
-  <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: "Montserrat", sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #533482;
-      color: #F2F2F2;
+    :root{
+      --morado:#533482;
+      --morado-osc:#452a7a;
+      --claro:#F4EDFF;
+      --gris:#e7e7e7;
+      --texto:#2b2b2b;
     }
-    h1 { text-align: center; }
-    button {
-      background-color: #533482;
-      color: #fff;
-      border: none;
-      padding: 8px 14px;
-      margin: 4px 2px;
-      cursor: pointer;
-      font-weight: 600;
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:24px;
+      font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--morado);
+      color:#fff;
     }
-    button:hover { background-color: #452a7a; }
-    .profesional {
-      border: 1px solid #ddd;
-      padding: 12px;
-      margin: 12px 0;
-      background: #fff;
-      color: #533482;
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      margin-bottom:16px;
     }
+    .topbar .left{
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    }
+    button{
+      background:#fff; color:var(--morado);
+      border:none; border-radius:10px; padding:10px 14px;
+      font-weight:700; cursor:pointer;
+      transition:.15s transform,.15s background,.15s color;
+    }
+    button:hover{ transform:translateY(-2px); background:var(--claro); }
+    h1{ margin:0; font-size:22px; }
+    .note{opacity:.9; font-size:14px}
+
+    .week{
+      display:grid; gap:16px;
+      grid-template-columns: repeat(5, minmax(220px,1fr));
+    }
+    @media (max-width:1100px){ .week{grid-template-columns:repeat(3,1fr)} }
+    @media (max-width:720px){ .week{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:520px){ .week{grid-template-columns:1fr} }
+
+    .day{
+      background:#ffffff10; border:1px solid #ffffff30; border-radius:14px;
+      padding:14px;
+      backdrop-filter: blur(2px);
+    }
+    .day h2{
+      margin:0 0 6px 0; font-size:18px; font-weight:700;
+    }
+    .date-tag{ font-size:12px; opacity:.85; margin-bottom:10px }
+
+    .prof{
+      background:#fff; color:var(--texto);
+      border-radius:12px; padding:10px; margin:10px 0; border:1px solid var(--gris);
+    }
+    .prof h3{ margin:0 0 8px 0; font-size:15px; color:var(--morado) }
+
+    .slots{ display:flex; flex-wrap:wrap; gap:8px; }
+    .slot{
+      padding:6px 10px; border-radius:8px; border:1px solid var(--gris);
+      font-weight:700; font-size:13px;
+      background:#fff;
+      cursor:pointer;
+    }
+    .slot.bloqueado{
+      opacity:.5; text-decoration:line-through;
+      background:#ddd;
+    }
+    .empty{ font-size:13px; opacity:.8 }
+
+    .legend{ display:flex; gap:12px; align-items:center; font-size:12px; margin-top:4px; opacity:.9 }
+    .legend .chip{ width:12px; height:12px; border-radius:4px; border:1px solid var(--gris); background:#fff }
+    .legend .chip.b{ opacity:.5; background:#fff; }
   </style>
 </head>
-<body onload="init()">
-  <button onclick="window.location.href='/'">⬅ Volver al Panel</button>
-  <button onclick="
-      window.location.href='/creditos.html?username='
-      + encodeURIComponent(username)
-      + '&userId=' + encodeURIComponent(userId);
-    ">
-      💳 Créditos
-  </button>
-  <h1>Panel de Configuración</h1>
-  <p>Usuario: <b id="username"></b></p>
-  <button onclick="agregarProfesional()">Agregar Profesional</button>
-  <div id="profesionales"></div>
-  <div id="config"></div>
+<body>
+  <div class="topbar">
+    <div class="left">
+      <button id="backBtn">← Volver al panel</button>
+      <h1 id="title">Agenda (Lun–Vie)</h1>
+    </div>
+    <div class="note" id="who"></div>
+    <button id="saveBtn">💾 Guardar cambios</button>
+  </div>
 
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec"; 
-let userId = localStorage.getItem("userId");
-let username = localStorage.getItem("username");
-let profesionales = [];
+  <div id="msg" class="note"></div>
+  <div id="week" class="week"></div>
 
-async function init() {
-  if (!userId || !username) {
-    alert("Debes iniciar sesión primero.");
-    window.location.href = "/login.html";
-    return;
-  }
-  document.getElementById("username").innerText = username;
-  await cargarProfesionales();
-}
+  <script>
+    // === CONFIG ===
+    const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec";
 
-async function cargarProfesionales() {
-  const res = await fetch(`${API_URL}?username=${username}`);
-  const data = await res.json();
-  if (data.status === "ok") {
-    profesionales = data.profesionales;
-    renderProfesionales();
-  }
-}
+    let params = new URLSearchParams(window.location.search);
+    let username = params.get("username");
+    if (!username) {
+      const path = window.location.pathname.replace(/\/+$/,"");
+      const last = path.substring(path.lastIndexOf("/")+1);
+      if (last && last !== "" && !last.endsWith(".html")) username = last;
+    }
+    document.getElementById("who").textContent = username ? `Mostrando agenda de: ${username}` : "";
 
-function renderProfesionales() {
-  const cont = document.getElementById("profesionales");
-  cont.innerHTML = "";
-  profesionales.forEach(prof => {
-    const div = document.createElement("div");
-    div.className = "profesional";
-    div.innerHTML = `
-      <h3>${prof.nombre}</h3>
-      <button onclick="abrirTurnos('${prof.profesionalId}','${prof.nombre}')">⚙ Configurar Turnos</button>
-      <button onclick="eliminarTurnos('${prof.profesionalId}')">🗑 Limpiar Turnos</button>
-      <button onclick="eliminarProfesional('${prof.profesionalId}')">❌ Eliminar Profesional</button>
-    `;
-    cont.appendChild(div);
-  });
-}
+    document.getElementById("backBtn").onclick = () => {
+      window.location.href = "/panel";
+    };
 
-async function agregarProfesional() {
-  const nombre = prompt("Nombre del profesional:");
-  if (!nombre) return;
-  const formData = new FormData();
-  formData.append("action","addProfessional");
-  formData.append("userId", userId);
-  formData.append("nombre", nombre);
-  const res = await fetch(API_URL, {method:"POST", body:formData});
-  const data = await res.json();
-  if (data.status === "ok") {
-    profesionales.push({profesionalId:data.profesionalId, nombre:data.nombre});
-    renderProfesionales();
-  }
-}
+    const diasES = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+    function toISODate(d){ return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().split("T")[0]; }
+    function formatES(d){
+      return d.toLocaleDateString("es-AR",{weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"});
+    }
+    function getNextMonToFri(){
+      const out = [];
+      const today = new Date();
+      for (let add=0; out.length<5 && add<10; add++){
+        const d = new Date(today); d.setDate(today.getDate()+add);
+        const w = d.getDay();
+        if (w>=1 && w<=5) out.push(d);
+      }
+      return out;
+    }
 
-// ---------------- CONFIGURACIÓN DE TURNOS ----------------
-async function abrirTurnos(profId, nombre) {
-  const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
-  let html = `<h2>Turnos Standard de ${nombre}</h2>`;
-  html += `
-    <label>Intervalo: 
-      <select id="intervalo">
-        <option value="15">15 min</option>
-        <option value="20">20 min</option>
-        <option value="30" selected>30 min</option>
-        <option value="60">60 min</option>
-      </select>
-    </label><br><br>
-  `;
-  dias.forEach(d=>{
-    html += `
-      <h4>${d}</h4>
-      Desde <input type="time" id="desde_${d}" value="09:00">
-      hasta <input type="time" id="hasta_${d}" value="17:00">
-      <button onclick="generarSlots('${profId}','${d}')">Generar</button>
-      <div id="slots_${profId}_${d}" class="slots"></div>
-    `;
-  });
-  html += `<br><button onclick="guardarTurnos('${profId}')">💾 Guardar</button>`;
-  document.getElementById("config").innerHTML = html;
+    // === Render ===
+    function renderDay(container, dateObj, profData){
+      const fechaISO = toISODate(dateObj);
+      const dayEl = document.createElement("div");
+      dayEl.className = "day";
+      const nice = formatES(dateObj);
+      dayEl.innerHTML = `
+        <h2>${diasES[dateObj.getDay()]}</h2>
+        <div class="date-tag">${nice} — ${fechaISO}</div>
+        <div class="legend">
+          <span class="chip"></span> Disponible
+          <span class="chip b"></span> Bloqueado / no disponible
+        </div>
+      `;
+      const section = document.createElement("div");
 
-  // cargar turnos guardados desde backend
-  const res = await fetch(`${API_URL}?action=getTurnosStandard&profesionalId=${profId}`);
-  const data = await res.json();
-  if (data.status === "ok") {
-    data.turnos.forEach(t=>{
-      generarSlots(profId, t.dia);
-      const chk = document.querySelector(`#${profId}_${t.dia}_${t.hora}`);
-      if (chk) chk.checked = t.visible === 1;
-    });
-  }
-}
+      if (!profData || Object.keys(profData).length===0){
+        section.innerHTML = `<div class="empty">No hay turnos configurados para este día.</div>`;
+        dayEl.appendChild(section);
+        container.appendChild(dayEl);
+        return;
+      }
 
-function generarSlots(profId, dia) {
-  const intervalo = parseInt(document.getElementById("intervalo").value);
-  const desde = document.getElementById(`desde_${dia}`).value;
-  const hasta = document.getElementById(`hasta_${dia}`).value;
-  const cont = document.getElementById(`slots_${profId}_${dia}`);
-  cont.innerHTML = "";
+      Object.keys(profData).forEach(profId=>{
+        const prof = profData[profId];
+        const profBox = document.createElement("div");
+        profBox.className = "prof";
+        const slots = (prof.turnos||[]).slice().sort((a,b)=>a.hora.localeCompare(b.hora));
+        let slotsHtml = "";
+        if (slots.length===0){
+          slotsHtml = `<div class="empty">Sin horarios.</div>`;
+        }else{
+          slotsHtml = `<div class="slots">` + 
+            slots.map(s=>`
+              <span 
+                class="slot ${s.visible==0 ? 'bloqueado':''}" 
+                data-dia="${diasES[dateObj.getDay()]}" 
+                data-hora="${s.hora}" 
+                data-visible="${s.visible}">
+                ${s.hora.padStart(5,"0")}
+              </span>`).join("") +
+          `</div>`;
+        }
+        profBox.innerHTML = `<h3>${prof.nombre}</h3>${slotsHtml}`;
+        section.appendChild(profBox);
+      });
 
-  let [h,m] = desde.split(":").map(Number);
-  let [hf,mf] = hasta.split(":").map(Number);
+      dayEl.appendChild(section);
+      container.appendChild(dayEl);
+    }
 
-  while (h < hf || (h===hf && m < mf)) {
-    const hora = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-    const id = `${profId}_${dia}_${hora}`;
-    cont.innerHTML += `<label><input type="checkbox" id="${id}" data-dia="${dia}" data-hora="${hora}" checked> ${hora}</label> `;
-    m += intervalo;
-    if (m >= 60) { m = m-60; h++; }
-  }
-}
+    async function fetchDay(username, isoDate){
+      const res = await fetch(`${API_URL}?username=${encodeURIComponent(username)}&fecha=${encodeURIComponent(isoDate)}`);
+      return res.json();
+    }
 
-async function guardarTurnos(profId) {
-  const checkboxes = document.querySelectorAll(`#config input[type=checkbox]`);
-  const turnos = [];
-  checkboxes.forEach(ch=>{
-    turnos.push({dia: ch.dataset.dia, hora: ch.dataset.hora, visible: ch.checked ? 1 : 0});
-  });
-  const formData = new FormData();
-  formData.append("action","saveTurnosStandard");
-  formData.append("profesionalId", profId);
-  formData.append("turnos", JSON.stringify(turnos));
-  await fetch(API_URL, {method:"POST", body:formData});
-  alert("Turnos guardados correctamente.");
-}
+    async function init(){
+      if (!username) return;
+      const weekDiv = document.getElementById("week");
+      weekDiv.innerHTML = "";
 
-async function eliminarTurnos(profId) {
-  if (!confirm("¿Seguro que quieres limpiar todos los turnos de este profesional?")) return;
-  const formData = new FormData();
-  formData.append("action","saveTurnosStandard");
-  formData.append("profesionalId", profId);
-  formData.append("turnos", JSON.stringify([]));
-  await fetch(API_URL, {method:"POST", body:formData});
-  alert("Turnos eliminados.");
-}
+      const days = getNextMonToFri();
+      for (const dateObj of days){
+        const iso = toISODate(dateObj);
+        try{
+          const data = await fetchDay(username, iso);
+          if (data.status === "ok"){
+            renderDay(weekDiv, dateObj, data.turnos);
+          }
+        }catch(err){
+          console.error("Error:", err);
+        }
+      }
 
-async function eliminarProfesional(profId) {
-  if (!confirm("❌ ¿Eliminar completamente este profesional y sus turnos?")) return;
-  const formData = new FormData();
-  formData.append("action","deleteProfessional");
-  formData.append("profesionalId", profId);
-  const res = await fetch(API_URL, {method:"POST", body:formData});
-  const data = await res.json();
-  if (data.status === "ok") {
-    profesionales = profesionales.filter(p => p.profesionalId !== profId);
-    renderProfesionales();
-    document.getElementById("config").innerHTML = "";
-    alert("Profesional eliminado.");
-  }
-}
-</script>
+      // Toggle de slots
+      document.addEventListener("click", e=>{
+        if(e.target.classList.contains("slot")){
+          e.target.classList.toggle("bloqueado");
+          e.target.dataset.visible = e.target.classList.contains("bloqueado") ? "0" : "1";
+        }
+      });
+    }
+
+    // === Guardar turnos ===
+    async function guardarTurnos(){
+      const slots = document.querySelectorAll(".slot");
+      const turnos = [];
+      slots.forEach(s=>{
+        turnos.push({
+          dia: s.dataset.dia,
+          hora: s.dataset.hora,
+          visible: s.dataset.visible
+        });
+      });
+
+      const formData = new FormData();
+      formData.append("action","saveTurnosStandard");
+      formData.append("profesionalId", username); // <-- ojo, si usas otro ID cámbialo aquí
+      formData.append("turnos", JSON.stringify(turnos));
+
+      await fetch(API_URL, {method:"POST", body:formData});
+      alert("Turnos guardados correctamente.");
+    }
+
+    document.getElementById("saveBtn").addEventListener("click", guardarTurnos);
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
 </body>
 </html>
-
-
