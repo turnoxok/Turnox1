@@ -1,128 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>TurnoX - Configuración de Turnos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Turnos Semanales</title>
   <style>
-    :root{
-      --morado:#533482;
-      --claro:#F4EDFF;
-      --gris:#e7e7e7;
-      --texto:#2b2b2b;
-    }
-    body{
-      margin:0; padding:24px;
-      font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:var(--morado);
-      color:#fff;
-    }
-    .topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;}
-    h1{margin:0;font-size:22px;}
-    button{
-      background:#fff; color:var(--morado);
-      border:none; border-radius:10px; padding:10px 14px;
-      font-weight:700; cursor:pointer;
-      transition:.2s;
-    }
-    button:hover{background:var(--claro);}
-    .week{display:grid; gap:16px; grid-template-columns:repeat(4,1fr);}
-    @media(max-width:900px){.week{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:600px){.week{grid-template-columns:1fr}}
-    .day{
-      background:#ffffff10; border:1px solid #ffffff30;
-      border-radius:14px; padding:14px;
-    }
-    .day h2{margin:0 0 6px 0; font-size:18px;}
-    .slots{display:flex; flex-wrap:wrap; gap:8px;}
-    .slot{
-      padding:6px 10px; border-radius:8px;
-      border:1px solid var(--gris); font-weight:700; font-size:13px;
-      background:#fff; color:var(--texto); cursor:pointer;
-      user-select:none;
-    }
-    .slot.off{background:#ccc; color:#666; text-decoration:line-through;}
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f6fa; }
+    h1 { text-align: center; color: #2c3e50; }
+    .container { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 20px; }
+    .day { background: #fff; border-radius: 8px; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .day h3 { margin-top: 0; text-align: center; background: #3498db; color: white; border-radius: 6px; padding: 5px; }
+    .slots { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+    .slot { padding: 6px; border-radius: 6px; text-align: center; cursor: pointer; background: #2ecc71; color: white; font-weight: bold; transition: background 0.3s, opacity 0.3s; }
+    .slot.bloqueado { background: #e74c3c; opacity: 0.6; text-decoration: line-through; }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <h1>Configuración de Turnos</h1>
-    <button id="saveBtn">💾 Guardar</button>
-  </div>
-  <div id="week" class="week"></div>
-  <div id="msg"></div>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec"; // ⚠️ cambia por tu endpoint
-    const username = new URLSearchParams(window.location.search).get("username") || "mi-negocio";
+<h1>Turnos del Profesional</h1>
+<div id="turnos" class="container"></div>
 
-    const diasOrden = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sabado","Domingo"];
-    let turnos = {}; // estructura: { "Lunes": { "09:00":"1", "10:00":"0", ... }, ... }
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec";
+const username = localStorage.getItem("username") || "prueba1";
 
-    function render(){
-      const weekDiv = document.getElementById("week");
-      weekDiv.innerHTML = "";
-      diasOrden.forEach(dia=>{
-        const dayBox = document.createElement("div");
-        dayBox.className="day";
-        dayBox.innerHTML = `<h2>${dia}</h2>`;
-        const slotsDiv = document.createElement("div");
-        slotsDiv.className="slots";
+const diasES = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 
-        if(turnos[dia]){
-          Object.keys(turnos[dia]).forEach(hora=>{
-            const estado = turnos[dia][hora];
-            const slot = document.createElement("div");
-            slot.className = "slot " + (estado==="1" ? "" : "off");
-            slot.textContent = hora;
-            slot.onclick=()=>{
-              turnos[dia][hora] = (turnos[dia][hora]==="1") ? "0" : "1";
-              render();
-            };
-            slotsDiv.appendChild(slot);
-          });
-        } else {
-          slotsDiv.innerHTML = "<em>No hay horarios configurados</em>";
-        }
+async function cargarTurnos() {
+  try {
+    const res = await fetch(`${API_URL}?username=${username}`);
+    const data = await res.json();
+    console.log("Turnos cargados:", data);
 
-        dayBox.appendChild(slotsDiv);
-        weekDiv.appendChild(dayBox);
-      });
+    if (!data.turnos) {
+      document.getElementById("turnos").innerHTML = "<p>No hay turnos configurados.</p>";
+      return;
     }
 
-    async function load(){
-      try{
-        const res = await fetch(`${API_URL}?action=getTurnosStandard&username=${encodeURIComponent(username)}`);
+    renderSemana(data.turnos);
+  } catch (err) {
+    console.error(err);
+    document.getElementById("turnos").innerHTML = "<p>Error al cargar turnos.</p>";
+  }
+}
+
+function renderSemana(turnosData) {
+  const cont = document.getElementById("turnos");
+  cont.innerHTML = "";
+
+  const profId = Object.keys(turnosData)[0]; 
+  const turnos = turnosData[profId] || [];
+
+  // Agrupar por día de la semana
+  const porDia = {};
+  turnos.forEach(t => {
+    if (!porDia[t.diaSemana]) porDia[t.diaSemana] = [];
+    porDia[t.diaSemana].push(t);
+  });
+
+  diasES.forEach(dia => {
+    const dayEl = document.createElement("div");
+    dayEl.className = "day";
+    dayEl.innerHTML = `<h3>${dia}</h3>`;
+
+    const slots = porDia[dia] || [];
+    let slotsHtml = `<div class="slots">` + 
+      slots.map(s => `
+        <span class="slot ${s.visible==0?'bloqueado':''}" 
+              data-prof="${profId}" 
+              data-dia="${dia}" 
+              data-hora="${s.hora}">
+          ${s.hora}
+        </span>
+      `).join("") + `</div>`;
+
+    dayEl.innerHTML += slotsHtml;
+    cont.appendChild(dayEl);
+  });
+
+  // Activar click en cada slot
+  document.querySelectorAll(".slot").forEach(el=>{
+    el.addEventListener("click", async ()=>{
+      const prof = el.dataset.prof;
+      const dia = el.dataset.dia;
+      const hora = el.dataset.hora;
+
+      try {
+        const res = await fetch(`${API_URL}?action=toggleTurno&profId=${prof}&diaSemana=${encodeURIComponent(dia)}&hora=${encodeURIComponent(hora)}`);
         const data = await res.json();
-        if(data.status==="ok"){
-          // data.turnos = { "Lunes":[{hora:"09:00",estado:"1"},...], ... }
-          turnos = {};
-          for(const dia in data.turnos){
-            turnos[dia] = {};
-            data.turnos[dia].forEach(slot=>{
-              turnos[dia][slot.hora] = slot.estado;
-            });
+        if (data.status==="ok") {
+          if (data.visible==1) {
+            el.classList.remove("bloqueado");
+          } else {
+            el.classList.add("bloqueado");
           }
+        } else {
+          alert("❌ Error: " + data.msg);
         }
-      }catch(e){ console.error(e); }
-      render();
-    }
-
-    document.getElementById("saveBtn").onclick = async ()=>{
-      try{
-        const res = await fetch(API_URL,{
-          method:"POST",
-          body:JSON.stringify({action:"guardarTurnos",username,turnos})
-        });
-        const data = await res.json();
-        document.getElementById("msg").textContent = "✔ Guardado!";
-      }catch(e){
-        document.getElementById("msg").textContent = "❌ Error al guardar";
+      } catch(err) {
+        alert("❌ No se pudo conectar con el servidor.");
       }
-    };
+    });
+  });
+}
 
-    load();
-  </script>
+document.addEventListener("DOMContentLoaded", cargarTurnos);
+</script>
+
 </body>
 </html>
