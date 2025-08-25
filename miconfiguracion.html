@@ -68,22 +68,16 @@
       font-weight:700; font-size:13px;
       background:#fff;
       cursor:pointer;
-      user-select:none;
     }
     .slot.bloqueado{
       opacity:.5; text-decoration:line-through;
-      background:#eee;
+      background:#ddd;
     }
     .empty{ font-size:13px; opacity:.8 }
 
     .legend{ display:flex; gap:12px; align-items:center; font-size:12px; margin-top:4px; opacity:.9 }
     .legend .chip{ width:12px; height:12px; border-radius:4px; border:1px solid var(--gris); background:#fff }
     .legend .chip.b{ opacity:.5; background:#fff; }
-
-    #guardarBtn{
-      margin-top:24px;
-      display:block;
-    }
   </style>
 </head>
 <body>
@@ -93,13 +87,14 @@
       <h1 id="title">Agenda (Lun–Vie)</h1>
     </div>
     <div class="note" id="who"></div>
+    <button id="saveBtn">💾 Guardar cambios</button>
   </div>
 
   <div id="msg" class="note"></div>
   <div id="week" class="week"></div>
-  <button id="guardarBtn">💾 Guardar cambios</button>
 
   <script>
+    // === CONFIG ===
     const API_URL = "https://script.google.com/macros/s/AKfycbxpL3trtn3QD08UTOBR2ToRNb-UouL0PfiuNjJhDCCcZ-f0UqAacugvHRbgwKQVfHZhfw/exec";
 
     let params = new URLSearchParams(window.location.search);
@@ -109,26 +104,29 @@
       const last = path.substring(path.lastIndexOf("/")+1);
       if (last && last !== "" && !last.endsWith(".html")) username = last;
     }
-    if (!username) document.getElementById("msg").textContent = "Falta username en la URL.";
     document.getElementById("who").textContent = username ? `Mostrando agenda de: ${username}` : "";
 
-    document.getElementById("backBtn").onclick = () => { window.location.href = "/panel"; };
+    document.getElementById("backBtn").onclick = () => {
+      window.location.href = "/panel";
+    };
 
     const diasES = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
     function toISODate(d){ return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().split("T")[0]; }
-    function formatES(d){ return d.toLocaleDateString("es-AR",{weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"}); }
+    function formatES(d){
+      return d.toLocaleDateString("es-AR",{weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"});
+    }
     function getNextMonToFri(){
-      const out = [], today = new Date();
+      const out = [];
+      const today = new Date();
       for (let add=0; out.length<5 && add<10; add++){
         const d = new Date(today); d.setDate(today.getDate()+add);
-        if (d.getDay()>=1 && d.getDay()<=5) out.push(d);
+        const w = d.getDay();
+        if (w>=1 && w<=5) out.push(d);
       }
       return out;
     }
 
-    // guardamos todos los slots en memoria
-    let turnosEditados = [];
-
+    // === Render ===
     function renderDay(container, dateObj, profData){
       const fechaISO = toISODate(dateObj);
       const dayEl = document.createElement("div");
@@ -139,7 +137,7 @@
         <div class="date-tag">${nice} — ${fechaISO}</div>
         <div class="legend">
           <span class="chip"></span> Disponible
-          <span class="chip b"></span> Bloqueado
+          <span class="chip b"></span> Bloqueado / no disponible
         </div>
       `;
       const section = document.createElement("div");
@@ -156,33 +154,22 @@
         const profBox = document.createElement("div");
         profBox.className = "prof";
         const slots = (prof.turnos||[]).slice().sort((a,b)=>a.hora.localeCompare(b.hora));
-        const slotsDiv = document.createElement("div");
-        slotsDiv.className = "slots";
-
-        slots.forEach(s=>{
-          const span = document.createElement("span");
-          span.className = "slot " + (s.estado==='bloqueado'?'bloqueado':'');
-          span.textContent = s.hora.padStart(5,"0");
-          // click toggle
-          span.addEventListener("click", ()=>{
-            span.classList.toggle("bloqueado");
-            s.estado = span.classList.contains("bloqueado") ? "bloqueado" : "disponible";
-          });
-          slotsDiv.appendChild(span);
-
-          // guardamos referencia para exportar luego
-          turnosEditados.push({
-            fecha: fechaISO,
-            dia: diasES[dateObj.getDay()],
-            profId: profId,
-            profNombre: prof.nombre,
-            hora: s.hora,
-            estado: s.estado
-          });
-        });
-
-        profBox.innerHTML = `<h3>${prof.nombre}</h3>`;
-        profBox.appendChild(slotsDiv);
+        let slotsHtml = "";
+        if (slots.length===0){
+          slotsHtml = `<div class="empty">Sin horarios.</div>`;
+        }else{
+          slotsHtml = `<div class="slots">` + 
+            slots.map(s=>`
+              <span 
+                class="slot ${s.visible==0 ? 'bloqueado':''}" 
+                data-dia="${diasES[dateObj.getDay()]}" 
+                data-hora="${s.hora}" 
+                data-visible="${s.visible}">
+                ${s.hora.padStart(5,"0")}
+              </span>`).join("") +
+          `</div>`;
+        }
+        profBox.innerHTML = `<h3>${prof.nombre}</h3>${slotsHtml}`;
         section.appendChild(profBox);
       });
 
@@ -199,48 +186,52 @@
       if (!username) return;
       const weekDiv = document.getElementById("week");
       weekDiv.innerHTML = "";
-      turnosEditados = [];
 
       const days = getNextMonToFri();
       for (const dateObj of days){
         const iso = toISODate(dateObj);
         try{
           const data = await fetchDay(username, iso);
-          if (data.status !== "ok"){
-            const errBox = document.createElement("div");
-            errBox.className = "day";
-            errBox.innerHTML = `<h2>${diasES[dateObj.getDay()]}</h2>
-              <div class="date-tag">${formatES(dateObj)} — ${iso}</div>
-              <div class="empty">Error al cargar</div>`;
-            weekDiv.appendChild(errBox);
-          }else{
+          if (data.status === "ok"){
             renderDay(weekDiv, dateObj, data.turnos);
           }
         }catch(err){
-          const errBox = document.createElement("div");
-          errBox.className = "day";
-          errBox.innerHTML = `<h2>${diasES[dateObj.getDay()]}</h2>
-            <div class="date-tag">${formatES(dateObj)} — ${iso}</div>
-            <div class="empty">No se pudieron cargar los turnos.</div>`;
-          weekDiv.appendChild(errBox);
+          console.error("Error:", err);
         }
       }
+
+      // Toggle de slots
+      document.addEventListener("click", e=>{
+        if(e.target.classList.contains("slot")){
+          e.target.classList.toggle("bloqueado");
+          e.target.dataset.visible = e.target.classList.contains("bloqueado") ? "0" : "1";
+        }
+      });
     }
 
-    async function guardarCambios(){
+    // === Guardar turnos ===
+    async function guardarTurnos(){
+      const slots = document.querySelectorAll(".slot");
+      const turnos = [];
+      slots.forEach(s=>{
+        turnos.push({
+          dia: s.dataset.dia,
+          hora: s.dataset.hora,
+          visible: s.dataset.visible
+        });
+      });
+
       const formData = new FormData();
-      formData.append("action","saveTurnosSemana");
-      formData.append("username", username);
-      formData.append("turnos", JSON.stringify(turnosEditados));
-      try{
-        await fetch(API_URL,{method:"POST",body:formData});
-        alert("✅ Turnos guardados correctamente");
-      }catch(e){
-        alert("❌ Error al guardar");
-      }
+      formData.append("action","saveTurnosStandard");
+      formData.append("profesionalId", username); // <-- ojo, si usas otro ID cámbialo aquí
+      formData.append("turnos", JSON.stringify(turnos));
+
+      await fetch(API_URL, {method:"POST", body:formData});
+      alert("Turnos guardados correctamente.");
     }
 
-    document.getElementById("guardarBtn").addEventListener("click", guardarCambios);
+    document.getElementById("saveBtn").addEventListener("click", guardarTurnos);
+
     document.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
