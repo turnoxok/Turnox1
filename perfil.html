@@ -257,10 +257,7 @@
   <!-- Header -->
   <div class="header-info">
     <h2 class="user-pill">¡Hola! <span id="usernameDisplay"></span></h2>
-    <div class="creditos-info">
-      <i class="fa fa-coins"></i>
-      <span id="creditosActuales">Cargando...</span>
-    </div>
+    
   </div>
 
  <div class="container">
@@ -271,6 +268,9 @@
     <div class="preview" id="preview"></div>
     <p id="status"></p>
   </div>
+   <div style="text-align:center; margin-top:20px;">
+  <a href="perfil.html" class="btn-volver">⬅ Volver</a>
+</div>
 </div>
 
  
@@ -344,16 +344,6 @@ saveBtn.addEventListener("click", async () => {
   }
 });
   </script>
-  <script>
-  fetch(`${WEBAPP_URL}?action=getCreditos&username=${encodeURIComponent(username)}`)
-    .then(r => r.json())
-    .then(data => {
-      document.getElementById("creditosActuales").innerText = data.creditos ?? "0";
-    })
-    .catch(err => {
-      console.error("Error al traer créditos:", err);
-      document.getElementById("creditosActuales").innerText = "Error";
-    });
-</script>
+ 
 </body>
 </html>
