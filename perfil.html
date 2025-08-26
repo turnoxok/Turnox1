@@ -344,6 +344,16 @@ saveBtn.addEventListener("click", async () => {
   }
 });
   </script>
-  
+  <script>
+  fetch(`${WEBAPP_URL}?action=getCreditos&username=${encodeURIComponent(username)}`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("creditosActuales").innerText = data.creditos ?? "0";
+    })
+    .catch(err => {
+      console.error("Error al traer créditos:", err);
+      document.getElementById("creditosActuales").innerText = "Error";
+    });
+</script>
 </body>
 </html>
