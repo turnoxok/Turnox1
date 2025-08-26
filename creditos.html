@@ -182,79 +182,73 @@
   gap: 30px;
   justify-content: center;
   align-items: center;
-  z-index: -1; /* 🔑 fondo atrás */
-  pointer-events: none; /* para que no bloquee clicks */
+  z-index: -1;
+  pointer-events: none;
 }
-    .columna {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
 
-    .rect {
-      width: 90px;
-      height: 140px;
-      border-radius: 12px;
-      border: 1.5px solid #4B2E78;
-      background: transparent;
-    }
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-    .solid {
-      background: #4B2E78;
-      border: none;
-    }
+.rect {
+  width: 80px;
+  height: 120px;
+  border: 2px solid #7b5cd6;
+  border-radius: 12px;
+}
 
-    /* Animación hacia abajo */
-    @keyframes bajar {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(100%); }
-    }
+.rect.filled {
+  background: #1e1a33;
+}
 
-    /* Animación hacia arriba */
-    @keyframes subir {
-      0% { transform: translateY(100%); }
-      100% { transform: translateY(-100%); }
-    }
+.down .rect {
+  animation: moveDown 10s linear infinite;
+}
 
-    /* Aplicamos animaciones alternadas */
-    .columna:nth-child(odd) {
-      animation: bajar 12s linear infinite;
-    }
+.up .rect {
+  animation: moveUp 10s linear infinite;
+}
 
-    .columna:nth-child(even) {
-      animation: subir 12s linear infinite;
-    }
+/* Arrancan desde arriba de la pantalla y van hacia abajo */
+@keyframes moveDown {
+  0%   { transform: translateY(-150vh); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(150vh); opacity: 0; }
+}
 
-    /* Un poco de desfase en el tiempo para que no se vean iguales */
-    .columna:nth-child(2) { animation-delay: 2s; }
-    .columna:nth-child(3) { animation-delay: 4s; }
-    .columna:nth-child(4) { animation-delay: 6s; }
+/* Arrancan desde abajo y suben hacia arriba */
+@keyframes moveUp {
+  0%   { transform: translateY(150vh); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(-150vh); opacity: 0; }
+}
 
 </style>
 </head>
 <body>
   <div class="grid">
-    <div class="columna">
-      <div class="rect solid"></div>
-      <div class="rect"></div>
-      <div class="rect"></div>
-    </div>
-    <div class="columna">
-      <div class="rect"></div>
-      <div class="rect solid"></div>
-      <div class="rect"></div>
-    </div>
-    <div class="columna">
-      <div class="rect"></div>
-      <div class="rect"></div>
-      <div class="rect solid"></div>
-    </div>
-    <div class="columna">
-      <div class="rect solid"></div>
-      <div class="rect"></div>
-      <div class="rect"></div>
-    </div>
+  <div class="col down">
+    <div class="rect filled"></div>
+    <div class="rect"></div>
+    <div class="rect filled"></div>
+    <div class="rect"></div>
   </div>
+  <div class="col up">
+    <div class="rect"></div>
+    <div class="rect filled"></div>
+    <div class="rect"></div>
+    <div class="rect filled"></div>
+  </div>
+  <div class="col down">
+    <div class="rect"></div>
+    <div class="rect filled"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+  </div>
+</div>
+
  <!-- Header con usuario y créditos -->
 <div class="header-info">
   <h2 class="user-pill">Usuario: <span id="usernameDisplay"></span></h2>
