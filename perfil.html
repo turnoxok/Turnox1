@@ -1,142 +1,222 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Guardar Logo Externo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Pago Exitoso - TurnoX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
   <style>
+    :root { color-scheme: light only; }
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f4f7fb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: "Montserrat", sans-serif;
+      background-color: #4B2E78;
+      color: #fff;
       margin: 0;
-    }
-    .card {
-      background: #fff;
-      width: 100%;
-      max-width: 420px;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      padding: 0;
       text-align: center;
     }
-    .card h2 {
-      margin-top: 0;
-      color: #333;
-      font-size: 1.6rem;
+
+    /* header igual al de créditos */
+    .header-info {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
-    input[type="url"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      outline: none;
-      margin: 15px 0;
-      transition: border-color 0.2s;
-    }
-    input[type="url"]:focus {
-      border-color: #4CAF50;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      background: #4CAF50;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
-    button:disabled {
-      background: #bbb;
-      cursor: not-allowed;
-    }
-    button:hover:not(:disabled) {
-      background: #43a047;
-      transform: translateY(-1px);
-    }
-    .preview img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-top: 15px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    }
-    #status {
-      margin-top: 15px;
+    .user-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
       font-size: 14px;
-      color: #333;
+      background: #ffffff25;
+      border: 1px solid #ffffff40;
+      margin: 0;
     }
+    .creditos-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #ffffff25;
+      border: 1px solid #ffffff40;
+      font-size: 14px;
+    }
+
+    /* contenedor central */
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      z-index: 1;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #4CAF50;
+    }
+    p { font-size: 18px; }
+
+    .btn-volver {
+      font-family: "Montserrat", sans-serif;
+      background: #25213C;
+      color: #5F48D7;
+      border: none;
+      padding: 12px 40px;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-volver:hover {
+      background: #ffffff25;
+      color: #fff;
+    }
+
+    /* fondo animado */
+    .grid {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: center;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .col { display: flex; flex-direction: column; gap: 20px; }
+    .rect {
+      width: 80px; height: 120px;
+      border: 2px solid #5F48D750;
+      border-radius: 12px;
+    }
+    .rect.filled { background: #412866; }
+    .down .rect { animation: moveDown 20s linear infinite; }
+    .up .rect { animation: moveUp 20s linear infinite; }
+    @keyframes moveDown {
+      0% { transform: translateY(-150vh); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(150vh); opacity: 0; }
+    }
+    @keyframes moveUp {
+      0% { transform: translateY(150vh); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(-150vh); opacity: 0; }
+    }
+
+    /* bottom nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      max-width: 500px;
+      background: #1c1c1c;
+      border-top: 1px solid #ffffff25;
+      padding: 10px 0;
+      z-index: 1000;
+    }
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-item i { font-size: 20px; padding: 8px; border-radius: 50%; }
+    .nav-item.active i {
+      background: #25213C;
+      color: #5F48D7;
+      transform: scale(1.1);
+    }
+    .nav-item.active span { color: #5F48D7; font-weight: 500; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Guardar Logo Externo</h2>
-    <input type="url" id="logoUrl" placeholder="Pega aquí el link del logo" required>
-    <button id="saveBtn" disabled>Guardar Logo</button>
-    <div class="preview" id="preview"></div>
-    <p id="status"></p>
+  <!-- Fondo animado -->
+  <div class="grid">
+    <div class="col down"><div class="rect filled"></div><div class="rect"></div><div class="rect"></div></div>
+    <div class="col up"><div class="rect"></div><div class="rect filled"></div><div class="rect"></div></div>
+    <div class="col down"><div class="rect"></div><div class="rect"></div><div class="rect filled"></div></div>
+  </div>
+
+  <!-- Header -->
+  <div class="header-info">
+    <h2 class="user-pill">¡Hola! <span id="usernameDisplay"></span></h2>
+    <div class="creditos-info">
+      <i class="fa fa-coins"></i>
+      <span id="creditosActuales">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Contenido central -->
+  <div class="container">
+    <h1>✅ ¡Pago realizado con éxito!</h1>
+    <p id="mensaje">Estamos acreditando tus créditos...</p>
+    <button class="btn-volver" id="volver">⬅ Volver al panel</button>
+  </div>
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <a href="#" class="nav-item active"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-calendar"></i><span>Configuración</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-user"></i><span>Clientes</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-cog"></i><span>Turnos</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-cog"></i><span>Perfil</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-sign-out-alt"></i><span>Salir</span></a>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const userId = params.get("userId");
-    const logoInput = document.getElementById("logoUrl");
-    const saveBtn = document.getElementById("saveBtn");
-    const status = document.getElementById("status");
-    const preview = document.getElementById("preview");
+    // Obtener parámetros de URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('username');
+    const cantidad = parseInt(urlParams.get('cantidad'), 10);
 
-    if (!userId) {
-      status.innerText = "❌ Falta userId en la URL";
-    }
+    document.getElementById('usernameDisplay').textContent = username || "";
 
-    // Habilitar botón y preview
-    logoInput.addEventListener("input", () => {
-      saveBtn.disabled = !logoInput.value.trim();
-      if (logoInput.value.trim()) {
-        preview.innerHTML = `<img src="${logoInput.value.trim()}" alt="Logo">`;
-      } else {
-        preview.innerHTML = "";
-      }
-    });
+    const API_URL = "TU_URL_DE_APPS_SCRIPT";
 
-    // Guardar logo
-    saveBtn.addEventListener("click", async () => {
-      const logoUrl = logoInput.value.trim();
-      if (!logoUrl || !userId) return;
-
-      status.innerText = "⏳ Guardando logo...";
-
+    async function acreditarCreditos() {
       try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycby_-LL7wZkEg9Kzm3e5Y2yCb9nNdSOPznHT4TpRciiJcdWvSGgvbqZHVKKZtmZ98KR7_Q/exec", {
-          method: "POST",
-          body: new URLSearchParams({
-            action: "guardarLogoExterno",
-            userId: userId,
-            logoUrl: logoUrl
-          })
-        });
-
+        const res = await fetch(`${API_URL}?action=sumaCreditos&username=${encodeURIComponent(username)}&cantidad=${cantidad}`);
         const data = await res.json();
-
-        if (data.status === "ok") {
-          status.innerHTML = `✅ Logo guardado: <a href="${data.url}" target="_blank">Ver logo</a>`;
-          status.style.color = "#2e7d32";
+        if (data.ok) {
+          document.getElementById('mensaje').innerText =
+            `Se acreditaron ${cantidad} créditos correctamente a tu cuenta, ${username}.`;
         } else {
-          status.innerText = "❌ Error: " + data.msg;
-          status.style.color = "#c62828";
+          document.getElementById('mensaje').innerText =
+            `Error al acreditar créditos: ${data.error || "desconocido"}`;
         }
       } catch (err) {
-        console.error(err);
-        status.innerText = "❌ Error de conexión con Apps Script";
-        status.style.color = "#c62828";
+        document.getElementById('mensaje').innerText = `Error en la conexión: ${err}`;
       }
-    });
+    }
+
+    document.getElementById('volver').onclick = () => {
+      window.location.href = "/panel.html?username=" + encodeURIComponent(username);
+    }
+
+    // Ejecutar al cargar
+    acreditarCreditos();
   </script>
 </body>
 </html>
