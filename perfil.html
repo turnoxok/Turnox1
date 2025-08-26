@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Pago Exitoso - TurnoX</title>
+  <title>Perfil - TurnoX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="light">
   <meta name="supported-color-schemes" content="light">
@@ -115,40 +115,73 @@
       100% { transform: translateY(-150vh); opacity: 0; }
     }
 
-    /* bottom nav */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      width: 100%;
-      max-width: 500px;
-      background: #1c1c1c;
-      border-top: 1px solid #ffffff25;
-      padding: 10px 0;
-      z-index: 1000;
-    }
-    .nav-item {
-      flex: 1;
-      text-align: center;
-      text-decoration: none;
-      color: #fff;
-      font-size: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-    .nav-item i { font-size: 20px; padding: 8px; border-radius: 50%; }
-    .nav-item.active i {
-      background: #25213C;
-      color: #5F48D7;
-      transform: scale(1.1);
-    }
-    .nav-item.active span { color: #5F48D7; font-weight: 500; }
+   /* Card centrada y grande */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  position: relative;
+  padding: 20px;
+}
+
+.card {
+  width: 90%;              /* ocupa 90% en celular */
+  max-width: 500px;        /* pero no más de 500px en escritorio */
+  background: #ffffff15;
+  padding: 30px 20px;
+  border-radius: 16px;
+  backdrop-filter: blur(6px);
+  border: 1px solid #ffffff40;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+/* Título */
+.card h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+/* Input grande */
+.card input[type="url"] {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 20px;
+  outline: none;
+}
+
+/* Botón grande */
+.card button {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 12px;
+  background: #5F48D7;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.card button:disabled {
+  background: #999;
+}
+.card button:hover:enabled {
+  background: #4B2E78;
+}
+
+/* Preview de la imagen */
+.preview img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 20px;
+}
   </style>
 </head>
 <body>
@@ -168,24 +201,17 @@
     </div>
   </div>
 
-  <!-- Contenido central -->
- <div class="card">
+ <div class="container">
+  <div class="card">
     <h2>Guardar Logo Externo</h2>
     <input type="url" id="logoUrl" placeholder="Pega aquí el link del logo" required>
     <button id="saveBtn" disabled>Guardar Logo</button>
     <div class="preview" id="preview"></div>
     <p id="status"></p>
   </div>
+</div>
 
-  <!-- Bottom nav -->
-  <div class="bottom-nav">
-    <a href="#" class="nav-item active"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-calendar"></i><span>Configuración</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-user"></i><span>Clientes</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-cog"></i><span>Turnos</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-cog"></i><span>Perfil</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-sign-out-alt"></i><span>Salir</span></a>
-  </div>
+ 
 
  
    <script>
