@@ -303,7 +303,10 @@
 <button class="btn-comprar" onclick="comprarCreditos()">Comprar Créditos</button>
 
 </div>
-<a href="#" class="nav-item active" id="btnUsername"><i class="fa fa-plus-circle"></i><span>Tu sitio es:www.turnox.pr/<span id="usernameDisplay"></span></span></a>
+<a class="nav-item active" id="btnUsername">
+  <i class="fa fa-plus-circle"></i>
+  <span>Tu sitio es: www.turnox.pro/<span id="usernameDisplay"></span></span>
+</a>
   
 <!-- Barra inferior -->
   <div class="bottom-nav">
@@ -410,7 +413,7 @@ document.getElementById("btnConfig").href     = `configuracion.html`;
 document.getElementById("btnClientes").href   = `clientes.html`;
 document.getElementById("btnTurnos").href     = `turnos.html`;
 document.getElementById("btnPerfil").href     = `perfil.html`;
-  document.getElementById("btnUsername").href     = `username.html`;
+ 
 
 // --- Logout ---
 document.getElementById("btnLogout").addEventListener("click", (e) => {
@@ -430,6 +433,12 @@ document.querySelectorAll(".nav-item").forEach(item => {
   }
 });
 </script>
+  <script>
+const storedUsername = localStorage.getItem("username");
+if (storedUsername) {
+  document.getElementById("usernameDisplay").innerText = storedUsername;
+  document.getElementById("btnUsername").href = `https://turnox.pro/${storedUsername}`;
+}</script>
 
 
 </body>
