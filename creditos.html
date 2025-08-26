@@ -123,7 +123,7 @@
     <a href="#" class="nav-item" id="btnConfig"><i class="fa fa-calendar"></i><span>Configuración</span></a>
     <a href="#" class="nav-item" id="btnClientes"><i class="fa fa-user"></i><span>Clientes</span></a>
     <a href="#" class="nav-item" id="btnTurnos"><i class="fa fa-cog"></i><span>Turnos</span></a>
-    
+    <a href="#" class="nav-item" id="btnPerfil"><i class="fa fa-cog"></i><span>Perfil</span></a>
     <a href="#" class="nav-item" id="btnLogout"><i class="fa fa-sign-out-alt"></i><span>Salir</span></a>
   </div>
 
@@ -196,7 +196,7 @@ init({ username, userId });
     document.getElementById("btnConfig").href   = `configuracion.html?username=${username}&userId=${userId}`;
     document.getElementById("btnClientes").href = `clientes.html?username=${username}&userId=${userId}`;
     document.getElementById("btnTurnos").href   = `turnos.html?username=${username}&userId=${userId}`;
-    document.getElementById("btnSitio").href    = `perfil.html?username=${username}&userId=${userId}`;
+    document.getElementById("btnPerfil").href    = `perfil.html?username=${username}&userId=${userId}`;
 
     // --- Logout ---
     document.getElementById("btnLogout").addEventListener("click", (e) => {
