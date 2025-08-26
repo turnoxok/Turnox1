@@ -4,16 +4,21 @@
   <meta charset="UTF-8" />
   <title>Panel TurnoX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
   <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
  <style>
+   :root {
+  color-scheme: light only;
+}
  body {
   font-family: "Montserrat", sans-serif;
-  background: #533482;
-  color: #fff;
+ background-color: #3f2c78; /* tu color base */
+  color: #fff;              /* texto claro */
   margin: 0;
   padding: 0;
 }
@@ -172,82 +177,69 @@
   }
   .nav-item:hover { opacity: 0.8; }
    
-  .grid {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  align-items: center;
-  z-index: -1;
-  pointer-events: none;
-}
+#bg-rectangles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1; /* atrás del contenido */
+    }
 
-.col {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+    .rectangle {
+      position: absolute;
+      width: 120px;
+      height: 60px;
+      border: 2px solid #5F48D7; /* contorno violeta */
+      background: transparent;
+      opacity: 0.7;
+      animation-duration: 12s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
 
-.rect {
-  width: 80px;
-  height: 120px;
-  border: 2px solid #7b5cd6;
-  border-radius: 12px;
-}
+    /* Mitad con relleno */
+    .filled {
+      background: #5F48D7;
+      border: none;
+    }
 
-.rect.filled {
-  background: #1e1a33;
-}
+    /* Animaciones */
+    @keyframes moveDown {
+      0% { transform: translateY(-120%); }
+      100% { transform: translateY(120vh); }
+    }
 
-.down .rect {
-  animation: moveDown 10s linear infinite;
-}
+    @keyframes moveUp {
+      0% { transform: translateY(120vh); }
+      100% { transform: translateY(-120%); }
+    }
 
-.up .rect {
-  animation: moveUp 10s linear infinite;
-}
+    .down { animation-name: moveDown; }
+    .up { animation-name: moveUp; }
 
-/* Arrancan desde arriba de la pantalla y van hacia abajo */
-@keyframes moveDown {
-  0%   { transform: translateY(-150vh); opacity: 0; }
-  10%  { opacity: 1; }
-  100% { transform: translateY(150vh); opacity: 0; }
-}
-
-/* Arrancan desde abajo y suben hacia arriba */
-@keyframes moveUp {
-  0%   { transform: translateY(150vh); opacity: 0; }
-  10%  { opacity: 1; }
-  100% { transform: translateY(-150vh); opacity: 0; }
-}
-
+    /* Ejemplo de contenido para ver */
+    .contenido {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding-top: 100px;
+      font-family: sans-serif;
+      color: white;
+    }
 </style>
 </head>
 <body>
-  <div class="grid">
-  <div class="col down">
-    <div class="rect filled"></div>
-    <div class="rect"></div>
-    <div class="rect filled"></div>
-    <div class="rect"></div>
+  <!-- Fondo animado -->
+  <div id="bg-rectangles"></div>
+
+  <!-- Tu contenido normal -->
+  <div class="contenido">
+    <h1>Mi App</h1>
+    <p>Texto por encima del fondo animado.</p>
   </div>
-  <div class="col up">
-    <div class="rect"></div>
-    <div class="rect filled"></div>
-    <div class="rect"></div>
-    <div class="rect filled"></div>
-  </div>
-  <div class="col down">
-    <div class="rect"></div>
-    <div class="rect filled"></div>
-    <div class="rect"></div>
-    <div class="rect"></div>
-  </div>
-</div>
+
 
  <!-- Header con usuario y créditos -->
 <div class="header-info">
@@ -398,7 +390,32 @@ document.querySelectorAll(".nav-item").forEach(item => {
   }
 });
 </script>
+<script>
+    const container = document.getElementById("bg-rectangles");
+    const totalRect = 20; // cuantos rectángulos querés
 
+    for (let i = 0; i < totalRect; i++) {
+      const rect = document.createElement("div");
+
+      // Alterna dirección arriba/abajo
+      rect.className = `rectangle ${i % 2 === 0 ? "up" : "down"}`;
+
+      // Algunos con relleno, otros solo borde
+      if (Math.random() > 0.7) rect.classList.add("filled");
+
+      // Posición horizontal aleatoria
+      rect.style.left = Math.random() * 100 + "vw";
+
+      // Delay aleatorio para que no arranquen juntos
+      rect.style.animationDelay = (Math.random() * 12) + "s";
+
+      // Tamaño aleatorio (opcional)
+      rect.style.width = 80 + Math.random() * 80 + "px";
+      rect.style.height = 40 + Math.random() * 40 + "px";
+
+      container.appendChild(rect);
+    }
+  </script>
 
 </body>
 </html>
