@@ -117,14 +117,16 @@
   <button onclick="volverPanel()">⬅ Volver</button>
     <a href="" class="nav-item" id="btnSitio"><i class="fa fa-home"></i><span>Sitio</span></a>
 </div>
-<!-- Bottom Nav -->
+<!-- Barra inferior -->
   <div class="bottom-nav">
-    <a href="" class="nav-item active" id="btnCreditos"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
-    <a href="" class="nav-item" id="btnConfig"><i class="fa fa-calendar"></i><span>Configuración</span></a>
-    <a href="" class="nav-item" id="btnClientes"><i class="fa fa-user"></i><span>Clientes</span></a>
-    <a href="" class="nav-item" id="btnTurnos"><i class="fa fa-cog"></i><span>Turnos</span></a>
-    <a href="" class="nav-item" id="btnLogout"><i class="fa fa-sign-out-alt"></i><span>Salir</span></a>
+    <a href="#" class="nav-item active" id="btnCreditos"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
+    <a href="#" class="nav-item" id="btnConfig"><i class="fa fa-calendar"></i><span>Configuración</span></a>
+    <a href="#" class="nav-item" id="btnClientes"><i class="fa fa-user"></i><span>Clientes</span></a>
+    <a href="#" class="nav-item" id="btnTurnos"><i class="fa fa-cog"></i><span>Turnos</span></a>
+    <a href="#" class="nav-item" id="btnSitio"><i class="fa fa-home"></i><span>Sitio</span></a>
+    <a href="#" class="nav-item" id="btnLogout"><i class="fa fa-sign-out-alt"></i><span>Salir</span></a>
   </div>
+
   <script>
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxRrsrpMXtPK8LYOqCYi6hipptvhfoQjyGehItpY1l5lTJHRzSyv723_y2LuO2fsJkt/exec"; // URL de tu Apps Script
 
@@ -170,45 +172,48 @@ init({
 </script>
 
  <script>
-  const params = new URLSearchParams(window.location.search);
-  const userId = params.get("userId") || localStorage.getItem("userId");
-  const username = params.get("username") || localStorage.getItem("username");
+  function volverPanel() { window.history.back(); }
 
-  // Si no hay sesión → volver a login
-  if (!userId || !username) {
-    window.location.href = "index.html";
-  }
+    // --- Protege acceso ---
+    const params = new URLSearchParams(window.location.search);
+    const storedUserId = params.get("userId") || localStorage.getItem("userId");
+    const storedUsername = params.get("username") || localStorage.getItem("username");
 
-  // Guardar en localStorage
-  localStorage.setItem("userId", userId);
-  localStorage.setItem("username", username);
-
-  // Setear links de navegación
-  document.getElementById("btnSitio").href     = `perfil.html?username=${username}&userId=${userId}`;
-  document.getElementById("btnCreditos").href  = `creditos.html?username=${username}&userId=${userId}`;
-  document.getElementById("btnConfig").href    = `configuracion.html?username=${username}&userId=${userId}`;
-  document.getElementById("btnClientes").href  = `clientes.html?username=${username}&userId=${userId}`;
-  document.getElementById("btnTurnos").href    = `turnos.html?username=${username}&userId=${userId}`;
-
-  // Logout
-  document.getElementById("btnLogout").addEventListener("click", (e) => {
-    e.preventDefault();
-    localStorage.removeItem("username");
-    localStorage.removeItem("userId");
-    window.location.href = "index.html";
-  });
-
-  // Marcar botón activo según la página actual
-  const currentPage = window.location.pathname.split("/").pop();
-  const navItems = document.querySelectorAll(".nav-item");
-
-  navItems.forEach(item => {
-    const linkPage = item.href.split("/").pop().split("?")[0];
-    if (linkPage === currentPage) {
-      navItems.forEach(i => i.classList.remove("active"));
-      item.classList.add("active");
+    if (!storedUserId || !storedUsername) {
+      window.location.href = "index.html";
     }
-  });
+
+    userId = storedUserId;
+    username = storedUsername;
+    localStorage.setItem("userId", userId);
+    localStorage.setItem("username", username);
+
+    init({ username, userId });
+
+    // --- Links de navegación ---
+    document.getElementById("btnCreditos").href = `creditos.html?username=${username}&userId=${userId}`;
+    document.getElementById("btnConfig").href   = `configuracion.html?username=${username}&userId=${userId}`;
+    document.getElementById("btnClientes").href = `clientes.html?username=${username}&userId=${userId}`;
+    document.getElementById("btnTurnos").href   = `turnos.html?username=${username}&userId=${userId}`;
+    document.getElementById("btnSitio").href    = `perfil.html?username=${username}&userId=${userId}`;
+
+    // --- Logout ---
+    document.getElementById("btnLogout").addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("username");
+      localStorage.removeItem("userId");
+      window.location.href = "index.html";
+    });
+
+    // --- Activa nav segun página ---
+    const currentPage = window.location.pathname.split("/").pop();
+    document.querySelectorAll(".nav-item").forEach(item => {
+      const linkPage = item.href.split("/").pop().split("?")[0];
+      if (linkPage === currentPage) {
+        document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+      }
+    });
 </script>
 
 </body>
