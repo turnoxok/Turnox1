@@ -62,49 +62,52 @@
     }
     .btn:hover { background-color: #f2f2f2; transform: translateY(-2px); }
 
-    /* Contenedor flotante */
-.fab-container {
-  position: fixed;
-  bottom: 0px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  max-width: 400px;
-  background: #000;
-  border-radius: 0px;
-  padding: 10px;
-  
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-
-/* Botones flotantes */
-.fab {
-  flex: 1;
-  text-align: center;
-  text-decoration: none;
-  font-size: 10px;
-  color: #fff;
-  padding: 12px 0;
-  border-radius: 12px;
-  transition: background 0.3s, transform 0.2s;
-}
-
-.fab:hover {
-  background: #25213C;
-  color: #5F48D7;
-  transform: translateY(-2px);
-}
-.fab i {
-      color: #5F48D7;
-      font-size: 20px;
-      margin-bottom: 4px;
+    /* Contenedor barra */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      max-width: 500px;
+      background: #1c1c1c;
+      border-top: 1px solid #ffffff25;
+      padding: 10px 0;
+      z-index: 1000;
     }
-    .fab span {
-      font-size: 10px;
-      line-height: 1;
+
+    /* Botones */
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 20px; /* redondeado */
+      transition: all 0.3s ease;
+    }
+
+    .nav-item i {
+      font-size: 18px;
+    }
+
+    /* Estado activo */
+    .nav-item.active {
+      background: #25213C;
+      color: #5F48D7;
+    }
+
+    /* Hover opcional */
+    .nav-item:hover {
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -119,29 +122,13 @@
   <a href="" class="btn" id="btnTurnos">Mis Turnos</a>
   <a href="" class="btn" id="btnLogout">Cerrar Sesión</a>
 </div>
-<!-- Barra flotante -->
-<div class="fab-container">
-  <a href="#" class="fab">
-    <i class="fa fa-home" aria-hidden="true"></i>
-    <span>Inicio</span>
-  </a>
-  <a href="#" class="fab">
-    <i class="fa fa-calendar" aria-hidden="true"></i>
-    <span>Agenda</span>
-  </a>
-  <a href="#" class="fab">
-    <i class="fa fa-plus-circle" aria-hidden="true"></i>
-    <span>Nuevo</span>
-  </a>
-  <a href="#" class="fab">
-    <i class="fa fa-user" aria-hidden="true"></i>
-    <span>Perfil</span>
-  </a>
-  <a href="#" class="fab">
-    <i class="fa fa-cog" aria-hidden="true"></i>
-    <span>Ajustes</span>
-  </a>
-</div>
+<div class="bottom-nav">
+    <a href="#" class="nav-item active"><i class="fa fa-home"></i><span>Sitio</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-calendar"></i><span>Agenda</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-plus-circle"></i><span>Nuevo</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-user"></i><span>Perfil</span></a>
+    <a href="#" class="nav-item"><i class="fa fa-cog"></i><span>Ajustes</span></a>
+  </div>
   <script>
    // Obtener userId y username (según lo que tengas guardado)
   const params = new URLSearchParams(window.location.search);
@@ -167,6 +154,16 @@
     localStorage.removeItem("userId");
     window.location.href = "index.html";
   });
+  </script>
+   <script>
+    // Hacer que al click se marque como activo
+    const items = document.querySelectorAll(".nav-item");
+    items.forEach(item => {
+      item.addEventListener("click", () => {
+        items.forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+      });
+    });
   </script>
 </body>
 </html>
