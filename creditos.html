@@ -370,13 +370,8 @@ init({
 });
 </script>
   
-
-
-
- <script>
-  
-
-   // --- Protege acceso ---
+<script>
+// --- Protege acceso ---
 // La sesión solo es válida si existe en localStorage
 const storedUserId = localStorage.getItem("userId");
 const storedUsername = localStorage.getItem("username");
@@ -390,36 +385,35 @@ if (!storedUserId || !storedUsername) {
 userId = storedUserId;
 username = storedUsername;
 
-// Inicializamos
+// Inicializamos de nuevo pero con datos del localStorage
 init({ username, userId });
 
-    // --- Links de navegación ---
-    document.getElementById("btnCreditos").href = `creditos.html?username=${username}&userId=${userId}`;
-    document.getElementById("btnConfig").href   = `configuracion.html?username=${username}&userId=${userId}`;
-    document.getElementById("btnClientes").href = `clientes.html?username=${username}&userId=${userId}`;
-    document.getElementById("btnTurnos").href   = `turnos.html?username=${username}&userId=${userId}`;
-    document.getElementById("btnPerfil").href    = `perfil.html?username=${username}&userId=${userId}`;
+// --- Links de navegación dinámicos ---
+document.getElementById("btnCreditos").href   = `creditos.html`;
+document.getElementById("btnConfig").href     = `configuracion.html`;
+document.getElementById("btnClientes").href   = `clientes.html`;
+document.getElementById("btnTurnos").href     = `turnos.html`;
+document.getElementById("btnPerfil").href     = `perfil.html`;
 
-    // --- Logout ---
-    document.getElementById("btnLogout").addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("username");
-      localStorage.removeItem("userId");
-      window.location.href = "index.html";
-    });
+// --- Logout ---
+document.getElementById("btnLogout").addEventListener("click", (e) => {
+  e.preventDefault();
+  localStorage.removeItem("username");
+  localStorage.removeItem("userId");
+  window.location.href = "index.html";
+});
 
-    // --- Activa nav segun página ---
-   const currentPage = window.location.pathname.split("/").pop(); // ej: "creditos.html"
+// --- Activa nav según página actual ---
+const currentPage = window.location.pathname.split("/").pop(); // ej: "creditos.html"
 document.querySelectorAll(".nav-item").forEach(item => {
-  const hrefPage = item.getAttribute("href")?.split("/").pop().split("?")[0]; 
+  const hrefPage = item.getAttribute("href")?.split("/").pop();
   if (hrefPage === currentPage) {
     document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
     item.classList.add("active");
   }
 });
-
-    }
 </script>
+
 
 </body>
 </html>
