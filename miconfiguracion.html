@@ -2,259 +2,236 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>TurnoX – Configurar disponibilidad (Lun–Dom)</title>
+  <title>TurnoX - Sistema PRE-PAGO de Turnos On Line</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Iconos -->
   <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
 
   <style>
-    :root{
-      --morado:#533482;
-      --morado-osc:#452a7a;
-      --claro:#F4EDFF;
-      --gris:#e7e7e7;
-      --texto:#2b2b2b;
-      --ok:#18a957;
-      --err:#d93636;
+    body {
+      font-family: "Montserrat", sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #533482;
+      color: #F2F2F2;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; padding:20px;
-      font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:var(--morado);
-      color:#fff;
-    }
-    h1{margin:0 0 10px 0; text-align:center; font-size:24px}
-    .topbar{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px}
-    .note{opacity:.9; font-size:14px}
-    button{
-      background:#fff; color:var(--morado);
-      border:none; border-radius:10px; padding:10px 14px;
-      font-weight:700; cursor:pointer; transition:.15s transform,.15s background;
-    }
-    button:hover{ transform:translateY(-2px); background:var(--claro) }
-    button[disabled]{ opacity:.6; cursor:not-allowed; transform:none }
+    h1, h2, h3, h4 { font-weight: 600; margin: 0 0 10px 0; }
+    h1 { text-align: center; font-size: 2rem; }
 
-    .profesional{
-      border:1px solid #ffffff2a; background:#ffffff10; border-radius:14px; padding:14px; margin:12px 0;
-      backdrop-filter: blur(3px);
+    button {
+      background-color: #533482;
+      color: #fff;
+      border: none;
+      border-radius: 0;
+      padding: 8px 14px;
+      margin: 4px 2px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 0.2s, transform 0.1s;
     }
-    .profesional h3{ margin:0 0 8px 0; font-size:18px }
-    .actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
+    button:hover { background-color: #452a7a; transform: translateY(-2px); }
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
 
-    .editor{
-      margin-top:12px; background:#fff; color:var(--texto); border-radius:14px; padding:12px;
-      border:1px solid var(--gris);
+    .profesional {
+      border: 1px solid #ddd;
+      padding: 12px;
+      margin: 12px 0;
+      background: #fff;
+      color: #533482;
     }
-    .toolbar{
-      display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; margin-bottom:10px;
+    .profesional h3 { margin-bottom: 8px; }
+
+    #config { margin-top: 20px; }
+    #config h2 { margin-bottom: 12px; font-size: 18px; font-weight: 600; }
+    #config h4 { margin: 10px 0 6px 0; font-size: 14px; font-weight: 500; }
+
+    label.hora-label span {
+      display: inline-block;
+      padding: 6px 10px;
+      font-weight: 600;
+      border-radius: 0;
+      transition: all 0.2s;
     }
-    .toolbar .left, .toolbar .right{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
-    select, input[type=time]{
-      padding:8px 10px; border:1px solid var(--gris); border-radius:10px; font-weight:600;
-      background:#fff; color:var(--texto);
+    label.hora-label span.disponible { background: #F7F7F7; color: #533482; }
+    label.hora-label span.disponible:hover { background-color: #533482; color: #fff; }
+    label.hora-label span.bloqueado { background: #D2B8FF95; color: #F7F7F7; text-decoration: line-through; }
+    label.hora-label span.selected { background-color: #533482; color: #fff; }
+
+    input[type="time"], select {
+      padding: 6px;
+      border-radius: 0;
+      border: 1px solid #ccc;
+      margin: 4px 0;
+      font-size: 14px;
+      text-align: center;
     }
-
-    .week{ display:grid; gap:12px; grid-template-columns:repeat(3, minmax(260px,1fr)); }
-    @media (max-width:980px){ .week{ grid-template-columns:repeat(2,1fr) } }
-    @media (max-width:620px){ .week{ grid-template-columns:1fr } }
-
-    .day{ border:1px solid var(--gris); border-radius:12px; padding:10px; background:#fafafa }
-    .day h4{ margin:0 0 8px 0; color:var(--morado); font-size:15px }
-    .range{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px }
-    .slots{ display:flex; flex-wrap:wrap; gap:8px }
-    .slot{
-      padding:6px 10px; border-radius:8px; border:1px solid var(--gris);
-      font-weight:700; font-size:13px; background:#fff; cursor:pointer; user-select:none; transition:.15s;
+    @media(max-width:650px){
+      .checkbox-row label span { padding: 4px 6px; font-size: 0.9rem; }
     }
-    .slot.selected{ background:#533482; color:#fff; border-color:#533482 }
-    .slot:not(.selected){ background:#eee; color:#666 }
-
-    .mini{ font-size:12px; opacity:.8; margin-left:6px }
-    .footerBar{ display:flex; justify-content:center; margin-top:14px }
-    .status{ margin-top:8px; text-align:center; font-size:14px }
-    .status.ok{ color:#0f0 }
-    .status.err{ color:#ffb3b3 }
-
-    .btn-link{ background:transparent; color:var(--morado); border:1px dashed var(--morado); }
-    .btn-danger{ background:#fff; color:#a12828; border:1px solid #f1c5c5 }
-    .pill{ padding:4px 8px; border-radius:999px; font-size:12px; background:#ffffff25; border:1px solid #ffffff40 }
   </style>
 </head>
-<body>
-  <div class="topbar">
-    <button onclick="window.location.href='/panel'">← Volver</button>
-    <h1>Panel de Configuración</h1>
-    <div class="note pill">Usuario: <b id="who">—</b></div>
-  </div>
+<body onload="init()">
+  <button onclick="
+      window.location.href='/creditos.html?username='
+      + encodeURIComponent(username)
+      + '&userId=' + encodeURIComponent(userId);
+    ">
+      💳 Créditos
+  </button>
 
-  <div class="actions">
-    <button id="creditosBtn">💳 Créditos</button>
-    <button id="addProfBtn">➕ Agregar Profesional</button>
-  </div>
+  <h1>Panel de Configuración</h1>
+  <p>Usuario: <b id="who">—</b></p>
 
+  <button onclick="agregarProfesional()">Agregar Profesional</button>
   <div id="profesionales"></div>
+  <div id="config"></div>
 
- <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby_-LL7wZkEg9Kzm3e5Y2yCb9nNdSOPznHT4TpRciiJcdWvSGgvbqZHVKKZtmZ98KR7_Q/exec"; 
-let userId = localStorage.getItem("userId");
-let username = localStorage.getItem("username");
-let profesionales = [];
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycby_-LL7wZkEg9Kzm3e5Y2yCb9nNdSOPznHT4TpRciiJcdWvSGgvbqZHVKKZtmZ98KR7_Q/exec"; 
+  let userId = localStorage.getItem("userId");
+  let username = localStorage.getItem("username");
 
-async function init() {
-  if (!userId || !username) {
-    alert("Debes iniciar sesión primero.");
-    window.location.href = "/login.html";
-    return;
-  }
-  document.getElementById("username").innerText = username;
-  await cargarProfesionales();
-}
-
-async function cargarProfesionales() {
-  const res = await fetch(`${API_URL}?username=${username}`);
-  const data = await res.json();
-  if (data.status === "ok") {
-    profesionales = data.profesionales;
-    renderProfesionales();
-  }
-}
-
-function renderProfesionales() {
-  const cont = document.getElementById("profesionales");
-  cont.innerHTML = "";
-  profesionales.forEach(prof => {
-    const div = document.createElement("div");
-    div.className = "profesional";
-    div.innerHTML = `
-      <h3>${prof.nombre}</h3>
-      <button onclick="abrirTurnos('${prof.profesionalId}','${prof.nombre}')">Configurar Turnos</button>
-      <button onclick="eliminarTurnos('${prof.profesionalId}')">🗑 Limpiar Turnos</button>
-    `;
-    cont.appendChild(div);
-  });
-}
-
-async function agregarProfesional() {
-  const nombre = prompt("Nombre del profesional:");
-  if (!nombre) return;
-  const formData = new FormData();
-  formData.append("action","addProfessional");
-  formData.append("userId", userId);
-  formData.append("nombre", nombre);
-  const res = await fetch(API_URL, {method:"POST", body:formData});
-  const data = await res.json();
-  if (data.status === "ok") {
-    profesionales.push({profesionalId:data.profesionalId, nombre:data.nombre});
-    renderProfesionales();
-  }
-}
-
-// ---------------- CONFIGURACIÓN DE TURNOS ----------------
-function abrirTurnos(profId, nombre) {
-  const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
-  let html = `<h2>Turnos Standard de ${nombre}</h2>`;
-  
-  html += `
-    <label>Intervalo: 
-      <select id="intervalo">
-        <option value="15">15 min</option>
-        <option value="20">20 min</option>
-        <option value="30" selected>30 min</option>
-        <option value="60">60 min</option>
-      </select>
-    </label><br><br>
-  `;
-
-  dias.forEach(d=>{
-    html += `
-      <h4>${d}</h4>
-      Desde <input type="time" id="desde_${d}" value="09:00">
-      hasta <input type="time" id="hasta_${d}" value="17:00">
-      <button onclick="generarSlots('${profId}','${d}')">Generar</button>
-      <div id="slots_${profId}_${d}" class="slots"></div>
-    `;
-  });
-
-  html += `<br><button onclick="guardarTurnos('${profId}')">Guardar</button>`;
-  document.getElementById("config").innerHTML = html;
-}
-
-function generarSlots(profId, dia) {
-  const intervalo = parseInt(document.getElementById("intervalo").value);
-  const desde = document.getElementById(`desde_${dia}`).value;
-  const hasta = document.getElementById(`hasta_${dia}`).value;
-  const cont = document.getElementById(`slots_${profId}_${dia}`);
-  cont.innerHTML = "";
-
-  let [h,m] = desde.split(":").map(Number);
-  let [hf,mf] = hasta.split(":").map(Number);
-
-  while (h < hf || (h===hf && m < mf)) {
-    const hora = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-    const id = `${profId}_${dia}_${hora}`;
-    cont.innerHTML += `<label><input type="checkbox" id="${id}" data-dia="${dia}" data-hora="${hora}" checked> ${hora}</label> `;
-    m += intervalo;
-    if (m >= 60) { m = m-60; h++; }
-  }
-}
-
-async function guardarTurnos(profId) {
-  const checkboxes = document.querySelectorAll(`#config input[type=checkbox]`);
-  const turnos = [];
-  checkboxes.forEach(ch=>{
-    turnos.push({dia: ch.dataset.dia, hora: ch.dataset.hora, visible: ch.checked ? 1 : 0});
-  });
-
-  const formData = new FormData();
-  formData.append("action","saveTurnosStandard");
-  formData.append("profesionalId", profId);
-  formData.append("turnos", JSON.stringify(turnos));
-
-  const res = await fetch(API_URL, {method:"POST", body:formData});
-  const data = await res.json();
-
-  if(data.status === "ok"){
-    alert("Turnos guardados ✅");
-    mostrarTurnosGuardados(profId, turnos);
-  }
-}
-
-function mostrarTurnosGuardados(profId, turnos){
-  const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
-  let html = `<h2>Turnos Guardados</h2>`;
-
-  dias.forEach(d=>{
-    html += `<h4>${d}</h4>`;
-    const slots = turnos.filter(t=>t.dia === d);
-    if(slots.length === 0){
-      html += `<p><em>No hay turnos</em></p>`;
-    } else {
-      slots.forEach(s=>{
-        html += `<span style="display:inline-block;margin:3px;padding:4px 8px;border-radius:4px;
-          background:${s.visible ? '#4CAF50' : '#ccc'};
-          color:#fff;
-          text-decoration:${s.visible ? 'none' : 'line-through'};
-        ">${s.hora}</span>`;
-      });
+  // --- detectar username de la URL si no está en localStorage ---
+  const params = new URLSearchParams(window.location.search);
+  if (!username) {
+    const u = params.get("username");
+    if (u) {
+      username = u;
+      localStorage.setItem("username", u);
     }
-  });
+  }
+  document.getElementById("who").innerText = username || "—";
 
-  document.getElementById("config").innerHTML = html;
-}
+  let profesionales = [];
 
-async function eliminarTurnos(profId) {
-  if (!confirm("¿Seguro que quieres limpiar todos los turnos de este profesional?")) return;
-  const formData = new FormData();
-  formData.append("action","saveTurnosStandard");
-  formData.append("profesionalId", profId);
-  formData.append("turnos", JSON.stringify([]));
-  const res = await fetch(API_URL, {method:"POST", body:formData});
-  const data = await res.json();
-  alert("Turnos eliminados.");
-  mostrarTurnosGuardados(profId, []); // refrescar la vista vacía
-}
+  async function init() {
+    if (!username) {
+      alert("Debes iniciar sesión primero o pasar ?username= en la URL.");
+      window.location.href = "/login.html";
+      return;
+    }
+    await cargarProfesionales();
+  }
+
+  async function cargarProfesionales() {
+    const res = await fetch(`${API_URL}?username=${username}`);
+    const data = await res.json();
+    if (data.status === "ok") {
+      profesionales = data.profesionales;
+      renderProfesionales();
+    }
+  }
+
+  function renderProfesionales() {
+    const cont = document.getElementById("profesionales");
+    cont.innerHTML = "";
+    profesionales.forEach(prof => {
+      const div = document.createElement("div");
+      div.className = "profesional";
+      div.innerHTML = `
+        <h3>${prof.nombre}</h3>
+        <button onclick="abrirTurnos('${prof.profesionalId}','${prof.nombre}')">Configurar Turnos</button>
+        <button onclick="eliminarTurnos('${prof.profesionalId}')">🗑 Limpiar Turnos</button>
+      `;
+      cont.appendChild(div);
+    });
+  }
+
+  async function agregarProfesional() {
+    const nombre = prompt("Nombre del profesional:");
+    if (!nombre) return;
+    const formData = new FormData();
+    formData.append("action","addProfessional");
+    formData.append("userId", userId);
+    formData.append("nombre", nombre);
+    const res = await fetch(API_URL, {method:"POST", body:formData});
+    const data = await res.json();
+    if (data.status === "ok") {
+      profesionales.push({profesionalId:data.profesionalId, nombre:data.nombre});
+      renderProfesionales();
+    }
+  }
+
+  // --- configuración de turnos ---
+  function abrirTurnos(profId, nombre) {
+    const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+    let html = `<h2>Turnos de ${nombre}</h2>`;
+    html += `
+      <label>Intervalo: 
+        <select id="intervalo">
+          <option value="15">15 min</option>
+          <option value="20">20 min</option>
+          <option value="30" selected>30 min</option>
+          <option value="60">60 min</option>
+        </select>
+      </label><br><br>
+    `;
+    dias.forEach(d=>{
+      html += `
+        <h4>${d}</h4>
+        Desde <input type="time" id="desde_${d}" value="09:00">
+        hasta <input type="time" id="hasta_${d}" value="17:00">
+        <button onclick="generarSlots('${profId}','${d}')">Generar</button>
+        <div id="slots_${profId}_${d}" class="slots"></div>
+      `;
+    });
+    html += `<br><button onclick="guardarTurnos('${profId}')">💾 Guardar</button>`;
+    document.getElementById("config").innerHTML = html;
+  }
+
+  function generarSlots(profId, dia) {
+    const intervalo = parseInt(document.getElementById("intervalo").value);
+    const desde = document.getElementById(`desde_${dia}`).value;
+    const hasta = document.getElementById(`hasta_${dia}`).value;
+    const cont = document.getElementById(`slots_${profId}_${dia}`);
+    cont.innerHTML = "";
+
+    let [h,m] = desde.split(":").map(Number);
+    let [hf,mf] = hasta.split(":").map(Number);
+
+    while (h < hf || (h===hf && m < mf)) {
+      const hora = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+      const id = `${profId}_${dia}_${hora}`;
+      cont.innerHTML += `<label><input type="checkbox" id="${id}" data-dia="${dia}" data-hora="${hora}" checked> ${hora}</label> `;
+      m += intervalo;
+      if (m >= 60) { m = m-60; h++; }
+    }
+  }
+
+  async function guardarTurnos(profId) {
+    const checkboxes = document.querySelectorAll(`#config input[type=checkbox]`);
+    const turnos = [];
+    checkboxes.forEach(ch=>{
+      turnos.push({dia: ch.dataset.dia, hora: ch.dataset.hora, visible: ch.checked ? 1 : 0});
+    });
+
+    const formData = new FormData();
+    formData.append("action","saveTurnosStandard");
+    formData.append("profesionalId", profId);
+    formData.append("turnos", JSON.stringify(turnos));
+
+    const res = await fetch(API_URL, {method:"POST", body:formData});
+    const data = await res.json();
+    alert("Turnos guardados correctamente.");
+    // refrescar config para que el usuario vea lo que hizo
+    abrirTurnos(profId, profesionales.find(p=>p.profesionalId===profId).nombre);
+  }
+
+  async function eliminarTurnos(profId) {
+    if (!confirm("¿Seguro que quieres limpiar todos los turnos de este profesional?")) return;
+    const formData = new FormData();
+    formData.append("action","saveTurnosStandard");
+    formData.append("profesionalId", profId);
+    formData.append("turnos", JSON.stringify([]));
+    await fetch(API_URL, {method:"POST", body:formData});
+    alert("Turnos eliminados.");
+    abrirTurnos(profId, profesionales.find(p=>p.profesionalId===profId).nombre);
+  }
 </script>
-
 </body>
 </html>
