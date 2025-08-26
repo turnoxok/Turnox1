@@ -58,6 +58,42 @@
       transition: background-color 0.3s, transform 0.2s;
     }
     .btn:hover { background-color: #f2f2f2; transform: translateY(-2px); }
+
+    /* Contenedor flotante */
+.fab-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 95%;
+  max-width: 400px;
+  background: #222;
+  border-radius: 20px;
+  padding: 10px;
+  border: 1px solid #ffffff25;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* Botones flotantes */
+.fab {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  font-size: 22px;
+  color: #fff;
+  padding: 12px 0;
+  border-radius: 12px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.fab:hover {
+  background: #333;
+  transform: translateY(-2px);
+}
+
   </style>
 </head>
 <body>
@@ -71,7 +107,13 @@
   <a href="" class="btn" id="btnTurnos">Mis Turnos</a>
   <a href="" class="btn" id="btnLogout">Cerrar Sesión</a>
 </div>
-
+<div class="fab-container">
+  <a href="#" class="fab">🏠</a>
+  <a href="#" class="fab">📅</a>
+  <a href="#" class="fab">➕</a>
+  <a href="#" class="fab">👤</a>
+  <a href="#" class="fab">⚙️</a>
+</div>
   <script>
    // Obtener userId y username (según lo que tengas guardado)
   const params = new URLSearchParams(window.location.search);
