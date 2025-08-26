@@ -229,31 +229,57 @@
   10%  { opacity: 1; }
   100% { transform: translateY(-150vh); opacity: 0; }
 }
-   .user-site {
-  margin-top: 15px;
+/* Botón flotante */
+.floating-tab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   text-align: center;
+  z-index: 999;
 }
 
-.user-site p {
-  margin: 0;
-  font-size: 14px;
-  color: #bbb;
-}
-
-.user-site a {
-  display: inline-block;
-  margin-top: 5px;
-  font-size: 16px;
+.floating-tab button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  cursor: pointer;
   font-weight: bold;
-  color: #4caf50; /* verde destacado */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.floating-tab button:hover {
+  background: #45a049;
+}
+
+/* Contenido oculto del tab */
+.tab-content {
+  display: none;
+  margin-top: 10px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.tab-content p {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.tab-content a {
+  font-weight: bold;
+  color: #4caf50;
   text-decoration: none;
 }
 
-.user-site a:hover {
-  color: #81c784; /* verde más claro al pasar */
+.tab-content a:hover {
   text-decoration: underline;
 }
-
+  
 </style>
 </head>
 <body>
@@ -329,12 +355,14 @@
 <button class="btn-comprar" onclick="comprarCreditos()">Comprar Créditos</button>
 
 </div>
- <div class="user-site">
+ <!-- Botón flotante con el link -->
+<div class="floating-tab" id="userTab">
+  <button id="toggleTab">🌐 Mi sitio</button>
+  <div class="tab-content" id="tabContent">
     <p>Tu sitio es:</p>
-    <a id="btnUsername" target="_blank">
-      www.turnox.pro/<span id="usernameLink"></span>
-    </a>
+    <a id="userSiteLink" target="_blank">www.turnox.pro/<span id="usernameLink"></span></a>
   </div>
+</div>
   
 <!-- Barra inferior -->
   <div class="bottom-nav">
@@ -461,16 +489,20 @@ document.querySelectorAll(".nav-item").forEach(item => {
   }
 });
 </script>
+
   <script>
-const storedUsername = localStorage.getItem("username");
-if (storedUsername) {
-  document.getElementById("usernameSaludo").innerText = storedUsername;
-  document.getElementById("usernameLink").innerText = storedUsername;
-  document.getElementById("btnUsername").href = `https://turnox.pro/${storedUsername}`;
-}
+ document.addEventListener("DOMContentLoaded", () => {
+  const storedUsername = localStorage.getItem("username");
+  if (storedUsername) {
+    document.getElementById("usernameLink").innerText = storedUsername;
+    document.getElementById("userSiteLink").href = `https://turnox.pro/${storedUsername}`;
+  }
 
+  document.getElementById("toggleTab").addEventListener("click", () => {
+    const tabContent = document.getElementById("tabContent");
+    tabContent.style.display = (tabContent.style.display === "block") ? "none" : "block";
+  });
+});
   </script>
-
-
 </body>
 </html>
