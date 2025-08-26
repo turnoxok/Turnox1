@@ -295,7 +295,7 @@ console.log("Respuesta del login:", data); // <--- mirar cómo llega
   localStorage.setItem("email", data.email || ""); // email puede no venir
 
   // Redirigir usando el username correcto
-  window.location.href = `/panel.html?username=${data.username}`;
+  window.location.href = `/creditos.html?username=${data.username}`;
 } else {
   showToast("Ups! Fijate bien el email y la clave");
 }
