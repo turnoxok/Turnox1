@@ -357,8 +357,8 @@ function init(data) {
 }
 
 function comprarCreditos() {
-  const cantidad = parseInt(document.getElementById("cantidadCreditos").value, 10);
-  if (!cantidad || cantidad <= 0) return alert("Cantidad inválida");
+    alert(`Compraste ${cantidad} créditos por $${cantidad * precioUnitario}`);
+  }
 
   // Crear preferencia
   fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}&cantidad=${cantidad}`)
