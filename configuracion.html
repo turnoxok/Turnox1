@@ -268,7 +268,37 @@
       status.textContent = "Guardando cambios, por favor espere…";
       status.className = "status";
       btn.disabled = true;
+// ===================== NUEVO: mostrar resumen =====================
+  // Armamos resumen legible solo de los que están visibles
+  const resumenPorDia = {};
+  turnos.forEach(t => {
+    if (t.visible) {
+      if (!resumenPorDia[t.dia]) resumenPorDia[t.dia] = [];
+      resumenPorDia[t.dia].push(t.hora);
+    }
+  });
 
+  let htmlResumen = `<div class="resumen"><h3>📅 Última configuración guardada</h3>`;
+  for (const dia in resumenPorDia) {
+    htmlResumen += `<p><b>${dia}:</b> ${resumenPorDia[dia].join(", ")}</p>`;
+  }
+  htmlResumen += `</div>`;
+
+  // Creamos o actualizamos el div resumen
+  let resumenDiv = document.getElementById("resumen_" + profId);
+  if (!resumenDiv) {
+    resumenDiv = document.createElement("div");
+    resumenDiv.id = "resumen_" + profId;
+    resumenDiv.style.border = "1px solid #ccc";
+    resumenDiv.style.padding = "10px";
+    resumenDiv.style.marginTop = "15px";
+    resumenDiv.style.background = "#fff";
+    resumenDiv.style.color = "#333";
+    resumenDiv.style.borderRadius = "6px";
+    document.getElementById("config").appendChild(resumenDiv);
+  }
+  resumenDiv.innerHTML = htmlResumen;
+}
       // recolectar TODOS los slots de este profesional (7 días)
       const all = [];
       dias.forEach(d=>{
