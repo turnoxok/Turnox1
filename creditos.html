@@ -239,7 +239,6 @@
   z-index: 999;
 }
 
-/* Botón */
 .floating-tab button {
   background: #25213C;
   color: #5F48D7;
@@ -260,24 +259,12 @@
 
 /* Contenido oculto del tab */
 .tab-content {
-  position: absolute;
-  right: 100%;          /* 👈 aparece a la izquierda del botón */
-  top: 0;
+  display: none;
+  margin-top: 10px;
   background: #25213C50;
   border: 1px solid #5F48D750;
   border-radius: 0px;
   padding: 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 0;             /* 👈 cerrado por defecto */
-  opacity: 0;
-  transition: width 0.4s ease, opacity 0.4s ease;
-}
-
-/* Cuando está abierto */
-.floating-tab.open .tab-content {
-  width: 220px;  /* 👈 ancho visible del panel */
-  opacity: 1;
 }
 
 .tab-content p {
@@ -301,13 +288,15 @@
 </style>
 </head>
 <body>
-<div class="floating-tab" id="floatingTab">
-  <button id="toggleTab">Mi Sitio</button>
-  <div class="tab-content">
+<!-- Botón flotante -->
+<div class="floating-tab">
+  <button id="toggleTab">Mi sitio</button>
+  <div class="tab-content" id="tabContent">
     <p>Tu sitio es:</p>
-    <a id="userLink" href="#" target="_blank">https://turnox.pro/username</a>
+    <a id="userLink" href="#" target="_blank"></a>
   </div>
 </div>
+
 
 <div class="grid">
   <div class="col down">
@@ -509,17 +498,21 @@ document.querySelectorAll(".nav-item").forEach(item => {
 </script>
 
 <script>
+<script>
 document.getElementById("toggleTab").addEventListener("click", () => {
-  document.getElementById("floatingTab").classList.toggle("open");
+  const tab = document.getElementById("tabContent");
+  tab.style.display = (tab.style.display === "block") ? "none" : "block";
 });
 
-// 🔗 Setear el link dinámicamente con el username del localStorage
+// Poner el link con el username guardado
 const storedUsername = localStorage.getItem("username");
 if (storedUsername) {
   const link = document.getElementById("userLink");
   link.href = `https://turnox.pro/${storedUsername}`;
   link.textContent = `https://turnox.pro/${storedUsername}`;
 }
+</script>
+
 </script>
 
 </body>
