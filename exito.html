@@ -21,24 +21,26 @@
   const username = urlParams.get('username');
   const cantidad = parseInt(urlParams.get('cantidad'), 10);
 
-  const API_URL = "https://script.google.com/macros/s/AKfycbyFfRbxWITX_XUwz5jzQpxNwyhYS60JC8DfNcTIzjKQnG_LTzWmTuiOFZFHIm5r6cNI/exec"; // <- Poné aquí tu URL de Apps Script
+  const API_URL = "https://script.google.com/macros/s/AKfycbwKzqCSj38XrNOabwkiYCfg94376WcSFX3XTzz13WA2lEjNGw4HR_lKo5Sl2RN57RCc/exec"; 
 
   async function acreditarCreditos() {
     try {
       const res = await fetch(`${API_URL}?action=sumaCreditos&username=${encodeURIComponent(username)}&cantidad=${cantidad}`);
       const data = await res.json();
-      if(data.ok){
-        document.getElementById('mensaje').innerText = `Se acreditaron ${cantidad} créditos correctamente a tu cuenta, ${username}.`;
+      if (data.ok) {
+        document.getElementById('mensaje').innerText = 
+          `Se acreditaron ${cantidad} créditos. Ahora tenés un total de ${data.nuevosCreditos} créditos, ${username}.`;
       } else {
-        document.getElementById('mensaje').innerText = `Error al acreditar créditos: ${data.error || "desconocido"}`;
+        document.getElementById('mensaje').innerText = 
+          `⚠️ Error al acreditar créditos: ${data.error || "desconocido"}`;
       }
-    } catch(err){
-      document.getElementById('mensaje').innerText = `Error en la conexión: ${err}`;
+    } catch (err) {
+      document.getElementById('mensaje').innerText = `❌ Error en la conexión: ${err}`;
     }
   }
 
   document.getElementById('volver').onclick = () => {
-    window.location.href = "/panel.html?username=" + encodeURIComponent(username);
+    window.location.href = "/creditos.html?username=" + encodeURIComponent(username);
   }
 
   // Ejecutar al cargar
