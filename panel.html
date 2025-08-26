@@ -63,11 +63,12 @@
 <body>
   <div class="container">
     <div class="logo">TurnoX</div>
+    <a href="#" class="btn" id="btnUsername">Mi Sitio</a>
     <a href="#" class="btn" id="btnConfig">Configuración Turnos</a>
     <a href="#" class="btn" id="btnCreditos">Créditos</a>
     <a href="#" class="btn" id="btnClientes">Clientes</a>
     <a href="#" class="btn" id="btnPerfil">Perfil</a>
-    <a href="#" class="btn" id="btnUsername">Ir a Usuario</a>
+    <a href="#" class="btn" id="btnTurnos">Mis Turnos</a>
     <a href="#" class="btn" id="btnLogout">Cerrar Sesión</a>
   </div>
 
@@ -79,7 +80,9 @@
     document.getElementById("btnCreditos").href = `creditos.html?username=${username}`;
     document.getElementById("btnClientes").href = `clientes.html?username=${username}`;
     document.getElementById("btnPerfil").href = `perfil.html?username=${username}`;
-    document.getElementById("btnUsername").href = `username.html?username=${username}`;
+    document.getElementById("btnUsername").href = `${username}`;
+    document.getElementById("btnTurnos").href = `turnos.html?username=${username}`;
+    
 
     document.getElementById("btnLogout").addEventListener("click", () => {
       localStorage.removeItem("username"); // limpiar sesión
