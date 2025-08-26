@@ -172,6 +172,51 @@
   }
   .nav-item:hover { opacity: 0.8; }
    
+    .grid {
+      display: flex;
+      gap: 30px;
+    }
+
+    .columna {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: bajar 10s linear infinite;
+    }
+
+    .rect {
+      width: 90px;
+      height: 140px;
+      border-radius: 12px;
+      border: 1.5px solid #7c5ef7;
+      background: transparent;
+    }
+
+    .solid {
+      background: #1f1a33;
+      border: none;
+    }
+
+    /* Animación que hace que los rectángulos bajen en loop */
+    @keyframes bajar {
+      0% {
+        transform: translateY(-100%);
+      }
+      100% {
+        transform: translateY(100%);
+      }
+    }
+
+    /* columnas alternadas con distinto delay para que no bajen iguales */
+    .columna:nth-child(2) {
+      animation-delay: 2s;
+    }
+    .columna:nth-child(3) {
+      animation-delay: 4s;
+    }
+    .columna:nth-child(4) {
+      animation-delay: 6s;
+    }
 </style>
 </head>
 <body>
@@ -198,6 +243,29 @@
 <button class="btn-comprar" onclick="comprarCreditos()">Comprar Créditos</button>
 
 </div>
+
+  <div class="grid">
+    <div class="columna">
+      <div class="rect solid"></div>
+      <div class="rect"></div>
+      <div class="rect"></div>
+    </div>
+    <div class="columna">
+      <div class="rect"></div>
+      <div class="rect solid"></div>
+      <div class="rect"></div>
+    </div>
+    <div class="columna">
+      <div class="rect"></div>
+      <div class="rect"></div>
+      <div class="rect solid"></div>
+    </div>
+    <div class="columna">
+      <div class="rect solid"></div>
+      <div class="rect"></div>
+      <div class="rect"></div>
+    </div>
+  </div>
 <!-- Barra inferior -->
   <div class="bottom-nav">
     <a href="#" class="nav-item active" id="btnCreditos"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
