@@ -239,13 +239,14 @@
   z-index: 999;
 }
 
+/* Botón */
 .floating-tab button {
   background: #25213C;
   color: #5F48D7;
   border: none;
   padding: 10px 15px;
   border-top-left-radius: 20px;
-  border-top-right-radius: 00px;
+  border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
   cursor: pointer;
@@ -259,19 +260,24 @@
 
 /* Contenido oculto del tab */
 .tab-content {
-  display: none;
-  margin-top: 10px;
-  background: white;
+  position: absolute;
+  right: 100%;          /* 👈 lo ubica a la izquierda del botón */
+  top: 0;
+  background: #25213C50;
   border: 1px solid #5F48D750;
   border-radius: 0px;
   padding: 10px;
-  background: #25213C50;
-  transition: max-height 0.5s ease, padding 0.5s ease; /* 👈 animación */
-  display: block;
-  position: absolute;
-  right: 100%; 
-  white-space: nowrap;
-  
+  white-space: nowrap;  /* 👈 evita que el texto salte de línea */
+  overflow: hidden;
+  width: 0;             /* 👈 inicia cerrado */
+  opacity: 0;
+  transition: width 0.4s ease, opacity 0.4s ease;
+}
+
+/* Cuando está abierto */
+.floating-tab.open .tab-content {
+  width: 200px;   /* 👈 ancho visible del panel */
+  opacity: 1;
 }
 
 .tab-content p {
@@ -289,6 +295,7 @@
 .tab-content a:hover {
   text-decoration: underline;
 }
+
 
 </style>
 </head>
