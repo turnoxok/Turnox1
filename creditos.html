@@ -185,12 +185,14 @@
     <span id="creditosActuales">Cargando...</span>
   </div>
 
-  <!-- Selector de créditos -->
   <div class="cantidad-wrapper">
-    <button class="cantidad-btn" onclick="document.getElementById('cantidadCreditos').stepDown()">-</button>
-    <input type="number" id="cantidadCreditos" min="1" value="1">
-    <button class="cantidad-btn" onclick="document.getElementById('cantidadCreditos').stepUp()">+</button>
-  </div>
+  <button id="btnMenos" class="cantidad-btn">-</button>
+  <input type="number" id="cantidadCreditos" min="1" value="1">
+  <button id="btnMas" class="cantidad-btn">+</button>
+</div>
+<p class="total-box">Total a pagar: <span id="totalPagar">$100</span></p>
+<button class="btn-comprar" onclick="comprarCreditos()">Comprar Créditos</button>
+
 <!-- Total a pagar -->
   <p class="total-box">Total a pagar: <span id="totalPagar">$100</span></p>
   <!-- Botón comprar -->
@@ -256,9 +258,26 @@ function actualizarTotal() {
   document.getElementById("totalPagar").textContent = `$${total}`;
 }
 
-// inicializa al cargar
-document.addEventListener("DOMContentLoaded", actualizarTotal);
+document.addEventListener("DOMContentLoaded", () => {
+  // Inicializa total
+  actualizarTotal();
+
+  // Botones + y -
+  document.getElementById("btnMenos").addEventListener("click", () => {
+    document.getElementById("cantidadCreditos").stepDown();
+    actualizarTotal();
+  });
+
+  document.getElementById("btnMas").addEventListener("click", () => {
+    document.getElementById("cantidadCreditos").stepUp();
+    actualizarTotal();
+  });
+
+  // También si alguien escribe manualmente
+  document.getElementById("cantidadCreditos").addEventListener("input", actualizarTotal);
+});
 </script>
+
  
 <script>
 // --- Protege acceso ---
