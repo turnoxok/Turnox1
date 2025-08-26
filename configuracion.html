@@ -2,329 +2,345 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>TurnoX - Sistema PRE-PAGO de Turnos On Line</title>
+  <title>TurnoX – Configurar disponibilidad (Lun–Dom)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-  <!-- Fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
- 
-
-  <!-- Iconos -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-
-  <!-- Open Graph para WhatsApp/Facebook -->
-  <meta property="og:title" content=">TurnoX - Sistema PRE-PAGO de Turnos On Line" />
-  <meta property="og:description" content="Turnero Pro." />
-  <meta property="og:image" content="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:url" content="https://turnox.pro/" />
-  <meta property="og:type" content="website" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="TurnoX - Sistema PRE-PAGO de Turnos On Line" />
-  <meta name="twitter:description" content="Turnero Pro." />
-  <meta name="twitter:image" content="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png" />
 
   <style>
-    /* ===== Tipografía y base ===== */
-body {
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  margin: 0;
-  padding: 20px;
-  background-color: #533482;
-  color: #F2F2F2;
-}
+    :root{
+      --morado:#533482;
+      --morado-osc:#452a7a;
+      --claro:#F4EDFF;
+      --gris:#e7e7e7;
+      --texto:#2b2b2b;
+      --ok:#18a957;
+      --err:#d93636;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:20px;
+      font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--morado);
+      color:#fff;
+    }
+    h1{margin:0 0 10px 0; text-align:center; font-size:24px}
+    .topbar{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px}
+    .note{opacity:.9; font-size:14px}
+    button{
+      background:#fff; color:var(--morado);
+      border:none; border-radius:10px; padding:10px 14px;
+      font-weight:700; cursor:pointer; transition:.15s transform,.15s background;
+    }
+    button:hover{ transform:translateY(-2px); background:var(--claro) }
+    button[disabled]{ opacity:.6; cursor:not-allowed; transform:none }
 
-h1, h2, h3, h4 {
-  font-weight: 600;
-  margin: 0 0 10px 0;
-}
+    .profesional{
+      border:1px solid #ffffff2a; background:#ffffff10; border-radius:14px; padding:14px; margin:12px 0;
+      backdrop-filter: blur(3px);
+    }
+    .profesional h3{ margin:0 0 8px 0; font-size:18px }
+    .actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
 
-h1 { text-align: center; font-size: 2rem; }
+    .editor{
+      margin-top:12px; background:#fff; color:var(--texto); border-radius:14px; padding:12px;
+      border:1px solid var(--gris);
+    }
+    .toolbar{
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; margin-bottom:10px;
+    }
+    .toolbar .left, .toolbar .right{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+    select, input[type=time]{
+      padding:8px 10px; border:1px solid var(--gris); border-radius:10px; font-weight:600;
+      background:#fff; color:var(--texto);
+    }
 
-/* ===== Botones ===== */
-button {
-  background-color: #533482;
-  color: #fff;
-  border: none;
-  border-radius: 0px;
-  padding: 8px 14px;
-  margin: 4px 2px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: background-color 0.2s, transform 0.1s;
-}
+    .week{ display:grid; gap:12px; grid-template-columns:repeat(3, minmax(260px,1fr)); }
+    @media (max-width:980px){ .week{ grid-template-columns:repeat(2,1fr) } }
+    @media (max-width:620px){ .week{ grid-template-columns:1fr } }
 
-button:hover {
-  background-color: #452a7a;
-  transform: translateY(-2px);
-}
+    .day{ border:1px solid var(--gris); border-radius:12px; padding:10px; background:#fafafa }
+    .day h4{ margin:0 0 8px 0; color:var(--morado); font-size:15px }
+    .range{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px }
+    .slots{ display:flex; flex-wrap:wrap; gap:8px }
+    .slot{
+      padding:6px 10px; border-radius:8px; border:1px solid var(--gris);
+      font-weight:700; font-size:13px; background:#fff; cursor:pointer; user-select:none; transition:.15s;
+    }
+    .slot.selected{ background:#533482; color:#fff; border-color:#533482 }
+    .slot:not(.selected){ background:#eee; color:#666 }
 
-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
+    .mini{ font-size:12px; opacity:.8; margin-left:6px }
+    .footerBar{ display:flex; justify-content:center; margin-top:14px }
+    .status{ margin-top:8px; text-align:center; font-size:14px }
+    .status.ok{ color:#0f0 }
+    .status.err{ color:#ffb3b3 }
 
-/* ===== Contenedores de profesionales ===== */
-.profesional {
-  border: 1px solid #ddd;
-  padding: 12px;
-  margin: 12px 0;
-  border-radius: 0px;
-  background: linear-gradient(
-              135deg,
-              #D2B8FF 0%, 
-              #fff 25%, 
-              #F4EDFF 50%, 
-              #fff 75%, 
-              #D2B8FF 100%
-          ),
-          repeating-linear-gradient(
-              0deg,
-              rgba(255,255,255,0.05) 0px,
-              rgba(255,255,255,0.05) 2px,
-              transparent 2px,
-              transparent 4px
-          );
-  background-blend-mode: overlay;
-  color: #533482;
-}
-
-.profesional h3 {
-  margin-bottom: 8px;
-}
-
-/* ===== Configuración de turnos ===== */
-#config {
-  margin-top: 20px;
-}
-
-#config h2 {
-  margin-bottom: 12px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-#config h4 {
-  margin: 10px 0 6px 0;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.checkbox-row {
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-
-label.hora-label {
-  margin: 4px;
-  display: inline-block;
-  cursor: pointer;
-}
-
-label.hora-label span {
-  display: inline-block;
-  padding: 6px 10px;
-  font-weight: 600;
-  border-radius: 0px;
-  transition: all 0.2s;
-}
-
-/* Estados de hora */
-label.hora-label span.disponible {
-  background: #F7F7F7;
-  color: #533482;
-}
-label.hora-label span.disponible:hover {
-  background-color: #533482;
-  color: #fff;
-  transform: translateY(-2px);
-  cursor: pointer;
-}
-label.hora-label span.bloqueado {
-  background: #D2B8FF95;
-  color: #F7F7F7;
-  cursor: not-allowed;
-  opacity: 0.6;
-  text-decoration: line-through;
-}
-label.hora-label span.selected {
-  background-color: #533482;
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-/* Inputs de rango y selects */
-input[type="time"], input[type="date"], select {
-  padding: 6px;
-  border-radius: 0px;
-  border: 1px solid #ccc;
-  margin: 4px 0;
-  font-size: 14px;
-  text-align: center;
-}
-
-/* Responsivo */
-@media(max-width:650px){
-  .checkbox-row label span {
-    padding: 4px 6px;
-    font-size: 0.9rem;
-  }
-}
+    .btn-link{ background:transparent; color:var(--morado); border:1px dashed var(--morado); }
+    .btn-danger{ background:#fff; color:#a12828; border:1px solid #f1c5c5 }
+    .pill{ padding:4px 8px; border-radius:999px; font-size:12px; background:#ffffff25; border:1px solid #ffffff40 }
   </style>
 </head>
-<body onload="init()">
-  <button onclick="
-      window.location.href='/creditos.html?username='
-      + encodeURIComponent(username)
-      + '&userId=' + encodeURIComponent(userId);
-    ">
-      💳 Créditos
-  </button>
-  <h1>Panel de Configuración</h1>
-  <p>Usuario: <b id="username"></b></p>
-  <button onclick="agregarProfesional()">Agregar Profesional</button>
+<body>
+  <div class="topbar">
+    <button onclick="window.location.href='/panel'">← Volver</button>
+    <h1>Panel de Configuración</h1>
+    <div class="note pill">Usuario: <b id="who">—</b></div>
+  </div>
+
+  <div class="actions">
+    <button id="creditosBtn">💳 Créditos</button>
+    <button id="addProfBtn">➕ Agregar Profesional</button>
+  </div>
+
   <div id="profesionales"></div>
-  <div id="config"></div>
-</body>
-    <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycby_-LL7wZkEg9Kzm3e5Y2yCb9nNdSOPznHT4TpRciiJcdWvSGgvbqZHVKKZtmZ98KR7_Q/exec"; 
+
+  <script>
+    // === CONFIG ===
+    const API_URL = "https://script.google.com/macros/s/AKfycby_-LL7wZkEg9Kzm3e5Y2yCb9nNdSOPznHT4TpRciiJcdWvSGgvbqZHVKKZtmZ98KR7_Q/exec";
+
+    // === SESSION ===
     let userId = localStorage.getItem("userId");
     let username = localStorage.getItem("username");
-    let profesionales = [];
 
-    async function init() {
-      if (!userId || !username) {
+    // fallback si llegan por URL directa
+    const q = new URLSearchParams(location.search);
+    if (!userId && q.get("userId")) userId = q.get("userId");
+    if (!username && q.get("username")) username = q.get("username");
+
+    const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+
+    // === INIT ===
+    document.getElementById("creditosBtn").onclick = () => {
+      if (!username || !userId) { alert("Debes iniciar sesión primero."); return; }
+      location.href = `/creditos.html?username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}`;
+    };
+    document.getElementById("addProfBtn").onclick = agregarProfesional;
+
+    async function init(){
+      if(!userId || !username){
         alert("Debes iniciar sesión primero.");
-        window.location.href = "/login.html";
+        location.href="/login.html";
         return;
       }
-      document.getElementById("username").innerText = username;
+      document.getElementById("who").textContent = username;
       await cargarProfesionales();
     }
 
-    async function cargarProfesionales() {
-      const res = await fetch(`${API_URL}?username=${username}`);
+    async function cargarProfesionales(){
+      const res = await fetch(`${API_URL}?username=${encodeURIComponent(username)}`);
       const data = await res.json();
-      if (data.status === "ok") {
-        profesionales = data.profesionales;
-        renderProfesionales();
+      if(data.status==="ok"){
+        renderProfesionales(data.profesionales||[]);
+      }else{
+        document.getElementById("profesionales").innerHTML = `<div class="note">No se pudieron cargar los profesionales.</div>`;
       }
     }
 
-    function renderProfesionales() {
+    function renderProfesionales(list){
       const cont = document.getElementById("profesionales");
       cont.innerHTML = "";
-      profesionales.forEach(prof => {
-        const div = document.createElement("div");
-        div.className = "profesional";
-        div.innerHTML = `
-          <h3>${prof.nombre}</h3>
-          <button onclick="abrirTurnos('${prof.profesionalId}','${prof.nombre}')">Configurar Turnos</button>
-          <button onclick="eliminarTurnos('${prof.profesionalId}')">🗑 Limpiar Turnos</button>
+      list.forEach(p=>{
+        const box = document.createElement("div");
+        box.className = "profesional";
+        box.innerHTML = `
+          <h3>${p.nombre}</h3>
+          <div class="actions">
+            <button class="btn-edit">⚙️ Configurar Turnos</button>
+            <button class="btn-danger btn-clear">🗑 Limpiar Turnos</button>
+          </div>
+          <div class="editor" style="display:none"></div>
         `;
-        cont.appendChild(div);
+        // eventos
+        box.querySelector(".btn-edit").onclick = ()=> abrirEditor(box.querySelector(".editor"), p);
+        box.querySelector(".btn-clear").onclick = ()=> eliminarTurnos(p.profesionalId);
+        cont.appendChild(box);
       });
     }
 
-    async function agregarProfesional() {
-      const nombre = prompt("Nombre del profesional:");
-      if (!nombre) return;
-      const formData = new FormData();
-      formData.append("action","addProfessional");
-      formData.append("userId", userId);
-      formData.append("nombre", nombre);
-      const res = await fetch(API_URL, {method:"POST", body:formData});
-      const data = await res.json();
-      if (data.status === "ok") {
-        profesionales.push({profesionalId:data.profesionalId, nombre:data.nombre});
-        renderProfesionales();
-      }
-    }
+    function abrirEditor(editorEl, prof){
+      if(editorEl.dataset.open==="1"){ editorEl.style.display="none"; editorEl.dataset.open=""; return; }
+      editorEl.dataset.open="1";
+      editorEl.style.display="block";
 
-    // ---------------- CONFIGURACIÓN DE TURNOS ----------------
-    function abrirTurnos(profId, nombre) {
-      const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
-      let html = `<h2>Turnos Standard de ${nombre}</h2>`;
-      
-      html += `
-        <label>Intervalo: 
-          <select id="intervalo">
-            <option value="15">15 min</option>
-            <option value="20">20 min</option>
-            <option value="30" selected>30 min</option>
-            <option value="60">60 min</option>
-          </select>
-        </label><br><br>
+      // plantilla del editor
+      editorEl.innerHTML = `
+        <div class="toolbar">
+          <div class="left">
+            <label>Intervalo
+              <select id="intervalo_${prof.profesionalId}">
+                <option value="10">10 min</option>
+                <option value="15">15 min</option>
+                <option value="20">20 min</option>
+                <option value="30" selected>30 min</option>
+                <option value="60">60 min</option>
+              </select>
+            </label>
+            <button class="btn-link" id="genTodos_${prof.profesionalId}">⚡ Generar todos</button>
+            <span class="mini">Tip: primero elegí intervalo y rangos, luego generá</span>
+          </div>
+          <div class="right">
+            <button id="guardar_${prof.profesionalId}">💾 Guardar cambios</button>
+          </div>
+        </div>
+        <div class="week" id="week_${prof.profesionalId}"></div>
+        <div class="footerBar"><span class="status" id="status_${prof.profesionalId}"></span></div>
       `;
 
+      // render de los 7 días
+      const week = editorEl.querySelector(`#week_${prof.profesionalId}`);
       dias.forEach(d=>{
-        html += `
+        const id = `${prof.profesionalId}_${d}`;
+        const day = document.createElement("div");
+        day.className="day";
+        day.innerHTML = `
           <h4>${d}</h4>
-          Desde <input type="time" id="desde_${d}" value="09:00">
-          hasta <input type="time" id="hasta_${d}" value="17:00">
-          <button onclick="generarSlots('${profId}','${d}')">Generar</button>
-          <div id="slots_${profId}_${d}" class="slots"></div>
+          <div class="range">
+            Desde <input type="time" id="desde_${id}" value="09:00">
+            hasta <input type="time" id="hasta_${id}" value="17:00">
+            <button class="btn-link" id="gen_${id}">Generar</button>
+            <button class="btn-link" id="sel_${id}">Seleccionar todo</button>
+            <button class="btn-link" id="clr_${id}">Limpiar día</button>
+          </div>
+          <div class="slots" id="slots_${id}"></div>
         `;
+        week.appendChild(day);
+
+        // eventos día
+        day.querySelector(`#gen_${id}`).onclick = ()=> generarSlots(prof.profesionalId, d);
+        day.querySelector(`#sel_${id}`).onclick = ()=> seleccionarTodo(prof.profesionalId, d, true);
+        day.querySelector(`#clr_${id}`).onclick = ()=> seleccionarTodo(prof.profesionalId, d, false);
+        day.querySelector(`#slots_${id}`).addEventListener("click", toggleSlot);
       });
 
-      html += `<br><button onclick="guardarTurnos('${profId}')">Guardar</button>`;
-      document.getElementById("config").innerHTML = html;
+      // eventos globales
+      editorEl.querySelector(`#genTodos_${prof.profesionalId}`).onclick = ()=> generarTodos(prof.profesionalId);
+      editorEl.querySelector(`#guardar_${prof.profesionalId}`).onclick = ()=> guardarTurnos(prof.profesionalId);
     }
 
-    function generarSlots(profId, dia) {
-      const intervalo = parseInt(document.getElementById("intervalo").value);
-      const desde = document.getElementById(`desde_${dia}`).value;
-      const hasta = document.getElementById(`hasta_${dia}`).value;
-      const cont = document.getElementById(`slots_${profId}_${dia}`);
-      cont.innerHTML = "";
+    function toggleSlot(e){
+      const el = e.target;
+      if(!el.classList.contains("slot")) return;
+      el.classList.toggle("selected");
+    }
 
-      let [h,m] = desde.split(":").map(Number);
-      let [hf,mf] = hasta.split(":").map(Number);
+    function timeStrToParts(t){ const [h,m]=t.split(":").map(n=>parseInt(n,10)); return {h,m}; }
+    function nextTime(h,m,step){ m+=step; while(m>=60){m-=60; h++;} return {h,m}; }
+    function toHHMM(h,m){ return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`; }
 
-      while (h < hf || (h===hf && m < mf)) {
-        const hora = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-        const id = `${profId}_${dia}_${hora}`;
-        cont.innerHTML += `<label><input type="checkbox" id="${id}" data-dia="${dia}" data-hora="${hora}" checked> ${hora}</label> `;
-        m += intervalo;
-        if (m >= 60) { m = m-60; h++; }
+    function generarSlots(profId, dia){
+      const interval = parseInt(document.getElementById(`intervalo_${profId}`).value,10);
+      const desde = document.getElementById(`desde_${profId}_${dia}`).value;
+      const hasta = document.getElementById(`hasta_${profId}_${dia}`).value;
+      const target = document.getElementById(`slots_${profId}_${dia}`);
+      target.innerHTML = "";
+
+      let {h, m} = timeStrToParts(desde);
+      const end = timeStrToParts(hasta);
+
+      // generar inclusivo de inicio, exclusivo del fin (ej: 09:00..16:30 con 30m)
+      while (h < end.h || (h===end.h && m < end.m)) {
+        const hora = toHHMM(h,m);
+        const span = document.createElement("span");
+        span.className = "slot selected"; // por defecto visible (como tus checkboxes checked)
+        span.dataset.dia = dia;
+        span.dataset.hora = hora;
+        span.textContent = hora;
+        target.appendChild(span);
+        ({h,m} = nextTime(h,m,interval));
       }
     }
 
-    async function guardarTurnos(profId) {
-      const checkboxes = document.querySelectorAll(`#config input[type=checkbox]`);
-      const turnos = [];
-      checkboxes.forEach(ch=>{
-        turnos.push({dia: ch.dataset.dia, hora: ch.dataset.hora, visible: ch.checked ? 1 : 0});
+    function generarTodos(profId){
+      dias.forEach(d=>generarSlots(profId,d));
+    }
+
+    function seleccionarTodo(profId, dia, value){
+      const cont = document.getElementById(`slots_${profId}_${dia}`);
+      cont.querySelectorAll(".slot").forEach(s=>{
+        s.classList.toggle("selected", !!value);
+      });
+    }
+
+    async function guardarTurnos(profId){
+      const btn = document.getElementById(`guardar_${profId}`);
+      const status = document.getElementById(`status_${profId}`);
+      status.textContent = "Guardando cambios, por favor espere…";
+      status.className = "status";
+      btn.disabled = true;
+
+      // recolectar TODOS los slots de este profesional (7 días)
+      const all = [];
+      dias.forEach(d=>{
+        const cont = document.getElementById(`slots_${profId}_${d}`);
+        cont.querySelectorAll(".slot").forEach(s=>{
+          all.push({
+            dia: s.dataset.dia,
+            hora: s.dataset.hora,
+            visible: s.classList.contains("selected") ? 1 : 0
+          });
+        });
       });
 
-      const formData = new FormData();
-      formData.append("action","saveTurnosStandard");
-      formData.append("profesionalId", profId);
-      formData.append("turnos", JSON.stringify(turnos));
+      try{
+        const fd = new FormData();
+        fd.append("action","saveTurnosStandard");
+        fd.append("profesionalId", profId);
+        fd.append("turnos", JSON.stringify(all));
 
-      const res = await fetch(API_URL, {method:"POST", body:formData});
-      const data = await res.json();
-      alert("Turnos guardados correctamente.");
+        const res = await fetch(API_URL, { method:"POST", body: fd });
+        const data = await res.json();
+
+        if(data.status==="ok"){
+          status.textContent = "✅ Se guardaron los horarios exitosamente.";
+          status.className = "status ok";
+        }else{
+          status.textContent = "❌ Error al guardar: " + (data.msg || "desconocido");
+          status.className = "status err";
+        }
+      }catch(err){
+        status.textContent = "❌ Error de conexión al guardar.";
+        status.className = "status err";
+      }finally{
+        btn.disabled = false;
+      }
     }
 
-    async function eliminarTurnos(profId) {
-      if (!confirm("¿Seguro que quieres limpiar todos los turnos de este profesional?")) return;
-      const formData = new FormData();
-      formData.append("action","saveTurnosStandard");
-      formData.append("profesionalId", profId);
-      formData.append("turnos", JSON.stringify([]));
-      const res = await fetch(API_URL, {method:"POST", body:formData});
-      const data = await res.json();
-      alert("Turnos eliminados.");
+    async function eliminarTurnos(profId){
+      if(!confirm("¿Seguro que quieres limpiar todos los turnos de este profesional?")) return;
+      // enviar array vacío para borrar
+      const fd = new FormData();
+      fd.append("action","saveTurnosStandard");
+      fd.append("profesionalId", profId);
+      fd.append("turnos", JSON.stringify([]));
+      try{
+        const res = await fetch(API_URL, { method:"POST", body:fd });
+        const data = await res.json();
+        if(data.status==="ok") alert("Turnos eliminados.");
+        else alert("No se pudo limpiar: " + (data.msg || "error"));
+      }catch(err){
+        alert("Error de conexión.");
+      }
     }
+
+    async function agregarProfesional(){
+      if(!userId){ alert("Falta userId. Iniciá sesión."); return; }
+      const nombre = prompt("Nombre del profesional:");
+      if(!nombre) return;
+      const fd = new FormData();
+      fd.append("action","addProfessional");
+      fd.append("userId", userId);
+      fd.append("nombre", nombre);
+      const res = await fetch(API_URL, { method:"POST", body:fd });
+      const data = await res.json();
+      if(data.status==="ok"){
+        await cargarProfesionales();
+      }else{
+        alert("No se pudo agregar: " + (data.msg || "error"));
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
   </script>
+</body>
 </html>
