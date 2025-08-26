@@ -169,10 +169,12 @@
   </div>
 
   <!-- Contenido central -->
-  <div class="container">
-    <h1>✅ ¡Pago realizado con éxito!</h1>
-    <p id="mensaje">Estamos acreditando tus créditos...</p>
-    <button class="btn-volver" id="volver">⬅ Volver al panel</button>
+ <div class="card">
+    <h2>Guardar Logo Externo</h2>
+    <input type="url" id="logoUrl" placeholder="Pega aquí el link del logo" required>
+    <button id="saveBtn" disabled>Guardar Logo</button>
+    <div class="preview" id="preview"></div>
+    <p id="status"></p>
   </div>
 
   <!-- Bottom nav -->
@@ -186,37 +188,58 @@
   </div>
 
   <script>
-    // Obtener parámetros de URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const username = urlParams.get('username');
-    const cantidad = parseInt(urlParams.get('cantidad'), 10);
+   <script>
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("userId");
+    const logoInput = document.getElementById("logoUrl");
+    const saveBtn = document.getElementById("saveBtn");
+    const status = document.getElementById("status");
+    const preview = document.getElementById("preview");
 
-    document.getElementById('usernameDisplay').textContent = username || "";
+    if (!userId) {
+      status.innerText = "❌ Falta userId en la URL";
+    }
 
-    const API_URL = "TU_URL_DE_APPS_SCRIPT";
+    // Habilitar botón si hay texto
+    logoInput.addEventListener("input", () => {
+      saveBtn.disabled = !logoInput.value.trim();
+      if (logoInput.value.trim()) {
+        preview.innerHTML = `<img src="${logoInput.value.trim()}" alt="Logo">`;
+      } else {
+        preview.innerHTML = "";
+      }
+    });
 
-    async function acreditarCreditos() {
+    // Guardar logo
+    saveBtn.addEventListener("click", async () => {
+      const logoUrl = logoInput.value.trim();
+      if (!logoUrl || !userId) return;
+
+      status.innerText = "⏳ Guardando logo...";
+
       try {
-        const res = await fetch(`${API_URL}?action=sumaCreditos&username=${encodeURIComponent(username)}&cantidad=${cantidad}`);
+        const res = await fetch("https://script.google.com/macros/s/AKfycbxRK4WyJlagviZGIqibZd8sISBMwW8WzYKCk0Z6qd-JHYwoImVX3MlfdKACo931zGbaxQ/exec", {
+          method: "POST",
+          body: new URLSearchParams({
+            action: "guardarLogoExterno",
+            userId: userId,
+            logoUrl: logoUrl
+          })
+        });
+
         const data = await res.json();
-        if (data.ok) {
-          document.getElementById('mensaje').innerText =
-            `Se acreditaron ${cantidad} créditos correctamente a tu cuenta, ${username}.`;
+
+        if (data.status === "ok") {
+          status.innerHTML = `✅ Logo guardado: <a href="${data.url}" target="_blank">Ver logo</a>`;
         } else {
-          document.getElementById('mensaje').innerText =
-            `Error al acreditar créditos: ${data.error || "desconocido"}`;
+          status.innerText = "❌ Error: " + data.msg;
         }
       } catch (err) {
-        document.getElementById('mensaje').innerText = `Error en la conexión: ${err}`;
+        console.error(err);
+        status.innerText = "❌ Error de conexión con Apps Script";
       }
-    }
-
-    document.getElementById('volver').onclick = () => {
-      window.location.href = "/panel.html?username=" + encodeURIComponent(username);
-    }
-
-    // Ejecutar al cargar
-    acreditarCreditos();
+    });
+  </script>
   </script>
 </body>
 </html>
