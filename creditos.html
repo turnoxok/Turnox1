@@ -172,16 +172,23 @@
   }
   .nav-item:hover { opacity: 0.8; }
    
-    .grid {
-      display: flex;
-      gap: 30px;
-    }
-
+  .grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  z-index: -1; /* 🔑 fondo atrás */
+  pointer-events: none; /* para que no bloquee clicks */
+}
     .columna {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      animation: bajar 10s linear infinite;
     }
 
     .rect {
@@ -197,29 +204,57 @@
       border: none;
     }
 
-    /* Animación que hace que los rectángulos bajen en loop */
+    /* Animación hacia abajo */
     @keyframes bajar {
-      0% {
-        transform: translateY(-100%);
-      }
-      100% {
-        transform: translateY(100%);
-      }
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
     }
 
-    /* columnas alternadas con distinto delay para que no bajen iguales */
-    .columna:nth-child(2) {
-      animation-delay: 2s;
+    /* Animación hacia arriba */
+    @keyframes subir {
+      0% { transform: translateY(100%); }
+      100% { transform: translateY(-100%); }
     }
-    .columna:nth-child(3) {
-      animation-delay: 4s;
+
+    /* Aplicamos animaciones alternadas */
+    .columna:nth-child(odd) {
+      animation: bajar 12s linear infinite;
     }
-    .columna:nth-child(4) {
-      animation-delay: 6s;
+
+    .columna:nth-child(even) {
+      animation: subir 12s linear infinite;
     }
+
+    /* Un poco de desfase en el tiempo para que no se vean iguales */
+    .columna:nth-child(2) { animation-delay: 2s; }
+    .columna:nth-child(3) { animation-delay: 4s; }
+    .columna:nth-child(4) { animation-delay: 6s; }
+
 </style>
 </head>
 <body>
+  <div class="grid">
+    <div class="columna">
+      <div class="rect solid"></div>
+      <div class="rect"></div>
+      <div class="rect"></div>
+    </div>
+    <div class="columna">
+      <div class="rect"></div>
+      <div class="rect solid"></div>
+      <div class="rect"></div>
+    </div>
+    <div class="columna">
+      <div class="rect"></div>
+      <div class="rect"></div>
+      <div class="rect solid"></div>
+    </div>
+    <div class="columna">
+      <div class="rect solid"></div>
+      <div class="rect"></div>
+      <div class="rect"></div>
+    </div>
+  </div>
  <!-- Header con usuario y créditos -->
 <div class="header-info">
   <h2 class="user-pill">Usuario: <span id="usernameDisplay"></span></h2>
@@ -244,28 +279,7 @@
 
 </div>
 
-  <div class="grid">
-    <div class="columna">
-      <div class="rect solid"></div>
-      <div class="rect"></div>
-      <div class="rect"></div>
-    </div>
-    <div class="columna">
-      <div class="rect"></div>
-      <div class="rect solid"></div>
-      <div class="rect"></div>
-    </div>
-    <div class="columna">
-      <div class="rect"></div>
-      <div class="rect"></div>
-      <div class="rect solid"></div>
-    </div>
-    <div class="columna">
-      <div class="rect solid"></div>
-      <div class="rect"></div>
-      <div class="rect"></div>
-    </div>
-  </div>
+  
 <!-- Barra inferior -->
   <div class="bottom-nav">
     <a href="#" class="nav-item active" id="btnCreditos"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
