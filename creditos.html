@@ -229,61 +229,79 @@
   10%  { opacity: 1; }
   100% { transform: translateY(-150vh); opacity: 0; }
 }
-/* Botón flotante */
-.floating-tab {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  text-align: center;
-  z-index: 999;
-}
 
-.floating-tab button {
-  background: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-}
-
-.floating-tab button:hover {
-  background: #45a049;
-}
-
-/* Contenido oculto del tab */
-.tab-content {
-  display: none;
-  margin-top: 10px;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-}
-
-.tab-content p {
-  margin: 0 0 5px 0;
-  font-size: 14px;
-  color: #555;
-}
-
-.tab-content a {
-  font-weight: bold;
-  color: #4caf50;
-  text-decoration: none;
-}
-
-.tab-content a:hover {
-  text-decoration: underline;
-}
+  /* Pestaña lateral */
+.wa-tab {
+  width: 60px;
+  height: 60px;
+  background-color: #4C1956;
+  border-top-left-radius: 20px;
   
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.wa-tab img {
+  width: 28px;
+  height: 28px;
+  filter: invert(1); /* lo vuelve blanco sobre fondo verde */
+  padding-right: 15px;
+}
+/* Contenido que se desliza */
+.wa-content {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 15px 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  border-bottom-right-radius: 0px;
+}
+
+/* Texto mensaje */
+.wa-tooltip {
+  font-size: 14px;
+  color: #333;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+/* Botón WhatsApp */
+.wa-button {
+  background-color: #4C1956;;
+  border-radius: 50%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+  will-change: transform;
+  transform-origin: center center;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px 10px rgba(37, 211, 102, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+
 </style>
 </head>
 <body>
- 
+ <div id="wa-slidebox">
+  <div class="wa-tab" id="wa-toggle">  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="WhatsApp"></div>
 <div class="grid">
   <div class="col down">
     <div class="rect filled"></div>
@@ -355,14 +373,7 @@
 <button class="btn-comprar" onclick="comprarCreditos()">Comprar Créditos</button>
 
 </div>
- <!-- Botón flotante con el link -->
-<div class="floating-tab" id="userTab">
-  <button id="toggleTab">🌐 Mi sitio</button>
-  <div class="tab-content" id="tabContent">
-    <p>Tu sitio es:</p>
-    <a id="userSiteLink" target="_blank">www.turnox.pro/<span id="usernameLink"></span></a>
-  </div>
-</div>
+ 
   
 <!-- Barra inferior -->
   <div class="bottom-nav">
@@ -490,19 +501,14 @@ document.querySelectorAll(".nav-item").forEach(item => {
 });
 </script>
 
-  <script>
- document.addEventListener("DOMContentLoaded", () => {
-  const storedUsername = localStorage.getItem("username");
-  if (storedUsername) {
-    document.getElementById("usernameLink").innerText = storedUsername;
-    document.getElementById("userSiteLink").href = `https://turnox.pro/${storedUsername}`;
-  }
+ <script>
+  const waBox = document.getElementById('wa-slidebox');
+  const waToggle = document.getElementById('wa-toggle');
 
-  document.getElementById("toggleTab").addEventListener("click", () => {
-    const tabContent = document.getElementById("tabContent");
-    tabContent.style.display = (tabContent.style.display === "block") ? "none" : "block";
-  });
+  document.getElementById('wa-toggle').addEventListener('click', () => {
+  document.getElementById('wa-slidebox').classList.toggle('open');
 });
-  </script>
+    
+</script>
 </body>
 </html>
