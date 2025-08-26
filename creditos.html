@@ -116,9 +116,10 @@
   <br><br>
   <button onclick="comprarCreditos()">💳 Comprar Créditos</button>
   <button onclick="volverPanel()">⬅ Volver</button>
+    <a href="" class="nav-item" id="btnSitio"><i class="fa fa-home"></i><span>Sitio</span></a>
 </div>
 <div class="bottom-nav">
-  <a href="" class="nav-item" id="btnSitio"><i class="fa fa-home"></i><span>Sitio</span></a>
+  
   <a href="" class="nav-item active" id="btnCreditos"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
   <a href="" class="nav-item" id="btnConfig"><i class="fa fa-calendar"></i><span>Configuración</span></a>
   <a href="" class="nav-item" id="btnClientes"><i class="fa fa-user"></i><span>Clientes</span></a>
@@ -169,51 +170,47 @@ init({
 });
 </script>
 
-  <script>
-   // Obtener userId y username (según lo que tengas guardado)
+ <script>
   const params = new URLSearchParams(window.location.search);
   const userId = params.get("userId") || localStorage.getItem("userId");
-  const username = params.get("username") || localStorage.getItem("username") || "demo";
+  const username = params.get("username") || localStorage.getItem("username");
 
-  // Asegurar que queden guardados
-  if (userId) localStorage.setItem("userId", userId);
-  if (username) localStorage.setItem("username", username);
-
-  const params = new URLSearchParams(window.location.search);
-const userId = params.get("userId") || localStorage.getItem("userId");
-const username = params.get("username") || localStorage.getItem("username") || "demo";
-
-// Guardar en localStorage
-if (userId) localStorage.setItem("userId", userId);
-if (username) localStorage.setItem("username", username);
- 
-  </script>
-  <script>
-    // Setear links
-document.getElementById("btnSitio").href     = `panel.html?username=${username}&userId=${userId}`;
-document.getElementById("btnCreditos").href  = `creditos.html?username=${username}&userId=${userId}`;
-document.getElementById("btnConfig").href    = `configuracion.html?username=${username}&userId=${userId}`;
-document.getElementById("btnClientes").href  = `clientes.html?username=${username}&userId=${userId}`;
-document.getElementById("btnTurnos").href    = `turnos.html?username=${username}&userId=${userId}`;
-    // Logout
-document.getElementById("btnLogout").addEventListener("click", (e) => {
-  e.preventDefault();
-  localStorage.removeItem("username");
-  localStorage.removeItem("userId");
-  window.location.href = "index.html";
-});
-
-    // Marcar botón activo según la página actual
-const currentPage = window.location.pathname.split("/").pop(); 
-const navItems = document.querySelectorAll(".nav-item");
-
-navItems.forEach(item => {
-  const linkPage = item.href.split("/").pop().split("?")[0]; 
-  if (linkPage === currentPage) {
-    navItems.forEach(i => i.classList.remove("active"));
-    item.classList.add("active");
+  // Si no hay sesión → volver a login
+  if (!userId || !username) {
+    window.location.href = "index.html";
   }
-});
-  </script>
+
+  // Guardar en localStorage
+  localStorage.setItem("userId", userId);
+  localStorage.setItem("username", username);
+
+  // Setear links de navegación
+  document.getElementById("btnSitio").href     = `perfil.html?username=${username}&userId=${userId}`;
+  document.getElementById("btnCreditos").href  = `creditos.html?username=${username}&userId=${userId}`;
+  document.getElementById("btnConfig").href    = `configuracion.html?username=${username}&userId=${userId}`;
+  document.getElementById("btnClientes").href  = `clientes.html?username=${username}&userId=${userId}`;
+  document.getElementById("btnTurnos").href    = `turnos.html?username=${username}&userId=${userId}`;
+
+  // Logout
+  document.getElementById("btnLogout").addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+    window.location.href = "index.html";
+  });
+
+  // Marcar botón activo según la página actual
+  const currentPage = window.location.pathname.split("/").pop();
+  const navItems = document.querySelectorAll(".nav-item");
+
+  navItems.forEach(item => {
+    const linkPage = item.href.split("/").pop().split("?")[0];
+    if (linkPage === currentPage) {
+      navItems.forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+    }
+  });
+</script>
+
 </body>
 </html>
