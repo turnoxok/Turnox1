@@ -9,116 +9,324 @@
   <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-   <style>
-    /* Copia de estilos de index.html */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%;
-      font-family: "Montserrat", sans-serif;
-      background-color: #533482;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container { text-align: center; color: #fff; }
-    .logo {
-      font-size: 3rem;
-      font-weight: 700;
-      margin-bottom: -2px;
-      letter-spacing: -2px;
-      position: relative;
-      display: inline-block;
-      color: transparent;
-    }
-    .logo::before {
-      content: "TurnoX";
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.9), transparent);
-      background-size: 200% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shine 5s infinite linear;
-    }
-    @keyframes shine {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
+ <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: "Montserrat", sans-serif;
+    background-color: #533482;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      width: 100%;
-      max-width: 500px;
-      background: #1c1c1c;
-      border-top: 1px solid #ffffff25;
-      padding: 10px 0;
-      z-index: 1000;
-    }
+  .container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    color: #fff;
+  }
 
-    .nav-item {
-      flex: 1;
-      text-align: center;
-      text-decoration: none;
-      color: #fff;
-      font-size: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
+  /* Usuario arriba izquierda */
+  .user-pill {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    background: #ffffff25;
+    border: 1px solid #ffffff40;
+    font-weight: 500;
+  }
 
-    .nav-item i {
-      font-size: 20px;
-      padding: 8px;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-    }
+  /* Créditos centrados */
+  .creditos-display {
+    text-align: center;
+    margin: 40px 0 20px;
+  }
+  .creditos-display svg {
+    display: block;
+    margin: 0 auto 10px;
+    width: 40px;
+    height: 40px;
+  }
+  .creditos-display span {
+    font-size: 24px;
+    font-weight: 600;
+  }
 
-    .nav-item span {
-      font-size: 12px;
-      transition: color 0.3s ease;
-    }
+  /* Control sumar/restar */
+  .creditos-control {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0 10px;
+  }
+  .creditos-control button {
+    background: none;
+    border: 1px solid #ffffff40;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .creditos-control span {
+    font-size: 22px;
+    font-weight: 600;
+  }
 
-    /* Estado activo */
-    .nav-item.active i {
-      background: #25213C;
-      color: #5F48D7;
-      transform: scale(1.1);
-    }
+  /* Valor a pagar */
+  .valor {
+    text-align: center;
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 20px;
+  }
 
-    .nav-item.active span {
-      color: #5F48D7;
-      font-weight: 500;
-    }
+  /* Botón comprar estilo pill */
+  .btn-comprar {
+    display: block;
+    margin: 0 auto;
+    background: #ffffff25;
+    border: 1px solid #ffffff40;
+    border-radius: 999px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-comprar:hover {
+    background: #5F48D7;
+    border-color: #5F48D7;
+  }
 
-    .nav-item:hover {
-      opacity: 0.8;
-    }
-     .pill{ padding:4px 8px; border-radius:999px; font-size:12px; background:#ffffff25; border:1px solid #ffffff40 }
-  </style>
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    background: #1c1c1c;
+    border-top: 1px solid #ffffff25;
+    padding: 10px 0;
+    z-index: 1000;
+  }
+  .nav-item {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav-item i {
+    font-size: 20px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  .nav-item span {
+    font-size: 12px;
+    transition: color 0.3s ease;
+  }
+  .nav-item.active i {
+    background: #25213C;
+    color: #5F48D7;
+    transform: scale(1.1);
+  }
+  .nav-item.active span {
+    color: #5F48D7;
+    font-weight: 500;
+  }
+  .nav-item:hover { opacity: 0.8; }
+</style>
 </head>
 <body>
-  <h2 class="pill">Usuario: <span id="usernameDisplay"></span></h2>
-  <div class="container">
-    
-  <div class="logo">TurnoX</div>
   
-  <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-      <path fill="currentColor" fill-rule="evenodd" d="M17.47 8.893C18.886 8.185 19 7.577 19 7.5s-.114-.685-1.53-1.393C16.173 5.459 14.242 5 12 5s-4.173.459-5.47 1.107C5.114 6.815 5 7.423 5 7.5s.114.685 1.53 1.393C7.827 9.541 9.758 10 12 10s4.173-.459 5.47-1.107M21 7.5c0 2.485-4.03 4.5-9 4.5S3 9.985 3 7.5 7.03 3 12 3s9 2.015 9 4.5m-17 4a1 1 0 0 1 1 1c0 .137.053.327.262.573.389.457 1.196.953 2.42 1.331 1.196.37 2.686.596 4.318.596s3.123-.226 4.319-.596c1.223-.378 2.03-.874 2.42-1.331.208-.246.261-.436.261-.573a1 1 0 1 1 2 0c0 .721-.3 1.354-.738 1.869-.743.873-1.967 1.517-3.352 1.946-1.412.437-3.105.685-4.91.685s-3.498-.248-4.91-.685c-1.385-.429-2.609-1.073-3.352-1.946C3.301 13.854 3 13.22 3 12.5a1 1 0 0 1 1-1M5 17a1 1 0 1 0-2 0c0 .721.3 1.354.738 1.869.743.873 1.967 1.517 3.352 1.946 1.412.437 3.105.685 4.91.685s3.498-.248 4.91-.685c1.385-.429 2.609-1.073 3.352-1.946.437-.515.738-1.148.738-1.869a1 1 0 1 0-2 0c0 .137-.053.327-.262.573-.389.457-1.196.953-2.42 1.331-1.196.37-2.686.596-4.318.596s-3.122-.226-4.319-.596c-1.223-.378-2.03-.874-2.42-1.331C5.054 17.327 5 17.137 5 17" clip-rule="evenodd"></path>
-    </svg><span id="creditosActuales">Cargando...</span></p>
+ <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: "Montserrat", sans-serif;
+    background-color: #533482;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
 
-  <label>
-    <input type="number" id="cantidadCreditos" min="1" value="1">
-  </label>
-  <br><br>
-  <button onclick="comprarCreditos()">💳 Comprar Créditos</button>
+  .container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    color: #fff;
+  }
+
+  /* Usuario arriba izquierda */
+  .user-pill {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    background: #ffffff25;
+    border: 1px solid #ffffff40;
+    font-weight: 500;
+  }
+
+  /* Créditos centrados */
+  .creditos-display {
+    text-align: center;
+    margin: 40px 0 20px;
+  }
+  .creditos-display svg {
+    display: block;
+    margin: 0 auto 10px;
+    width: 40px;
+    height: 40px;
+  }
+  .creditos-display span {
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  /* Control sumar/restar */
+  .creditos-control {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0 10px;
+  }
+  .creditos-control button {
+    background: none;
+    border: 1px solid #ffffff40;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .creditos-control span {
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  /* Valor a pagar */
+  .valor {
+    text-align: center;
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 20px;
+  }
+
+  /* Botón comprar estilo pill */
+  .btn-comprar {
+    display: block;
+    margin: 0 auto;
+    background: #ffffff25;
+    border: 1px solid #ffffff40;
+    border-radius: 999px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-comprar:hover {
+    background: #5F48D7;
+    border-color: #5F48D7;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    background: #1c1c1c;
+    border-top: 1px solid #ffffff25;
+    padding: 10px 0;
+    z-index: 1000;
+  }
+  .nav-item {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav-item i {
+    font-size: 20px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  .nav-item span {
+    font-size: 12px;
+    transition: color 0.3s ease;
+  }
+  .nav-item.active i {
+    background: #25213C;
+    color: #5F48D7;
+    transform: scale(1.1);
+  }
+  .nav-item.active span {
+    color: #5F48D7;
+    font-weight: 500;
+  }
+  .nav-item:hover { opacity: 0.8; }
+</style>
+
+<div class="container">
+  <!-- Usuario -->
+  <h2 class="user-pill">Usuario: <span id="usernameDisplay"></span></h2>
+
+  <!-- Créditos -->
+  <div class="creditos-display">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M17.47 8.893C18.886 8.185 19 7.577 19 7.5s-.114-.685-1.53-1.393C16.173 5.459 14.242 5 12 5s-4.173.459-5.47 1.107C5.114 6.815 5 7.423 5 7.5s.114.685 1.53 1.393C7.827 9.541 9.758 10 12 10s4.173-.459 5.47-1.107"/>
+    </svg>
+    <span id="creditosActuales">Cargando...</span>
+  </div>
+
+  <!-- Control sumar/restar -->
+  <div class="creditos-control">
+    <button onclick="cambiarCantidad(-1)">-</button>
+    <span id="cantidadCreditos">1</span>
+    <button onclick="cambiarCantidad(1)">+</button>
+  </div>
+
+  <!-- Valor -->
+  <div class="valor">Valor a pagar: $<span id="valorPagar">0</span></div>
+
+  <!-- Botón comprar -->
+  <button class="btn-comprar" onclick="comprarCreditos()">💳 Comprar Créditos</button>
+</div>
+
   
    
 </div>
