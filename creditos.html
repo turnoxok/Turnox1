@@ -235,7 +235,7 @@ function comprarCreditos() {
     .then(r => r.json())
     .then(data => {
       if (data.url) {
-        window.open(data.url, "_blank"); // abre Mercado Pago
+        window.location.href = data.url; // abre Mercado Pago
       } else {
         alert("Error al generar link de pago");
       }
