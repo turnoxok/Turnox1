@@ -62,32 +62,41 @@
 </head>
 <body>
   <div class="container">
-    <div class="logo">TurnoX</div>
-    <a href="#" class="btn" id="btnUsername">Mi Sitio</a>
-    <a href="#" class="btn" id="btnConfig">Configuración Turnos</a>
-    <a href="#" class="btn" id="btnCreditos">Créditos</a>
-    <a href="#" class="btn" id="btnClientes">Clientes</a>
-    <a href="" class="btn" id="btnPerfil">Perfil</a>
-    <a href="#" class="btn" id="btnTurnos">Mis Turnos</a>
-    <a href="#" class="btn" id="btnLogout">Cerrar Sesión</a>
-  </div>
+  <div class="logo">TurnoX</div>
+  <a href="" class="btn" id="btnUsername">Mi Sitio</a>
+  <a href="" class="btn" id="btnConfig">Configuración Turnos</a>
+  <a href="" class="btn" id="btnCreditos">Créditos</a>
+  <a href="" class="btn" id="btnClientes">Clientes</a>
+  <a href="" class="btn" id="btnPerfil">Perfil</a>
+  <a href="" class="btn" id="btnTurnos">Mis Turnos</a>
+  <a href="" class="btn" id="btnLogout">Cerrar Sesión</a>
+</div>
 
   <script>
-    // Obtener username desde localStorage o query param (según tu login)
-    const username = localStorage.getItem("username") || "demo";
+   // Obtener userId y username (según lo que tengas guardado)
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("userId") || localStorage.getItem("userId");
+  const username = params.get("username") || localStorage.getItem("username") || "demo";
 
-    document.getElementById("btnUsername").href = `${username}`;
-    document.getElementById("btnConfig").href = `configuracion.html?username=${username}`;
-    document.getElementById("btnCreditos").href = `creditos.html?username=${username}`;
-    document.getElementById("btnClientes").href = `clientes.html?username=${username}`;
-    document.getElementById("btnPerfil").href = `perfil.html?userId=${userId}`;
-    document.getElementById("btnTurnos").href = `turnos.html?username=${username}`;
-    
+  // Asegurar que queden guardados
+  if (userId) localStorage.setItem("userId", userId);
+  if (username) localStorage.setItem("username", username);
 
-    document.getElementById("btnLogout").addEventListener("click", () => {
-      localStorage.removeItem("username"); // limpiar sesión
-      window.location.href = "index.html";
-    });
+  // Setear links
+  document.getElementById("btnConfig").href   = `configuracion.html?username=${username}`;
+  document.getElementById("btnCreditos").href = `creditos.html?username=${username}`;
+  document.getElementById("btnClientes").href = `clientes.html?username=${username}`;
+  document.getElementById("btnPerfil").href   = `perfil.html?userId=${userId}`;
+  document.getElementById("btnUsername").href = `${username}`;
+  document.getElementById("btnTurnos").href   = `turnos.html?username=${username}`;
+
+  // Logout
+  document.getElementById("btnLogout").addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+    window.location.href = "index.html";
+  });
   </script>
 </body>
 </html>
