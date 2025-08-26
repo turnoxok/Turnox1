@@ -236,9 +236,9 @@
 .floating-tab {
   position: fixed;
   top: 15%;
-  right: 0px;
+  right: 0;
   text-align: center;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .floating-tab button {
@@ -247,22 +247,31 @@
   border: none;
   padding: 10px 15px;
   border-top-left-radius: 20px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-  border-bottom-left-radius: 0px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
   cursor: pointer;
   font-weight: bold;
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
-.floating-tab button:hover { background: #25213C50; }
+.floating-tab button:hover {
+  background: #25213C50;
+}
 
-/* Contenido del tab */
+/* Contenido oculto del tab */
 .tab-content {
-  margin-top: 10px;
+  max-height: 0;
+  overflow: hidden;
   background: #25213C50;
   border: 1px solid #5F48D750;
-  border-radius: 0px;
+  border-radius: 0;
+  padding: 0 10px;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+}
+
+.tab-content.open {
+  max-height: 200px;
   padding: 10px;
 }
 
@@ -278,20 +287,23 @@
   text-decoration: none;
 }
 
-.tab-content a:hover { text-decoration: underline; }
+.tab-content a:hover {
+  text-decoration: underline;
+}
 
 
 </style>
 </head>
 <body>
 <!-- Botón flotante -->
-<div class="floating-tab" id="floatingTab">
-  <button type="button" onclick="toggleUserTab()">Mi sitio</button>
-  <div class="tab-content" id="tabContent" hidden>
+<div class="floating-tab">
+  <button onclick="toggleUserTab()">Mi sitio</button>
+  <div class="tab-content" id="tabContent">
     <p>Tu sitio es:</p>
-    <a id="userLink" href="#" target="_blank" rel="noopener">—</a>
+    <a id="userLink" href="#" target="_blank">https://turnox.pro/username</a>
   </div>
 </div>
+
 
 
 
@@ -496,33 +508,19 @@ document.querySelectorAll(".nav-item").forEach(item => {
 
 <script>
 <script>
-(function () {
-  function setUserLink() {
-    var u = localStorage.getItem("username");
-    var a = document.getElementById("userLink");
-    if (!a) return;
+  function toggleUserTab() {
+    const content = document.getElementById("tabContent");
+    content.classList.toggle("open");
+  }
 
-    if (u) {
-      a.href = "https://turnox.pro/" + encodeURIComponent(u);
-      a.textContent = "https://turnox.pro/" + u;
-    } else {
-      a.removeAttribute("href");
-      a.textContent = "Iniciá sesión para ver tu sitio";
+  document.addEventListener("DOMContentLoaded", () => {
+    const username = localStorage.getItem("username"); // 👈 acá trae el username
+    if (username) {
+      const link = document.getElementById("userLink");
+      link.href = "https://turnox.pro/" + encodeURIComponent(username);
+      link.textContent = "https://turnox.pro/" + username;
     }
-  }
-
-  // Exponer la función para el botón
-  window.toggleUserTab = function () {
-    var box = document.getElementById("tabContent");
-    if (box) box.hidden = !box.hidden;
-  };
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setUserLink);
-  } else {
-    setUserLink();
-  }
-})();
+  });
 </script>
 
 
