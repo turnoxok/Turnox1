@@ -189,6 +189,16 @@
 
  
    <script>
+
+     const storedUserId = localStorage.getItem("userId");
+const storedUsername = localStorage.getItem("username");
+
+if (!storedUserId || !storedUsername) {
+  window.location.href = "index.html"; // sin sesión => login
+}
+
+// Ahora podés usar storedUsername y storedUserId en tu perfil
+document.getElementById("usernameDisplay").innerText = storedUsername;
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("userId");
     const logoInput = document.getElementById("logoUrl");
