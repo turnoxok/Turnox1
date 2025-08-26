@@ -128,8 +128,8 @@
 }
 
 .card {
-  width: 90%;              /* ocupa 90% en celular */
-  max-width: 500px;        /* pero no más de 500px en escritorio */
+  width: 90%;              /* 90% de la pantalla */
+  max-width: 500px;
   background: #ffffff15;
   padding: 30px 20px;
   border-radius: 16px;
@@ -137,6 +137,23 @@
   border: 1px solid #ffffff40;
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
   text-align: center;
+  display: flex;           /* nuevo */
+  flex-direction: column;  /* nuevo */
+  align-items: center;     /* nuevo */
+  box-sizing: border-box;  /* asegura que padding no rompa ancho */
+}
+
+/* Input grande centrado */
+.card input[type="url"] {
+  width: 100%;             /* ocupa todo el ancho de la card */
+  max-width: 100%;         /* no se escapa */
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 20px;
+  outline: none;
+  box-sizing: border-box;  /* clave para que no se desborde */
 }
 
 /* Título */
@@ -146,16 +163,7 @@
   color: #fff;
 }
 
-/* Input grande */
-.card input[type="url"] {
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 12px;
-  border: none;
-  margin-bottom: 20px;
-  outline: none;
-}
+
 
 /* Botón grande */
 .card button {
@@ -182,6 +190,60 @@
   border-radius: 12px;
   margin-top: 20px;
 }
+
+    #status {
+  font-family: "Montserrat", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 15px;
+  color: #fff;
+  text-align: center;
+}
+
+/* Cuando es éxito */
+#status.success {
+  color: #4CAF50; /* verde brillante */
+  font-size: 20px;
+  font-weight: 700;
+  background: #ffffff20;
+  padding: 12px 18px;
+  border-radius: 12px;
+  display: inline-block;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  animation: pop 0.4s ease;
+}
+
+/* Cuando es error */
+#status.error {
+  color: #ff4c4c;
+  font-weight: 600;
+  background: #ff4c4c20;
+  padding: 10px 16px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+/* Animación de éxito */
+@keyframes pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+#status a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  background: #5F48D7;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+#status a:hover {
+  background: #4CAF50;
+  color: #fff;
+}
   </style>
 </head>
 <body>
@@ -203,7 +265,7 @@
 
  <div class="container">
   <div class="card">
-    <h2>Guardar Logo Externo</h2>
+    <h2>Publicá tu logo!</h2>
     <input type="url" id="logoUrl" placeholder="Pega aquí el link del logo" required>
     <button id="saveBtn" disabled>Guardar Logo</button>
     <div class="preview" id="preview"></div>
@@ -248,7 +310,7 @@ const preview = document.getElementById("preview");
       const logoUrl = logoInput.value.trim();
       if (!logoUrl || !userId) return;
 
-      status.innerText = "⏳ Guardando logo...";
+      status.innerText = " Guardando logo...";
 
       try {
         const res = await fetch("https://script.google.com/macros/s/AKfycby_-LL7wZkEg9Kzm3e5Y2yCb9nNdSOPznHT4TpRciiJcdWvSGgvbqZHVKKZtmZ98KR7_Q/exec", {
@@ -262,16 +324,19 @@ const preview = document.getElementById("preview");
 
         const data = await res.json();
 
-        if (data.status === "ok") {
-          status.innerHTML = `✅ Logo guardado: <a href="${data.url}" target="_blank">Ver logo</a>`;
-        } else {
-          status.innerText = "❌ Error: " + data.msg;
-        }
-      } catch (err) {
-        console.error(err);
-        status.innerText = "❌ Error de conexión con Apps Script";
-      }
-    });
+       if (data.status === "ok") {
+  status.className = "success";
+  status.innerHTML = `
+     Listo! Mirá cómo queda tu sitio personalizado:<br>
+    <a href="https://turnox.pro/${storedUsername}" target="_blank">
+      turnox.pro/${storedUsername}
+    </a>
+  `;
+} else {
+  status.className = "error";
+  status.innerText = "❌ Error: " + data.msg;
+}
+
   </script>
   
 </body>
