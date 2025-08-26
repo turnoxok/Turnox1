@@ -83,7 +83,6 @@
     <p id="status"></p>
   </div>
 
-
   <script>
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("userId");
@@ -96,7 +95,7 @@
       status.innerText = "❌ Falta userId en la URL";
     }
 
-    // Habilitar botón si hay texto
+    // Habilitar botón y preview
     logoInput.addEventListener("input", () => {
       saveBtn.disabled = !logoInput.value.trim();
       if (logoInput.value.trim()) {
