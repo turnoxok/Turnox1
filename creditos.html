@@ -1,15 +1,112 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Créditos</title>
-<style>
-  body { font-family: Arial; padding:20px; }
-  button { padding:8px 15px; margin:5px; cursor:pointer; }
-  input { padding:5px; width:80px; text-align:center; }
-</style>
+  <meta charset="UTF-8" />
+  <title>Panel TurnoX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
+  <!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    /* Copia de estilos de index.html */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: "Montserrat", sans-serif;
+      background-color: #533482;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container { text-align: center; color: #fff; }
+    .logo {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: -2px;
+      letter-spacing: -2px;
+      position: relative;
+      display: inline-block;
+      color: transparent;
+    }
+    .logo::before {
+      content: "TurnoX";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.9), transparent);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 5s infinite linear;
+    }
+    @keyframes shine {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      max-width: 500px;
+      background: #1c1c1c;
+      border-top: 1px solid #ffffff25;
+      padding: 10px 0;
+      z-index: 1000;
+    }
+
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-item i {
+      font-size: 20px;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item span {
+      font-size: 12px;
+      transition: color 0.3s ease;
+    }
+
+    /* Estado activo */
+    .nav-item.active i {
+      background: #25213C;
+      color: #5F48D7;
+      transform: scale(1.1);
+    }
+
+    .nav-item.active span {
+      color: #5F48D7;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      opacity: 0.8;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+  <div class="logo">TurnoX</div>
   <h2>Usuario: <span id="usernameDisplay"></span></h2>
   <p>Créditos actuales: <span id="creditosActuales">Cargando...</span></p>
 
@@ -19,8 +116,17 @@
   <br><br>
   <button onclick="comprarCreditos()">💳 Comprar Créditos</button>
   <button onclick="volverPanel()">⬅ Volver</button>
-
-<script>
+</div>
+<div class="bottom-nav">
+  <a href="#" class="nav-item active" id="btnCreditos"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
+    <a href="#" class="nav-item" id="btnUsername"><i class="fa fa-home"></i><span>Sitio</span></a>
+    <a href="#" class="nav-item" id="btnConfig"><i class="fa fa-calendar"></i><span>Configuración</span></a>
+    
+    <a href="#" class="nav-item" id="btnClientes"><i class="fa fa-user"></i><span>Clientes</span></a>
+    <a href="#" class="nav-item" id="btnTurnos"><i class="fa fa-cog"></i><span>Ajustes</span></a>
+  <a href="#" class="nav-item" id="btnLogout"><i class="fa fa-cog"></i><span>Salir</span></a>
+  </div>
+  <script>
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxRrsrpMXtPK8LYOqCYi6hipptvhfoQjyGehItpY1l5lTJHRzSyv723_y2LuO2fsJkt/exec"; // URL de tu Apps Script
 
 let username, userId;
@@ -63,5 +169,41 @@ init({
   userId: urlParams.get('userId')
 });
 </script>
+
+  <script>
+   // Obtener userId y username (según lo que tengas guardado)
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("userId") || localStorage.getItem("userId");
+  const username = params.get("username") || localStorage.getItem("username") || "demo";
+
+  // Asegurar que queden guardados
+  if (userId) localStorage.setItem("userId", userId);
+  if (username) localStorage.setItem("username", username);
+
+  // Setear links
+  document.getElementById("btnConfig").href   = `configuracion.html?username=${username}`;
+  document.getElementById("btnCreditos").href = `creditos.html?username=${username}`;
+  document.getElementById("btnClientes").href = `clientes.html?username=${username}`;
+  document.getElementById("btnPerfil").href   = `perfil.html?userId=${userId}`;
+  document.getElementById("btnUsername").href = `${username}`;
+  document.getElementById("btnTurnos").href   = `turnos.html?username=${username}`;
+
+  // Logout
+  document.getElementById("btnLogout").addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+    window.location.href = "index.html";
+  });
+  </script>
+  <script>
+    const items = document.querySelectorAll(".nav-item");
+    items.forEach(item => {
+      item.addEventListener("click", () => {
+        items.forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+      });
+    });
+  </script>
 </body>
 </html>
