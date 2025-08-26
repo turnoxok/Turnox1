@@ -266,6 +266,11 @@
   border-radius: 0px;
   padding: 10px;
   background: #25213C50;
+  transition: max-height 0.5s ease, padding 0.5s ease; /* 👈 animación */
+  display: block;
+  position: absolute;
+  right: 100%; 
+  white-space: nowrap;
   
 }
 
@@ -292,7 +297,7 @@
 <div class="floating-tab" id="userTab">
   <button id="toggleTab"> Mi sitio</button>
   <div class="tab-content" id="tabContent">
-    <p>Tu sitio es:</p>
+    
     <a id="userSiteLink" target="_blank">www.turnox.pro/<span id="usernameLink"></span></a>
   </div>
 </div>
