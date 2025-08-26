@@ -338,7 +338,7 @@
     <a href="#" class="nav-item" id="btnLogout"><i class="fa fa-sign-out-alt"></i><span>Salir</span></a>
   </div>
 
-  <script>
+    <script>
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxRrsrpMXtPK8LYOqCYi6hipptvhfoQjyGehItpY1l5lTJHRzSyv723_y2LuO2fsJkt/exec"; // URL de tu Apps Script
 
 let username, userId;
@@ -357,8 +357,8 @@ function init(data) {
 }
 
 function comprarCreditos() {
-    alert(`Compraste ${cantidad} créditos por $${cantidad * precioUnitario}`);
-  }
+  const cantidad = parseInt(document.getElementById("cantidadCreditos").value, 10);
+  if (!cantidad || cantidad <= 0) return alert("Cantidad inválida");
 
   // Crear preferencia
   fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}&cantidad=${cantidad}`)
@@ -372,20 +372,8 @@ function comprarCreditos() {
     });
 }
 
+function volverPanel() { window.history.back(); }
 
-let cantidad = 1;
-  const precioUnitario = 100; // 💲 Cambia el precio de cada crédito aquí
-
-  function cambiarCantidad(delta) {
-    cantidad = Math.max(1, cantidad + delta);
-    document.getElementById("cantidadCreditos").innerText = cantidad;
-    document.getElementById("valorPagar").innerText = cantidad * precioUnitario;
-  }
-
-  // Inicializa el valor
-  document.getElementById("valorPagar").innerText = cantidad * precioUnitario;
-
-  
 // Inicializa
 const urlParams = new URLSearchParams(window.location.search);
 init({
@@ -393,6 +381,9 @@ init({
   userId: urlParams.get('userId')
 });
 </script>
+  
+
+
 
  <script>
   
