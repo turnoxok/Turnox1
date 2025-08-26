@@ -45,22 +45,7 @@
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
-    .btn {
-      display: block;
-      width: 250px;
-      padding: 15px 0;
-      margin: 10px auto;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #533482;
-      background-color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background-color 0.3s, transform 0.2s;
-    }
-    .btn:hover { background-color: #f2f2f2; transform: translateY(-2px); }
+    
 
     .bottom-nav {
       position: fixed;
@@ -122,21 +107,69 @@
 <body>
   <div class="container">
   <div class="logo">TurnoX</div>
-  <a href="" class="btn" id="btnUsername">Mi Sitio</a>
-  <a href="" class="btn" id="btnConfig">Configuración Turnos</a>
-  <a href="" class="btn" id="btnCreditos">Créditos</a>
-  <a href="" class="btn" id="btnClientes">Clientes</a>
-  <a href="" class="btn" id="btnPerfil">Perfil</a>
-  <a href="" class="btn" id="btnTurnos">Mis Turnos</a>
-  <a href="" class="btn" id="btnLogout">Cerrar Sesión</a>
+  <h2>Usuario: <span id="usernameDisplay"></span></h2>
+  <p>Créditos actuales: <span id="creditosActuales">Cargando...</span></p>
+
+  <label>Cantidad de créditos:
+    <input type="number" id="cantidadCreditos" min="1" value="1">
+  </label>
+  <br><br>
+  <button onclick="comprarCreditos()">💳 Comprar Créditos</button>
+  <button onclick="volverPanel()">⬅ Volver</button>
 </div>
 <div class="bottom-nav">
-    <a href="#" class="nav-item active"><i class="fa fa-home"></i><span>Sitio</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-calendar"></i><span>Agenda</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-plus-circle"></i><span>Nuevo</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-user"></i><span>Perfil</span></a>
-    <a href="#" class="nav-item"><i class="fa fa-cog"></i><span>Ajustes</span></a>
+  <a href="#" class="nav-item active" id="btnCreditos"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
+    <a href="#" class="nav-item" id="btnUsername"><i class="fa fa-home"></i><span>Sitio</span></a>
+    <a href="#" class="nav-item" id="btnConfig"><i class="fa fa-calendar"></i><span>Configuración</span></a>
+    
+    <a href="#" class="nav-item" id="btnClientes"><i class="fa fa-user"></i><span>Clientes</span></a>
+    <a href="#" class="nav-item" id="btnTurnos"><i class="fa fa-cog"></i><span>Ajustes</span></a>
+  <a href="#" class="nav-item" id="btnLogout"><i class="fa fa-cog"></i><span>Salir</span></a>
   </div>
+  <script>
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxRrsrpMXtPK8LYOqCYi6hipptvhfoQjyGehItpY1l5lTJHRzSyv723_y2LuO2fsJkt/exec"; // URL de tu Apps Script
+
+let username, userId;
+
+function init(data) {
+  username = data.username;
+  userId = data.userId;
+  document.getElementById("usernameDisplay").innerText = username;
+
+  // Trae créditos actuales
+  fetch(`${WEBAPP_URL}?action=getCreditos&username=${encodeURIComponent(username)}`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("creditosActuales").innerText = data.creditos;
+    });
+}
+
+function comprarCreditos() {
+  const cantidad = parseInt(document.getElementById("cantidadCreditos").value, 10);
+  if (!cantidad || cantidad <= 0) return alert("Cantidad inválida");
+
+  // Crear preferencia
+  fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}&cantidad=${cantidad}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.url) {
+        window.open(data.url, "_blank"); // abre Mercado Pago
+      } else {
+        alert("Error al generar link de pago");
+      }
+    });
+}
+
+function volverPanel() { window.history.back(); }
+
+// Inicializa
+const urlParams = new URLSearchParams(window.location.search);
+init({
+  username: urlParams.get('username'),
+  userId: urlParams.get('userId')
+});
+</script>
+
   <script>
    // Obtener userId y username (según lo que tengas guardado)
   const params = new URLSearchParams(window.location.search);
@@ -174,3 +207,5 @@
   </script>
 </body>
 </html>
+
+
