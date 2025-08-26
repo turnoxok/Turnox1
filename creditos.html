@@ -174,21 +174,22 @@ init({
  <script>
   function volverPanel() { window.history.back(); }
 
-    // --- Protege acceso ---
-    const params = new URLSearchParams(window.location.search);
-    const storedUserId = params.get("userId") || localStorage.getItem("userId");
-    const storedUsername = params.get("username") || localStorage.getItem("username");
+   // --- Protege acceso ---
+// La sesión solo es válida si existe en localStorage
+const storedUserId = localStorage.getItem("userId");
+const storedUsername = localStorage.getItem("username");
 
-    if (!storedUserId || !storedUsername) {
-      window.location.href = "index.html";
-    }
+if (!storedUserId || !storedUsername) {
+  // No hay sesión => redirigir al login
+  window.location.href = "index.html";
+}
 
-    userId = storedUserId;
-    username = storedUsername;
-    localStorage.setItem("userId", userId);
-    localStorage.setItem("username", username);
+// Ahora usamos lo del localStorage (no confiamos en los query params)
+userId = storedUserId;
+username = storedUsername;
 
-    init({ username, userId });
+// Inicializamos
+init({ username, userId });
 
     // --- Links de navegación ---
     document.getElementById("btnCreditos").href = `creditos.html?username=${username}&userId=${userId}`;
