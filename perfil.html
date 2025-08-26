@@ -5,12 +5,73 @@
   <title>Guardar Logo Externo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .card { max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; text-align: center; }
-    input[type="url"] { width: 90%; padding: 8px; margin: 15px 0; font-size: 16px; }
-    button { padding: 10px 20px; border: none; background: #28a745; color: #fff; font-size: 16px; border-radius: 5px; cursor: pointer; }
-    button:disabled { background: #999; }
-    .preview img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f7fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #fff;
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #333;
+      font-size: 1.6rem;
+    }
+    input[type="url"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      margin: 15px 0;
+      transition: border-color 0.2s;
+    }
+    input[type="url"]:focus {
+      border-color: #4CAF50;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:disabled {
+      background: #bbb;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background: #43a047;
+      transform: translateY(-1px);
+    }
+    .preview img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 15px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
@@ -21,6 +82,7 @@
     <div class="preview" id="preview"></div>
     <p id="status"></p>
   </div>
+
 
   <script>
     const params = new URLSearchParams(window.location.search);
@@ -65,12 +127,15 @@
 
         if (data.status === "ok") {
           status.innerHTML = `✅ Logo guardado: <a href="${data.url}" target="_blank">Ver logo</a>`;
+          status.style.color = "#2e7d32";
         } else {
           status.innerText = "❌ Error: " + data.msg;
+          status.style.color = "#c62828";
         }
       } catch (err) {
         console.error(err);
         status.innerText = "❌ Error de conexión con Apps Script";
+        status.style.color = "#c62828";
       }
     });
   </script>
