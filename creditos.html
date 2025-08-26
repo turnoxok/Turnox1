@@ -230,7 +230,7 @@
   100% { transform: translateY(-150vh); opacity: 0; }
 }
 
- /* Botón flotante */
+/* Botón flotante */
 .floating-tab {
   position: fixed;
   top: 15%;
@@ -261,22 +261,22 @@
 /* Contenido oculto del tab */
 .tab-content {
   position: absolute;
-  right: 100%;          /* 👈 lo ubica a la izquierda del botón */
+  right: 100%;          /* 👈 aparece a la izquierda del botón */
   top: 0;
   background: #25213C50;
   border: 1px solid #5F48D750;
   border-radius: 0px;
   padding: 10px;
-  white-space: nowrap;  /* 👈 evita que el texto salte de línea */
+  white-space: nowrap;
   overflow: hidden;
-  width: 0;             /* 👈 inicia cerrado */
+  width: 0;             /* 👈 cerrado por defecto */
   opacity: 0;
   transition: width 0.4s ease, opacity 0.4s ease;
 }
 
 /* Cuando está abierto */
 .floating-tab.open .tab-content {
-  width: 200px;   /* 👈 ancho visible del panel */
+  width: 220px;  /* 👈 ancho visible del panel */
   opacity: 1;
 }
 
@@ -297,15 +297,15 @@
 }
 
 
+
 </style>
 </head>
 <body>
-<!-- Botón flotante con el link -->
-<div class="floating-tab" id="userTab">
-  <button id="toggleTab"> Mi sitio</button>
-  <div class="tab-content" id="tabContent">
-    
-    <a id="userSiteLink" target="_blank">www.turnox.pro/<span id="usernameLink"></span></a>
+<div class="floating-tab" id="floatingTab">
+  <button id="toggleTab">Mi Sitio</button>
+  <div class="tab-content">
+    <p>Tu sitio es:</p>
+    <a id="userLink" href="#" target="_blank">https://turnox.pro/username</a>
   </div>
 </div>
 
@@ -508,21 +508,19 @@ document.querySelectorAll(".nav-item").forEach(item => {
 });
 </script>
 
- <script>
-  document.addEventListener("DOMContentLoaded", () => {
-  const storedUsername = localStorage.getItem("username");
-  if (storedUsername) {
-    document.getElementById("usernameLink").innerText = storedUsername;
-    document.getElementById("userSiteLink").href = `https://turnox.pro/${storedUsername}`;
-  }
-
-  document.getElementById("toggleTab").addEventListener("click", () => {
-    const tabContent = document.getElementById("tabContent");
-    tabContent.style.display = (tabContent.style.display === "block") ? "none" : "block";
-  });
+<script>
+document.getElementById("toggleTab").addEventListener("click", () => {
+  document.getElementById("floatingTab").classList.toggle("open");
 });
 
-    
+// 🔗 Setear el link dinámicamente con el username del localStorage
+const storedUsername = localStorage.getItem("username");
+if (storedUsername) {
+  const link = document.getElementById("userLink");
+  link.href = `https://turnox.pro/${storedUsername}`;
+  link.textContent = `https://turnox.pro/${storedUsername}`;
+}
 </script>
+
 </body>
 </html>
