@@ -373,11 +373,19 @@ function comprarCreditos() {
 }
 
 
-function cambiarCantidad(delta) {
-  cantidad = Math.max(1, cantidad + delta);
-  document.getElementById("cantidadCreditos").innerText = cantidad;
+let cantidad = 1;
+  const precioUnitario = 100; // 💲 Cambia el precio de cada crédito aquí
+
+  function cambiarCantidad(delta) {
+    cantidad = Math.max(1, cantidad + delta);
+    document.getElementById("cantidadCreditos").innerText = cantidad;
+    document.getElementById("valorPagar").innerText = cantidad * precioUnitario;
+  }
+
+  // Inicializa el valor
   document.getElementById("valorPagar").innerText = cantidad * precioUnitario;
-}
+
+  
 // Inicializa
 const urlParams = new URLSearchParams(window.location.search);
 init({
