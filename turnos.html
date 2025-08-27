@@ -291,6 +291,9 @@ td.seleccionado {
     }
    button{  background:#25213C; color:#5F48D7; border:none; border-radius:12px; padding:12px 16px; font-weight:700; cursor:pointer; transition:.2s transform,.2s background; font-size:15px; flex:1; }
     button:hover{ transform:translateY(-2px); background:#ffffff25; color:#fff; }
+
+    
+
 </style>
 </head>
 <body>
@@ -344,7 +347,7 @@ td.seleccionado {
     <h2 class="user-pill">¡Hola! <span id="usernameDisplay"></span></h2>
     
   </div>
-<h1>Mis Turnos</h1>
+
 <div id="calendarioContainer"></div>
 <div id="ticketsContainer"></div>
 
@@ -369,8 +372,8 @@ let turnosUsuario = [];
 let turnosPorFecha = {};
 let selectedDate = new Date();
 
-async function cargarTurnosUsuario(){
-  try{
+async function cargarTurnosUsuario() {
+  try {
     const res = await fetch(`${API_URL}?action=getTurnosUsuario&username=${username}`);
     const data = await res.json();
     console.log("Respuesta API:", data);
@@ -397,8 +400,25 @@ async function cargarTurnosUsuario(){
       if(!turnosPorFecha[fechaSolo]) turnosPorFecha[fechaSolo] = [];
       turnosPorFecha[fechaSolo].push(t);
     });
+    
+    // Configurar la fecha seleccionada como hoy
+    selectedDate = new Date(); // Añadir esta línea
 
+    // Renderizar el calendario y resaltar hoy
     renderCalendario(selectedDate.getFullYear(), selectedDate.getMonth());
+    
+    // Mostrar turnos del día de hoy automáticamente
+    const hoyStr = selectedDate.toISOString().split("T")[0];
+    // Marcar la fecha en el calendario como seleccionada
+    document.querySelectorAll("#calendarioContainer td").forEach(td => {
+      if(td.dataset.fecha === hoyStr){
+        td.classList.add("seleccionado");
+      } else {
+        td.classList.remove("seleccionado");
+      }
+    });
+    // Mostrar los turnos de hoy
+    renderTickets(hoyStr);
   }catch(e){ 
     console.error(e); 
     document.getElementById("ticketsContainer").innerHTML="<p>Error al cargar turnos.</p>"; 
