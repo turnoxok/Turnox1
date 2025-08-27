@@ -89,7 +89,7 @@
   </div>
 
   <div class="actions">
-    <button id="creditosBtn">-Eliminar Profesional</button>
+    
     <button id="addProfBtn">+ Agregar Profesional</button>
   </div>
 
@@ -148,12 +148,14 @@
           <div class="actions">
             <button class="btn-edit">⚙️ Configurar Turnos</button>
             <button class="btn-danger btn-clear">🗑 Limpiar Turnos</button>
+            <button class="btn-danger btn-delete">❌ Eliminar Profesional</button>
           </div>
           <div class="editor" style="display:none"></div>
         `;
         // eventos
         box.querySelector(".btn-edit").onclick = ()=> abrirEditor(box.querySelector(".editor"), p);
         box.querySelector(".btn-clear").onclick = ()=> eliminarTurnos(p.profesionalId);
+        box.querySelector(".btn-delete").onclick = ()=> eliminarProfesional(p.profesionalId);
         cont.appendChild(box);
       });
     }
@@ -341,7 +343,27 @@
     }
 
     document.addEventListener("DOMContentLoaded", init);
+
+     async function eliminarProfesional(profesionalId){
+  if(!confirm("¿Seguro que querés eliminar este profesional y todos sus turnos?")) return;
+  const fd = new FormData();
+  fd.append("action", "eliminarProfesional");
+  fd.append("profesionalId", profesionalId);
+  try{
+    const res = await fetch(API_URL, { method:"POST", body: fd });
+    const data = await res.json();
+    if(data.status === "ok"){
+      await cargarProfesionales(); // refresca la lista
+    } else {
+      alert("No se pudo eliminar: " + (data.msg || "error"));
+    }
+  }catch(err){
+    alert("Error de conexión.");
+  }
+}
+
   </script>
+  
   
 </body>
 </html>
