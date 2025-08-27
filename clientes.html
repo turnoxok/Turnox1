@@ -114,14 +114,19 @@
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxZDCW_fq-12OWxcgxaf-_5Wp3jPpLvFLwsXQZv9E3N2i7YuFJYo22_1aA5YlFN1fcpyQ/exec";
+const storedUserId = localStorage.getItem("userId");
+const storedUsername = localStorage.getItem("username");
 
-let username = localStorage.getItem("username");
-
-if(!username){ 
-  alert("No hay usuario logueado"); 
-  window.location.href="login.html"; 
+if (!storedUserId || !storedUsername) {
+  alert("No hay usuario logueado");
+  window.location.href = "login.html"; // o index.html, pero solo uno
 }
 
+let username = storedUsername;
+  
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("who").textContent = "Usuario: " + username;
+});
 async function cargarReservas(){
   try {
     const res = await fetch(`${API_URL}?action=getTurnosUsuario&username=${username}`);
