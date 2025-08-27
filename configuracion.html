@@ -111,10 +111,7 @@
     const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
 
     // === INIT ===
-    document.getElementById("creditosBtn").onclick = () => {
-      if (!username || !userId) { alert("Debes iniciar sesión primero."); return; }
-      location.href = `/creditos.html?username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}`;
-    };
+    
     document.getElementById("addProfBtn").onclick = agregarProfesional;
 
     async function init(){
