@@ -409,6 +409,7 @@ const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzRGVtMbeFygbgrloutH
 let username, userId;
 
 function init(data) {
+   console.log("👉 init llamado con:", data); // 👈 log de qué datos llegaron
   username = data.username;
   userId = data.userId;
   document.getElementById("usernameDisplay").innerText = username;
