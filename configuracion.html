@@ -130,6 +130,16 @@
 
     function renderProfesionales(list){
       const cont = document.getElementById("profesionales");
+      if (!lista || lista.length === 0) {
+    cont.innerHTML = `
+      <div class="note" style="text-align:center; margin:20px 0; padding:15px; border-radius:12px; background:#f8f8f8;">
+        No hay profesionales creados.<br>
+        <b>Creá uno</b> para acceder a la configuración.
+      </div>
+    `;
+    return;
+  }
+      
       cont.innerHTML = "";
       list.forEach(p=>{
         const box = document.createElement("div");
