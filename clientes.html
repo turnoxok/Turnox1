@@ -57,15 +57,18 @@
 
   /* tabla */
 .table-wrapper {
-  
   margin: 20px auto;
   width: 95%;
   max-width: 1000px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  border-radius: 14px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.08); /* efecto vidrio */
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
 
 table {
   width: 100%;
@@ -113,7 +116,7 @@ tr:hover td {
     <h2 class="user-pill">¡Hola! <span id="usernameDisplay"></span></h2>
     
   </div>
-<h1>Listado de Clientes</h1>
+
 <div id="tablaReservas"></div>
 
 <script>
