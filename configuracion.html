@@ -97,7 +97,7 @@
 
   <script>
     // === CONFIG ===
-    const API_URL = "https://script.google.com/macros/s/AKfycbw8teFqvCT3yEV-L-IoIiK2Df2x7kGbfLaqoNPbkLrtWLQJZjh1VF_3NppzCNlcQ8_JiQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxZDCW_fq-12OWxcgxaf-_5Wp3jPpLvFLwsXQZv9E3N2i7YuFJYo22_1aA5YlFN1fcpyQ/exec";
 
     // === SESSION ===
     let userId = localStorage.getItem("userId");
@@ -341,23 +341,28 @@
 
     document.addEventListener("DOMContentLoaded", init);
 
-     async function eliminarProfesional(profesionalId){
+    async function eliminarProfesional(profesionalId){
   if(!confirm("¿Seguro que querés eliminar este profesional y todos sus turnos?")) return;
+
   const fd = new FormData();
   fd.append("action", "eliminarProfesional");
   fd.append("profesionalId", profesionalId);
-  try{
+  fd.append("userId", userId);   // 👈 esto faltaba
+
+  try {
     const res = await fetch(API_URL, { method:"POST", body: fd });
     const data = await res.json();
-    if(data.status === "ok"){
+    if (data.status === "ok") {
+      alert("Profesional eliminado con éxito");
       await cargarProfesionales(); // refresca la lista
     } else {
       alert("No se pudo eliminar: " + (data.msg || "error"));
     }
-  }catch(err){
+  } catch(err) {
     alert("Error de conexión.");
   }
 }
+
 
   </script>
   
