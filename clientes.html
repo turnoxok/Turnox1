@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", cargarReservas);
   }
 
   // 🔹 Definí qué campos NO querés mostrar
-  const excluir = ["extra1", "extra2", "extra3"];
+  const excluir = ["extra1", "extra2", "extra3", "username", "profesional", "profesionalId", "fecha", "hora", "telefono", "fechaNacimiento", "comentario"];
 
   // 🔹 Genero encabezados dinámicos excluyendo los no deseados
   let claves = Object.keys(turnos[0]).filter(k => !excluir.includes(k));
