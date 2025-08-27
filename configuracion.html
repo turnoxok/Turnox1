@@ -11,14 +11,14 @@
     :root{ --morado:#533482; --morado-osc:#452a7a; --claro:#F4EDFF; --gris:#e7e7e7; --texto:#2b2b2b; --ok:#18a957; --err:#d93636; --blanco:#ffffff; }
     *{box-sizing:border-box}
     body{ margin:0; padding:14px; font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--morado); color:#fff; }
-    h1{margin:0 0 10px 0; text-align:center; font-size:22px}
+    h1{font-family:Montserrat, margin:0 0 10px 0; text-align:center; font-size:22px}
     .topbar{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px}
     .note{opacity:.95; font-size:14px}
-    button{ background:#25213C; color:#5F48D7; border:none; border-radius:12px; padding:12px 16px; font-weight:700; cursor:pointer; transition:.2s transform,.2s background; font-size:15px; flex:1; }
+    button{ font-family:Montserrat, background:#25213C; color:#5F48D7; border:none; border-radius:12px; padding:12px 16px; font-weight:700; cursor:pointer; transition:.2s transform,.2s background; font-size:15px; flex:1; }
     button:hover{ transform:translateY(-2px); background:#ffffff25; color:#fff; }
-    button[disabled]{ opacity:.6; cursor:not-allowed; transform:none }
+    button[disabled]{ opacity:.6; cursor:not-allowed; transform:none; font-family:Montserrat, }
     .profesional{ border:1px solid #ffffff30; background:#ffffff15; border-radius:14px; padding:14px; margin:12px 0; backdrop-filter: blur(3px); }
-    .profesional h3{ margin:0 0 10px 0; font-size:18px; text-align:center }
+    .profesional h3{ margin:0 0 10px 0; font-size:18px; text-align:center; font-family:Montserrat, }
     .actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px }
     .editor{ margin-top:12px; background:#ffffff15; color:#fff; border-radius:16px; padding:12px; backdrop-filter: blur(6px);
     border: 1px solid #ffffff40;
@@ -30,7 +30,7 @@
     .week{ display:grid; gap:12px; grid-template-columns:repeat(2,1fr); }
     @media (max-width:640px){ .week{ grid-template-columns:1fr } }
     .day{ border:1px solid var(--gris); border-radius:12px; padding:12px; background:#ffffff15; }
-    .day h4{ margin:0 0 10px 0; color:var(--morado); font-size:16px }
+    .day h4{ font-family:Montserrat, margin:0 0 10px 0; color:var(--morado); font-size:16px }
     .range{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px }
     .slots{ display:flex; flex-wrap:wrap; gap:8px }
     .slot{ padding:8px 12px; border-radius:10px; border:1px solid var(--gris); font-weight:700; font-size:14px; background:#eee; color:#666; cursor:pointer; user-select:none; transition:.15s; }
@@ -40,8 +40,8 @@
     .status{ margin-top:10px; text-align:center; font-size:14px }
     .status.ok{ color:var(--ok) }
     .status.err{ color:var(--err) }
-    .btn-link{ background:#25213C; color:#5F48D7; border:1px dashed var(--morado); font-size:13px; padding:8px 12px }
-    .btn-danger{ background:#25213C; color:#5F48D7; border:1px solid #f1c5c5 }
+    .btn-link{ font-family:Montserrat, background:#25213C; color:#5F48D7; border:1px dashed var(--morado); font-size:13px; padding:8px 12px }
+    .btn-danger{ font-family:Montserrat, background:#25213C; color:#5F48D7; border:1px solid #f1c5c5 }
     .pill{ padding:5px 10px; border-radius:999px; font-size:12px; background:#ffffff25; border:1px solid #ffffff40 }
     .guardar-btn{ background:#25213C; color:#5F48D7; font-size:16px!important; padding:14px!important; border-radius:14px!important; width:100%; }
     .guardar-btn:hover{ background: #ffffff25; }
