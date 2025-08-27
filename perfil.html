@@ -204,8 +204,8 @@
 
 /* Cuando es éxito */
 #status.success {
-  color: #4CAF50; /* verde brillante */
-  font-size: 20px;
+  color: #fff; 
+  font-size: 16px;
   font-weight: 700;
   background: #ffffff20;
   padding: 12px 18px;
@@ -233,17 +233,17 @@
 #status a {
   display: inline-block;
   margin-top: 10px;
-  color: #fff;
   font-weight: 700;
   text-decoration: none;
-  background: #5F48D7;
+  background: #25213C;
+    color: #5F48D7;
   padding: 8px 14px;
   border-radius: 8px;
   transition: 0.2s;
 }
 
 #status a:hover {
-  background: #4CAF50;
+   background: #ffffff25;
   color: #fff;
 }
   </style>
@@ -329,7 +329,7 @@ saveBtn.addEventListener("click", async () => {
     if (data.status === "ok") {
       status.className = "success";
       status.innerHTML = `
-        ✅ Listo! Mirá cómo queda tu sitio personalizado:<br>
+         Listo! Mirá cómo queda tu sitio personalizado:<br>
         <a href="https://turnox.pro/${storedUsername}" target="_blank">
           turnox.pro/${storedUsername}
         </a>
