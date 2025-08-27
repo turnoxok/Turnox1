@@ -204,6 +204,17 @@ td.conTurnos {
     padding: 8px 12px;
   }
 }
+   td.hoy {
+  backdrop-filter: blur(6px);
+    border: 1px solid #ffffff40;
+}
+
+td.seleccionado {
+  background: #25213C;
+    color: #5F48D7;
+  font-weight: bold;
+  
+}
 </style>
 </head>
 <body>
@@ -276,6 +287,7 @@ function renderCalendario(year, month){
 
   for(let i=0; i<firstDay.getDay(); i++){ html+="<td></td>"; }
 
+  // 👇 ESTE for lo reemplazamos
   for(let d=1; d<=lastDay.getDate(); d++){
     const fecha = new Date(year, month, d);
     const fechaStr = fecha.toISOString().split("T")[0];
@@ -287,19 +299,45 @@ function renderCalendario(year, month){
     }
     if(tieneTurnos) classes.push("conTurnos");
 
-    html += `<td class="${classes.join(" ")}" onclick="renderTickets('${fechaStr}')">${d}</td>`;
+    // 🔹 Agregamos: marcar "hoy"
+    if(fecha.toDateString() === today.toDateString()){
+      classes.push("hoy");
+    }
+
+    // 🔹 Agregamos: marcar la fecha seleccionada
+    if(fechaStr === selectedDate.toISOString().split("T")[0]){
+      classes.push("seleccionado");
+    }
+
+    // 🔹 Cambiamos el onclick para que use clickDia(this)
+    html += `<td class="${classes.join(" ")}" data-fecha="${fechaStr}" onclick="clickDia(this)">${d}</td>`;
+
     if(fecha.getDay()===6 && d!==lastDay.getDate()) html+="</tr><tr>";
   }
+
   html+="</tr></table>";
   container.innerHTML += html;
 }
+function clickDia(td){
+  // quitar selección previa
+  document.querySelectorAll("#calendarioContainer td").forEach(el=>{
+    el.classList.remove("seleccionado");
+  });
+  // marcar nuevo día
+  td.classList.add("seleccionado");
+  // actualizar variable global
+  selectedDate = new Date(td.dataset.fecha);
+  // mostrar turnos de ese día
+  renderTickets(td.dataset.fecha);
+}
+
 
 function renderTickets(fechaStr){
   const ticketsDiv = document.getElementById("ticketsContainer");
   const turnos = turnosPorFecha[fechaStr] || [];
   const fechaBonita = fechaStr.split("-").reverse().join("/");
 
-  ticketsDiv.innerHTML=`<h2 style="text-align:center;color:#5a2d82;">Turnos para el día ${fechaBonita}</h2>`;
+  ticketsDiv.innerHTML=`<h2 style="text-align:center;color:#fff;">Turnos para el día ${fechaBonita}</h2>`;
 
   if(turnos.length===0){
     ticketsDiv.innerHTML += `<p style="text-align:center;">En esta fecha no hay turnos.</p>`;
