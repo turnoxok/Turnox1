@@ -235,10 +235,11 @@
 /* Botón flotante */
 .floating-tab {
   position: fixed;
-  top: 15%;
-  right: 0;
-  text-align: center;
+  top: 15%;             /* 15% desde arriba */
+  left: 50%;            /* lo mandamos al centro horizontal */
+  transform: translateX(-50%); /* lo centramos exactamente */
   z-index: 999;
+
 }
 
 .floating-tab button {
@@ -252,7 +253,7 @@
   border-bottom-left-radius: 0;
   cursor: pointer;
   font-weight: bold;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  
 }
 
 .floating-tab button:hover {
@@ -264,7 +265,7 @@
   max-height: 0;
   overflow: hidden;
   background: #25213C50;
-  border: 1px solid #5F48D750;
+  border: none;
   border-radius: 0;
   padding: 0 10px;
   transition: max-height 0.4s ease, padding 0.4s ease;
