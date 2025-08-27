@@ -16,80 +16,93 @@
       --texto:#2b2b2b;
       --ok:#18a957;
       --err:#d93636;
+      --blanco:#ffffff;
     }
     *{box-sizing:border-box}
     body{
-      margin:0; padding:20px;
+      margin:0; padding:14px;
       font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
       background:var(--morado);
       color:#fff;
     }
-    h1{margin:0 0 10px 0; text-align:center; font-size:24px}
+    h1{margin:0 0 10px 0; text-align:center; font-size:22px}
     .topbar{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px}
-    .note{opacity:.9; font-size:14px}
+    .note{opacity:.95; font-size:14px}
     button{
-      background:#fff; color:var(--morado);
-      border:none; border-radius:10px; padding:10px 14px;
-      font-weight:700; cursor:pointer; transition:.15s transform,.15s background;
+      background:var(--blanco); color:var(--morado);
+      border:none; border-radius:12px; padding:12px 16px;
+      font-weight:700; cursor:pointer; transition:.2s transform,.2s background;
+      font-size:15px;
+      flex:1;
     }
     button:hover{ transform:translateY(-2px); background:var(--claro) }
     button[disabled]{ opacity:.6; cursor:not-allowed; transform:none }
 
     .profesional{
-      border:1px solid #ffffff2a; background:#ffffff10; border-radius:14px; padding:14px; margin:12px 0;
+      border:1px solid #ffffff30; background:#ffffff15; border-radius:14px; padding:14px; margin:12px 0;
       backdrop-filter: blur(3px);
     }
-    .profesional h3{ margin:0 0 8px 0; font-size:18px }
-    .actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
+    .profesional h3{ margin:0 0 10px 0; font-size:18px; text-align:center }
+    .actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px }
 
     .editor{
-      margin-top:12px; background:#fff; color:var(--texto); border-radius:14px; padding:12px;
+      margin-top:12px; background:#fff; color:var(--texto); border-radius:16px; padding:12px;
       border:1px solid var(--gris);
     }
     .toolbar{
-      display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; margin-bottom:10px;
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:12px;
     }
     .toolbar .left, .toolbar .right{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+
     select, input[type=time]{
-      padding:8px 10px; border:1px solid var(--gris); border-radius:10px; font-weight:600;
-      background:#fff; color:var(--texto);
+      padding:10px 12px; border:1px solid var(--gris); border-radius:10px; font-weight:600;
+      background:#fff; color:var(--texto); font-size:15px;
     }
 
-    .week{ display:grid; gap:12px; grid-template-columns:repeat(3, minmax(260px,1fr)); }
-    @media (max-width:980px){ .week{ grid-template-columns:repeat(2,1fr) } }
-    @media (max-width:620px){ .week{ grid-template-columns:1fr } }
+    .week{ display:grid; gap:12px; grid-template-columns:repeat(2,1fr); }
+    @media (max-width:640px){ .week{ grid-template-columns:1fr } }
 
-    .day{ border:1px solid var(--gris); border-radius:12px; padding:10px; background:#fafafa }
-    .day h4{ margin:0 0 8px 0; color:var(--morado); font-size:15px }
-    .range{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px }
+    .day{ border:1px solid var(--gris); border-radius:12px; padding:12px; background:#fafafa }
+    .day h4{ margin:0 0 10px 0; color:var(--morado); font-size:16px }
+    .range{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px }
     .slots{ display:flex; flex-wrap:wrap; gap:8px }
     .slot{
-      padding:6px 10px; border-radius:8px; border:1px solid var(--gris);
-      font-weight:700; font-size:13px; background:#fff; cursor:pointer; user-select:none; transition:.15s;
+      padding:8px 12px; border-radius:10px; border:1px solid var(--gris);
+      font-weight:700; font-size:14px; background:#eee; color:#666;
+      cursor:pointer; user-select:none; transition:.15s;
     }
-    .slot.selected{ background:#533482; color:#fff; border-color:#533482 }
-    .slot:not(.selected){ background:#eee; color:#666 }
+    .slot.selected{ background:var(--morado); color:#fff; border-color:var(--morado) }
 
-    .mini{ font-size:12px; opacity:.8; margin-left:6px }
+    .mini{ font-size:12px; opacity:.8; margin-left:4px }
     .footerBar{ display:flex; justify-content:center; margin-top:14px }
-    .status{ margin-top:8px; text-align:center; font-size:14px }
-    .status.ok{ color:#0f0 }
-    .status.err{ color:#ffb3b3 }
+    .status{ margin-top:10px; text-align:center; font-size:14px }
+    .status.ok{ color:var(--ok) }
+    .status.err{ color:var(--err) }
 
-    .btn-link{ background:transparent; color:var(--morado); border:1px dashed var(--morado); }
+    .btn-link{ background:#f5f5f5; color:var(--morado); border:1px dashed var(--morado); font-size:13px; padding:8px 12px }
     .btn-danger{ background:#fff; color:#a12828; border:1px solid #f1c5c5 }
-    .pill{ padding:4px 8px; border-radius:999px; font-size:12px; background:#ffffff25; border:1px solid #ffffff40 }
+    .pill{ padding:5px 10px; border-radius:999px; font-size:12px; background:#ffffff25; border:1px solid #ffffff40 }
+
+    /* Botón Guardar resaltado */
+    .guardar-btn{
+      background:var(--ok)!important;
+      color:#fff!important;
+      font-size:16px!important;
+      padding:14px!important;
+      border-radius:14px!important;
+      width:100%;
+    }
+    .guardar-btn:hover{ background:#129948!important }
   </style>
 </head>
 <body>
   <div class="topbar">
     <button onclick="window.location.href='/panel'">← Volver</button>
-    <h1>Panel de Configuración</h1>
+    
     <div class="note pill">Usuario: <b id="who">—</b></div>
   </div>
 
   <div class="actions">
-    
     <button id="addProfBtn">+ Agregar Profesional</button>
   </div>
 
@@ -103,15 +116,11 @@
     let userId = localStorage.getItem("userId");
     let username = localStorage.getItem("username");
 
-    // fallback si llegan por URL directa
     const q = new URLSearchParams(location.search);
     if (!userId && q.get("userId")) userId = q.get("userId");
     if (!username && q.get("username")) username = q.get("username");
 
     const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
-
-    // === INIT ===
-    
     document.getElementById("addProfBtn").onclick = agregarProfesional;
 
     async function init(){
@@ -149,7 +158,6 @@
           </div>
           <div class="editor" style="display:none"></div>
         `;
-        // eventos
         box.querySelector(".btn-edit").onclick = ()=> abrirEditor(box.querySelector(".editor"), p);
         box.querySelector(".btn-clear").onclick = ()=> eliminarTurnos(p.profesionalId);
         box.querySelector(".btn-delete").onclick = ()=> eliminarProfesional(p.profesionalId);
@@ -162,7 +170,6 @@
       editorEl.dataset.open="1";
       editorEl.style.display="block";
 
-      // plantilla del editor
       editorEl.innerHTML = `
         <div class="toolbar">
           <div class="left">
@@ -179,14 +186,13 @@
             <span class="mini">Tip: primero elegí intervalo y rangos, luego generá</span>
           </div>
           <div class="right">
-            <button id="guardar_${prof.profesionalId}">💾 Guardar cambios</button>
+            <button id="guardar_${prof.profesionalId}" class="guardar-btn">💾 Guardar cambios</button>
           </div>
         </div>
         <div class="week" id="week_${prof.profesionalId}"></div>
         <div class="footerBar"><span class="status" id="status_${prof.profesionalId}"></span></div>
       `;
 
-      // render de los 7 días
       const week = editorEl.querySelector(`#week_${prof.profesionalId}`);
       dias.forEach(d=>{
         const id = `${prof.profesionalId}_${d}`;
@@ -205,14 +211,12 @@
         `;
         week.appendChild(day);
 
-        // eventos día
         day.querySelector(`#gen_${id}`).onclick = ()=> generarSlots(prof.profesionalId, d);
         day.querySelector(`#sel_${id}`).onclick = ()=> seleccionarTodo(prof.profesionalId, d, true);
         day.querySelector(`#clr_${id}`).onclick = ()=> seleccionarTodo(prof.profesionalId, d, false);
         day.querySelector(`#slots_${id}`).addEventListener("click", toggleSlot);
       });
 
-      // eventos globales
       editorEl.querySelector(`#genTodos_${prof.profesionalId}`).onclick = ()=> generarTodos(prof.profesionalId);
       editorEl.querySelector(`#guardar_${prof.profesionalId}`).onclick = ()=> guardarTurnos(prof.profesionalId);
     }
@@ -237,11 +241,10 @@
       let {h, m} = timeStrToParts(desde);
       const end = timeStrToParts(hasta);
 
-      // generar inclusivo de inicio, exclusivo del fin (ej: 09:00..16:30 con 30m)
       while (h < end.h || (h===end.h && m < end.m)) {
         const hora = toHHMM(h,m);
         const span = document.createElement("span");
-        span.className = "slot selected"; // por defecto visible (como tus checkboxes checked)
+        span.className = "slot selected";
         span.dataset.dia = dia;
         span.dataset.hora = hora;
         span.textContent = hora;
@@ -268,7 +271,6 @@
       status.className = "status";
       btn.disabled = true;
 
-      // recolectar TODOS los slots de este profesional (7 días)
       const all = [];
       dias.forEach(d=>{
         const cont = document.getElementById(`slots_${profId}_${d}`);
@@ -307,7 +309,6 @@
 
     async function eliminarTurnos(profId){
       if(!confirm("¿Seguro que quieres limpiar todos los turnos de este profesional?")) return;
-      // enviar array vacío para borrar
       const fd = new FormData();
       fd.append("action","saveTurnosStandard");
       fd.append("profesionalId", profId);
@@ -342,30 +343,24 @@
     document.addEventListener("DOMContentLoaded", init);
 
     async function eliminarProfesional(profesionalId){
-  if(!confirm("¿Seguro que querés eliminar este profesional y todos sus turnos?")) return;
-
-  const fd = new FormData();
-  fd.append("action", "eliminarProfesional");
-  fd.append("profesionalId", profesionalId);
-  fd.append("userId", userId);   // 👈 esto faltaba
-
-  try {
-    const res = await fetch(API_URL, { method:"POST", body: fd });
-    const data = await res.json();
-    if (data.status === "ok") {
-      alert("Profesional eliminado con éxito");
-      await cargarProfesionales(); // refresca la lista
-    } else {
-      alert("No se pudo eliminar: " + (data.msg || "error"));
+      if(!confirm("¿Seguro que querés eliminar este profesional y todos sus turnos?")) return;
+      const fd = new FormData();
+      fd.append("action", "eliminarProfesional");
+      fd.append("profesionalId", profesionalId);
+      fd.append("userId", userId);
+      try {
+        const res = await fetch(API_URL, { method:"POST", body: fd });
+        const data = await res.json();
+        if (data.status === "ok") {
+          alert("Profesional eliminado con éxito");
+          await cargarProfesionales();
+        } else {
+          alert("No se pudo eliminar: " + (data.msg || "error"));
+        }
+      } catch(err) {
+        alert("Error de conexión.");
+      }
     }
-  } catch(err) {
-    alert("Error de conexión.");
-  }
-}
-
-
   </script>
-  
-  
 </body>
 </html>
