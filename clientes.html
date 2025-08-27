@@ -3,12 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <title>Listado de Clientes Únicos</title>
+  <meta charset="UTF-8" />
+  <title>Panel TurnoX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
+  <!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 <style>
-  body { font-family: Arial, sans-serif; margin: 20px; background: #f5f6fa; }
-  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-  th { background: #3498db; color: white; }
-  tr:nth-child(even) { background: #ecf0f1; }
+  body {
+    font-family: system-ui, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f6fa;
+    color: #333;
+  }
+
+  header {
+    background: #6c5ce7;
+    color: #fff;
+    padding: 14px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  /* tabla */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  th, td {
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  th {
+    background: #6c5ce7;
+    color: #fff;
+    text-transform: capitalize;
+  }
+
+  tr:nth-child(even) td {
+    background: #f9f9f9;
+  }
+
+  /* scroll horizontal en mobile */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 15px;
+    border-radius: 12px;
+  }
+
+  /* mensaje vacío */
+  .note {
+    text-align: center;
+    margin: 40px 0;
+    padding: 20px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    color: #666;
+    font-size: 15px;
+  }
+
 </style>
 </head>
 <body>
