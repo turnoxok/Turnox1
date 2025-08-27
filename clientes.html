@@ -14,24 +14,43 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
-  body {
-    font-family: system-ui, Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f5f6fa;
-    color: #333;
-  }
+  :root { color-scheme: light only; }
+    body {
+      font-family: "Montserrat", sans-serif;
+      background-color: #4B2E78;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
 
-  header {
-    background: #6c5ce7;
-    color: #fff;
-    padding: 14px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  }
-
+    /* header igual al de créditos */
+    .header-info {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .user-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      background: #ffffff25;
+      border: 1px solid #ffffff40;
+      margin: 0;
+    }
+    .creditos-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #ffffff25;
+      border: 1px solid #ffffff40;
+      font-size: 14px;
+    }
   .container {
     padding: 15px;
   }
@@ -85,12 +104,16 @@
 </style>
 </head>
 <body>
-
-<h1>Listado de Clientes (sin duplicados por DNI)</h1>
+<!-- Header -->
+  <div class="header-info">
+    <h2 class="user-pill">¡Hola! <span id="usernameDisplay"></span></h2>
+    
+  </div>
+<h1>Listado de Clientes</h1>
 <div id="tablaReservas"></div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby_-LL7wZkEg9Kzm3e5Y2yCb9nNdSOPznHT4TpRciiJcdWvSGgvbqZHVKKZtmZ98KR7_Q/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxZDCW_fq-12OWxcgxaf-_5Wp3jPpLvFLwsXQZv9E3N2i7YuFJYo22_1aA5YlFN1fcpyQ/exec";
 
 let username = localStorage.getItem("username");
 
