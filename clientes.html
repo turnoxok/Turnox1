@@ -125,7 +125,7 @@ if (!storedUserId || !storedUsername) {
 let username = storedUsername;
   
 document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("who").textContent = "Usuario: " + username;
+  document.getElementById("usernameDisplay").textContent = username;
 });
 async function cargarReservas(){
   try {
