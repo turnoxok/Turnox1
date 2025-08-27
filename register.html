@@ -224,10 +224,10 @@
     Enviamos un mail con los datos a:<strong> ${data.email}</strong><br>
     Agregamos créditos gratis a tu cuenta:<strong> 5 créditos</strong> para prueba.<br>
     
-    <button id="ingresarPanel" style="margin-top:10px; padding:8px 16px; cursor:pointer;">Ingresa a tu panel</button>
+    <button id="ingresarPanel" style="margin-top:10px; padding:8px 16px; cursor:pointer;">Ir a tu sitio.</button>
   `;
   document.getElementById("ingresarPanel").onclick = () => {
-    window.location.href = `https://turnoxok.netlify.app/${encodeURIComponent(data.creditos.toLowerCase())}`;
+    window.location.href = `https://turnoxok.netlify.app/${encodeURIComponent(data.username.toLowerCase())}`;
   };
 
 
