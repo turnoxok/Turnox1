@@ -219,13 +219,13 @@ function renderTickets(fechaStr){
     div.innerHTML=`
       <h3>TurnoX</h3>
       <div class="hora">${t.hora}</div>
-      <p><strong>Comercio:</strong> ${t.profesional || "Ej: Barbería X"}</p>
+      <p><strong>Turno con:</strong> ${t.profesional || "Ej: Barbería X"}</p>
       <p><strong>Nombre:</strong> ${t.nombre} ${t.apellido}</p>
       <p><strong>Dirección:</strong> ${t.direccion || ""}</p>
       <p><strong>Email:</strong> ${t.email || ""}</p>
-      <p><strong>Teléfono:</strong> ${t.telefono || ""}</p>
-      <p><strong>Comentario:</strong> ${t.comentario || ""}</p>
+      <p><strong>WhatsApp:</strong> ${t.whatsapp || ""}</p>
       <p><strong>DNI:</strong> ${t.dni}</p>
+      <p><strong>Comentario:</strong> ${t.comentario || ""}</p>
       <button onclick="eliminarTurno('${t.fecha}','${t.hora}','${t.profesionalId}','${t.dni}')">Eliminar turno</button>
     `;
     grid.appendChild(div);
