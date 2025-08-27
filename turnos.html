@@ -269,6 +269,26 @@ td.seleccionado {
 }
 /* Para ocultar/mostrar con el atributo hidden */
 [hidden] { display: none !important; }
+
+.header-info {display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin:15px}   
+   .user-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      background: #ffffff25;
+      border: 1px solid #ffffff40;
+      margin: 0;
+    }
+    .creditos-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #5F48D7;
+      border: 1px solid #ffffff40;
+      font-size: 14px;
+    }
 </style>
 </head>
 <body>
@@ -317,6 +337,11 @@ td.seleccionado {
     <div class="rect"></div>
   </div>
 </div>
+  <div class="header-info">
+    <button style="max-width: 120px; max-height: 60px;" onclick="window.location.href='/creditos'">← Volver</button>
+    <h2 class="user-pill">¡Hola! <span id="usernameDisplay"></span></h2>
+    
+  </div>
 <h1>Mis Turnos</h1>
 <div id="calendarioContainer"></div>
 <div id="ticketsContainer"></div>
@@ -324,12 +349,19 @@ td.seleccionado {
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwSHPQD3ZXVqMpPZ1E2cA9_ELs8hxScPkeEs5ReZ-_MwqZ9Wt3qvIgGy6pVk6STCebKBw/exec";
 
-let username = localStorage.getItem("username");
+const storedUserId = localStorage.getItem("userId");
+const storedUsername = localStorage.getItem("username");
 
-if(!username){ 
-  alert("No hay usuario logueado"); 
-  window.location.href="login.html"; 
+if (!storedUserId || !storedUsername) {
+  alert("No hay usuario logueado");
+  window.location.href = "login.html"; // o index.html, pero solo uno
 }
+
+let username = storedUsername;
+  
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("usernameDisplay").textContent = username;
+});
 
 let turnosUsuario = [];
 let turnosPorFecha = {};
