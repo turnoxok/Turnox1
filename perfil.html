@@ -65,7 +65,7 @@
 const storedUserId = localStorage.getItem("userId");
 const storedUsername = localStorage.getItem("username");
 
-if (!storedUserId || !storedUsername) window.location.href="index.html";
+if (!storedUserId || !storedUsername) window.location.href = "index.html";
 
 document.getElementById("usernameDisplay").innerText = storedUsername;
 
@@ -80,14 +80,10 @@ const uploadBtn = document.getElementById("uploadBtn");
 
 // 1️⃣ Subir a ImgBB
 uploadBtn.addEventListener("click", async () => {
-  if (!logoFile.files[0]) return alert("Seleccioná un archivo primero");
+  const file = logoFile.files[0];
+  if (!file) return alert("Seleccioná un archivo primero");
 
   status.innerText = "Subiendo logo a ImgBB...";
-
- const inputFile = document.getElementById("logoFile");
-inputFile.addEventListener("change", async () => {
-  const file = inputFile.files[0];
-  if (!file) return;
 
   const reader = new FileReader();
   reader.onloadend = async () => {
@@ -95,7 +91,7 @@ inputFile.addEventListener("change", async () => {
     const formData = new FormData();
     formData.append("key", "5e7ff6621fb603a7835a4b4ec45fd4eb");
     formData.append("image", base64);
-    
+
     try {
       const res = await fetch("https://api.imgbb.com/1/upload", {
         method: "POST",
@@ -104,12 +100,17 @@ inputFile.addEventListener("change", async () => {
       const data = await res.json();
       console.log(data);
       if (data.success) {
-        alert("Imagen subida! URL: " + data.data.url);
-        // aquí podrías guardar data.data.url en tu Google Sheet
+        const url = data.data.url;
+        status.innerText = "✅ Logo subido! URL copiada al campo de texto";
+        logoInput.value = url; // poner URL en el input
+        preview.innerHTML = `<img src="${url}" alt="Logo">`;
+        saveBtn.disabled = false; // habilitar botón guardar
+      } else {
+        status.innerText = "❌ Error al subir: " + JSON.stringify(data);
       }
-    } catch(e) {
+    } catch (e) {
       console.error(e);
-      alert("Error al subir la imagen");
+      status.innerText = "❌ Error de conexión con ImgBB";
     }
   };
   reader.readAsDataURL(file);
@@ -131,6 +132,7 @@ saveBtn.addEventListener("click", async () => {
         logoUrl
       })
     });
+
     const data = await res.json();
 
     if (data.status === "ok") {
@@ -141,13 +143,20 @@ saveBtn.addEventListener("click", async () => {
       status.className = "error";
       status.innerText = "❌ Error: " + data.msg;
     }
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     status.className = "error";
     status.innerText = "❌ Error de conexión con Apps Script";
   }
 });
+
+// 3️⃣ Habilitar botón guardar si se pega un URL manualmente
+logoInput.addEventListener("input", () => {
+  saveBtn.disabled = !logoInput.value.trim();
+  preview.innerHTML = logoInput.value.trim() ? `<img src="${logoInput.value.trim()}" alt="Logo">` : "";
+});
 </script>
+
 
 </body>
 </html>
