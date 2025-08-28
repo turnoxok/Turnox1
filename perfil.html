@@ -84,29 +84,35 @@ uploadBtn.addEventListener("click", async () => {
 
   status.innerText = "Subiendo logo a ImgBB...";
 
-  const formData = new FormData();
-  formData.append("key", "5e7ff6621fb603a7835a4b4ec45fd4eb");
-    formData.append("image", base64);
-  try {
-    const res = await fetch("https://api.imgbb.com/1/upload", { method:"POST", body:formData });
-    const data = await res.json();
+ const inputFile = document.getElementById("logoFile");
+inputFile.addEventListener("change", async () => {
+  const file = inputFile.files[0];
+  if (!file) return;
 
-    if (data.success) {
-      const logoUrl = data.data.url;
-      logoInput.value = logoUrl;
-      preview.innerHTML = `<img src="${logoUrl}" alt="Logo">`;
-      status.className = "success";
-      status.innerText = "✅ Logo subido correctamente, ahora podés guardarlo!";
-      saveBtn.disabled = false;
-    } else {
-      status.className = "error";
-      status.innerText = "❌ Error al subir el logo";
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const base64 = reader.result.split(",")[1]; // solo la parte base64
+    const formData = new FormData();
+    formData.append("key", "5e7ff6621fb603a7835a4b4ec45fd4eb");
+    formData.append("image", base64);
+    
+    try {
+      const res = await fetch("https://api.imgbb.com/1/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success) {
+        alert("Imagen subida! URL: " + data.data.url);
+        // aquí podrías guardar data.data.url en tu Google Sheet
+      }
+    } catch(e) {
+      console.error(e);
+      alert("Error al subir la imagen");
     }
-  } catch(err) {
-    console.error(err);
-    status.className = "error";
-    status.innerText = "❌ Error de conexión con ImgBB";
-  }
+  };
+  reader.readAsDataURL(file);
 });
 
 // 2️⃣ Guardar en tu hoja de cálculo (Apps Script)
