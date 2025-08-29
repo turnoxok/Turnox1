@@ -38,8 +38,8 @@
   font-style: normal;
   margin: 0;
   padding: 0;
-  background-color: #533482;
-     color: #F2F2F2;
+  background-color: #4B2E78;
+     color: #fff;
     }
   h1 {
     text-align: center;
@@ -54,44 +54,29 @@
    margin: 100px auto 10px auto; /* arriba - lados - abajo - lados */
   max-width: 600px;             /* ancho máximo */
   width: 100%;  
-    background: 
-        linear-gradient(
-            135deg,
-            #D2B8FF 0%, 
-            #fff 25%, 
-            #F4EDFF 50%, 
-            #fff 75%, 
-            #D2B8FF 100%
-        ),
-        repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,0.05) 0px,
-            rgba(255,255,255,0.05) 2px,
-            transparent 2px,
-            transparent 4px
-        );
-   
+    background: #ffffff15;
     background-blend-mode: overlay;
-  color: #533482; 
-    
-    border-radius: 0px;
+  color: #fff; 
+    border: 1px solid #ffffff30;
+    border-radius: 16px;
     overflow: hidden;
     padding: 15px;
+    backdrop-filter: blur(3px);
   }
   #calendario h2 { text-align: center; margin-bottom: 10px; text-transform: capitalize; }
   #calendario table { width: 100%; border-collapse: collapse; }
   #calendario th, #calendario td { width: 14.28%; text-align: center; padding: 10px 0; }
-  #calendario td:hover { border-color: #575757; cursor: pointer; border-radius: 0%; }
+  #calendario td:hover { border-color: #ffffff99; cursor: pointer; border-radius: 10%; }
   #calendario td[style*="not-allowed"] { cursor: not-allowed; color: #999; }
 #calendario td.hoy {
-  border: 2px solid #575757;
-  border-radius: 0%;
+  border: 2px solid #ffffff99;
+  border-radius: 10%;
 }
 
 #calendario td.seleccionado {
   background-color: #533482;
   color: #fff;
-  border-radius: 0%;
+  border-radius: 10%;
 }
 
 #calendario td.bloqueado {
@@ -108,33 +93,20 @@
     margin: 15px auto;
     max-width: 600px;
     text-align: center;
-    background: #ffffff;
-    color: #533482;
     padding: 15px;
-     background: 
-        linear-gradient(
-            135deg,
-            #D2B8FF 0%, 
-            #fff 25%, 
-            #F4EDFF 50%, 
-            #fff 75%, 
-            #D2B8FF 100%
-        ),
-        repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,0.05) 0px,
-            rgba(255,255,255,0.05) 2px,
-            transparent 2px,
-            transparent 4px
-        );
-   
+    background: #ffffff15;
     background-blend-mode: overlay;
+    color: #fff; 
+    border: 2px solid #ffffff30;
+    border-radius: 16px;
+    backdrop-filter: blur(3px);
+     
   }
   .turnos h3 { margin-bottom: 10px; }
-  .hora { display: inline-block; margin: 5px; padding: 8px 12px; border-radius: 0px; font-weight: 600; transition: all 0.2s; }
-  .hora.disponible { background: #F7F7F7; color: #533482; }
+  .hora { display: inline-block; margin: 5px; padding: 8px 12px; border-radius: 10px; font-weight: 600; transition: all 0.2s; }
+  .hora.disponible { background: #ffffff99; color: #533482; border-radius: 10px; }
   .hora.disponible:hover { background: #533482; color: #fff;  cursor: pointer; transform: translateY(-2px); }
-  .hora.bloqueado { background: #D2B8FF95; color: #F7F7F7; cursor: not-allowed; text-decoration: line-through; opacity: 0.6; }
+  .hora.bloqueado { background: #D2B8FF95; color: #F7F7F7; cursor: not-allowed; text-decoration: line-through; opacity: 0.6; border-radius: 10px; }
 .hora.selected {
   background-color: #533482; /* fondo del seleccionado */
   color: #fff;               /* texto */
@@ -144,27 +116,14 @@
 #reservaFormContainer {
   margin: 20px auto;
   max-width: 600px;
-  background: 
-      linear-gradient(
-          135deg,
-          #D2B8FF 0%, 
-          #fff 25%, 
-          #F4EDFF 50%, 
-          #fff 75%, 
-          #D2B8FF 100%
-      ),
-      repeating-linear-gradient(
-          0deg,
-          rgba(255,255,255,0.05) 0px,
-          rgba(255,255,255,0.05) 2px,
-          transparent 2px,
-          transparent 4px
-      );
-  background-blend-mode: overlay;
-  color: #533482;
+  background: #ffffff15;
+    background-blend-mode: overlay;
+  color: #fff; 
+    border: 2px solid #ffffff30;
+    border-radius: 16px;
   padding: 20px;
-  border-radius: 0px; /* sin bordes redondeados */
   text-align: center; /* todo centrado */
+  backdrop-filter: blur(3px);
 }
 
 #reservaForm {
@@ -179,17 +138,19 @@
   width: 90%;
   padding: 10px;
   margin: 8px 0;
-  border-radius: 0px; /* sin bordes redondeados */
-  border: 1px solid #ccc;
+  border-radius: 16px; 
+  border: 1px solid #ffffff40;
   font-family: 'Montserrat', sans-serif;
   text-align: center;
   box-sizing: border-box;
+   background-color: #ffffff25;
 }
 
 #reservaForm button {
   background-color: #533482;
   color: #fff;
   border: none;
+  border-radius: 16px; 
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -210,7 +171,7 @@
   #calendario,
   .turnos,
   #reservaFormContainer {
-    width: 95%;
+    width: 80%;
     padding: 10px;
   }
   .hora {
@@ -238,37 +199,22 @@
   font-style: normal;
   margin: 20px auto;
   max-width: 500px;
-  background: 
-        linear-gradient(
-            135deg,
-            #D2B8FF 0%, 
-            #fff 25%, 
-            #F4EDFF 50%, 
-            #fff 75%, 
-            #D2B8FF 100%
-        ),
-        repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,0.05) 0px,
-            rgba(255,255,255,0.05) 2px,
-            transparent 2px,
-            transparent 4px
-        );
-   
+ background: #ffffff25;
     background-blend-mode: overlay;
-  color: #333;
+  color: #fff; 
+    border: 2px solid #ffffff40;
+    border-radius: 16px;
   padding: 20px;
-  border-radius: 0px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   text-align: left;
 }
 .ticket h2 {
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+  font-weight: 700;
+  font-style: bold;
   text-align: center;
-  color: #533482;
+  color: #fff;
   margin-bottom: 15px;
 }
 .ticket p {
@@ -285,9 +231,9 @@
   font-weight: 400;
   font-style: normal;
   margin-top: 15px;
-  padding: 8px 14px;
+  padding: 14px 16px;
   border: none;
-  border-radius: 0px;
+  border-radius: 10px;
   background: #533482;
   color: #fff;
   cursor: pointer;
@@ -296,7 +242,7 @@
   margin-right: auto;
 }
 .ticket button:hover {
-  background: #452a7a;
+  background: #5F48D7;
 }
 
 #floatingLogo {
@@ -364,11 +310,117 @@ header {
     .login-btn:hover {
       background-color: #533482;
     }
-     
+        .grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rect {
+  width: 80px;
+  height: 120px;
+  border: 2px solid #5F48D750;
+  border-radius: 12px;
+}
+
+.rect.filled {
+  background: #412866;
+}
+
+.down .rect {
+  animation: moveDown 20s linear infinite;
+}
+
+.up .rect {
+  animation: moveUp 20s linear infinite;
+}
+
+/* Arrancan desde arriba de la pantalla y van hacia abajo */
+@keyframes moveDown {
+  0%   { transform: translateY(-150vh); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(150vh); opacity: 0; }
+}
+
+/* Arrancan desde abajo y suben hacia arriba */
+@keyframes moveUp {
+  0%   { transform: translateY(150vh); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(-150vh); opacity: 0; }
+}
+/* Para ocultar/mostrar con el atributo hidden */
+[hidden] { display: none !important; } 
+     input::placeholder,
+textarea::placeholder {
+  color: #fff;       
+  opacity: 1;        
+  font-family: "Montserrat", sans-serif;
+}
 </style>
 
 </head>
 <body>
+<div class="grid">
+  <div class="col down">
+    <div class="rect filled"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect filled"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+  </div>
+  <div class="col up">
+    <div class="rect"></div>
+    <div class="rect filled"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+     <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect filled"></div>
+  </div>
+  <div class="col down">
+   <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect filled"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    
+    <div class="rect"></div>
+    <div class="rect"></div>
+   <div class="rect filled"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+    <div class="rect"></div>
+  </div>
+</div>
+  
+  
  <header>
   <!-- Logo del usuario -->
 <div id="floatingLogo">
@@ -376,7 +428,7 @@ header {
   <img id="userLogo"></div>
 </div>
    <!-- Botón Login -->
-    <a href="login.html" class="login-btn">Login</a>
+    <a href="login.html" class="login-btn">Acceso</a>
  </header>
   
 
@@ -416,7 +468,7 @@ header {
 <!-- Nuevo: ticket fijo -->
 <div id="ticketContainer"></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwSHPQD3ZXVqMpPZ1E2cA9_ELs8hxScPkeEs5ReZ-_MwqZ9Wt3qvIgGy6pVk6STCebKBw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxKhvDjAMU0HA6KOybXfIBWMMvin7Mad9HScnJniGK90g7jdV3z54mmaPlo0I1elk7pMA/exec";
 
 // ------------------ OBTENER USERNAME ------------------
 let params = new URLSearchParams(window.location.search);
@@ -636,7 +688,7 @@ function mostrarFormReserva(profId, hora) {
   const formContainer = document.getElementById("reservaFormContainer");
   formContainer.style.display = "block";
   formContainer.innerHTML = `
-    <h2>Último paso! </h2><p>Completa tus datos y confirma la reserva con ${turnosData[profId].nombre} el ${fechaBonita} a las ${hora}</p>
+    <h2>Último paso! </h2><p style="font-size: 12px;">Completa tus datos y confirma la reserva con ${turnosData[profId].nombre} el ${fechaBonita} a las ${hora}</p>
    <form id="reservaForm">
   
   
