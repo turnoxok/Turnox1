@@ -585,76 +585,88 @@ function seleccionarDia(td, fechaStr) {
   cargarTurnos(fechaStr);
 }
 
-// ------------------ CARGAR TURNOS ------------------
+// ==================== CARGAR TURNOS ====================
 async function cargarTurnos(fechaStr) {
-  selectedDate = new Date(fechaStr + "T00:00:00");
-  const fechaBonita = selectedDate.toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  });
+  const cont = document.getElementById("turnos");
+  cont.innerHTML = "Cargando...";
 
-  const turnosDiv = document.getElementById("turnos");
-  turnosDiv.innerHTML = `<h2> ${fechaBonita}</h2><p>Cargando...</p>`;
-  document.getElementById("reservaFormContainer").style.display = "none";
+  const res = await fetch(`${API_URL}?action=getTurnos&username=${username}&fecha=${fechaStr}`);
+  const data = await res.json();
+  turnosData = data; // guardamos para usar en servicio y form
 
-  try {
-    const res = await fetch(`${API_URL}?username=${username}&fecha=${fechaStr}`);
-    const data = await res.json();
+  cont.innerHTML = "";
 
-    if (data.status !== "ok") {
-      turnosDiv.innerHTML = `
-        <h2> ${fechaBonita}</h2>
-        <p style="color:red;">Error al cargar: ${data.msg || "Error desconocido"}</p>
-      `;
+  // Selector de servicio
+  const servicioSelector = document.createElement("div");
+  servicioSelector.innerHTML = `
+    <label for="selectServicio">Selecciona un servicio:</label>
+    <select id="selectServicio">
+      <option value="">-- Seleccionar --</option>
+      ${Object.values(turnosData).flatMap(p =>
+        p.servicios.map(s =>
+          `<option value="${p.profesionalId}|${s.nombre}" data-duracion="${s.duracion}" data-prof="${p.profesionalId}">
+            ${s.nombre} con ${p.nombre} (${s.duracion} min)
+          </option>`
+        )
+      ).join("")}
+    </select>
+    <div id="horasDisponibles"></div>
+  `;
+  cont.appendChild(servicioSelector);
+
+  document.getElementById("selectServicio").onchange = (e) => {
+    const val = e.target.value;
+    if (!val) {
+      document.getElementById("horasDisponibles").innerHTML = "";
       return;
     }
+    const [profId, servicioNombre] = val.split("|");
+    const duracion = parseInt(e.target.selectedOptions[0].dataset.duracion);
+    mostrarHorasDisponibles(profId, servicioNombre, duracion, fechaStr);
+  };
+}
 
-    turnosData = data.turnos;
-    profesionales = data.profesionales;
+// ==================== MOSTRAR HORAS DISPONIBLES ====================
+function mostrarHorasDisponibles(profId, servicioNombre, duracion, fechaStr) {
+  const horasDiv = document.getElementById("horasDisponibles");
+  const prof = turnosData[profId];
 
-    let html = "";
-
-    if (!turnosData || Object.keys(turnosData).length === 0) {
-      html += `<div class="turnos"><p>No hay turnos configurados para esta fecha</p></div>`;
-    } else {
-      Object.keys(turnosData).forEach(profId => {
-        const profObj = turnosData[profId];
-        html += `<div class="turnos"><h3>${profObj.nombre}</h3>`;
-        if (!profObj.turnos || profObj.turnos.length === 0) {
-          html += "<p>No hay turnos disponibles</p>";
-        } else {
-          profObj.turnos.forEach(t => {
-            const clase = t.estado === "bloqueado" ? "bloqueado" : "disponible";
-            const horaFormateada = t.hora.padStart(5, "0");
-            html += `<span 
-                        class="hora ${clase}" 
-                        data-profid="${profId}" 
-                        data-hora="${horaFormateada}">
-                        ${horaFormateada}
-                     </span>`;
-          });
-        }
-        html += `</div>`;
-      });
-    }
-
-    turnosDiv.innerHTML = html;
-
-    // 🔽 Agregamos los listeners a las horas disponibles
-    document.querySelectorAll(".hora.disponible").forEach(span => {
-      span.addEventListener("click", () => {
-        seleccionarTurno(span.dataset.profid, span.dataset.hora);
-      });
-    });
-
-  } catch (err) {
-    console.error("Error cargando turnos:", err);
-    turnosDiv.innerHTML = `
-      <h2> ${fechaBonita}</h2>
-      <p style="color:red;">No se pudieron cargar los turnos.</p>
-    `;
+  if (!prof || !prof.turnos) {
+    horasDiv.innerHTML = "<p>No hay turnos disponibles</p>";
+    return;
   }
+
+  horasDiv.innerHTML = "<h3>Selecciona una hora:</h3>";
+  const lista = document.createElement("div");
+  lista.className = "horas-lista";
+
+  prof.turnos.forEach(t => {
+    // chequeo si la hora + duración entra sin chocar con bloqueos
+    const entra = verificarDisponibilidad(prof.turnos, t.hora, duracion);
+
+    const btn = document.createElement("button");
+    btn.textContent = t.hora;
+    btn.disabled = !entra || t.ocupado;
+    btn.className = t.ocupado ? "ocupado" : (entra ? "libre" : "no-disponible");
+
+    if (entra && !t.ocupado) {
+      btn.onclick = () => mostrarFormReserva(profId, t.hora, servicioNombre, duracion, fechaStr);
+    }
+    lista.appendChild(btn);
+  });
+
+  horasDiv.appendChild(lista);
+}
+
+// ==================== CHEQUEAR DISPONIBILIDAD POR DURACIÓN ====================
+function verificarDisponibilidad(turnos, horaInicio, duracion) {
+  const intervalo = 30; // ⚠️ esto deberíamos leerlo dinámico desde TurnosStandard
+  const necesarios = duracion / intervalo;
+  const idx = turnos.findIndex(t => t.hora === horaInicio);
+
+  if (idx === -1) return false;
+  const subset = turnos.slice(idx, idx + necesarios);
+  return subset.length === necesarios && subset.every(t => !t.ocupado);
 }
 
 // ------------------ SELECCIONAR TURNO ------------------
