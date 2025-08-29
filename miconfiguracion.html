@@ -196,59 +196,70 @@
       }
     }
 
-    // === Render ===
-    function renderProfesionales(list){
-      const cont = document.getElementById("profesionales");
-      if (!list || list.length === 0) {
-        cont.innerHTML = `
-          <div class="note" style="text-align:center; margin:20px 0; padding:15px; border-radius:12px; background:#ffffff10;">
-            No hay profesionales creados.<br>
-            <b>Creá uno</b> para acceder a la configuración.
-          </div>
-        `;
-        return;
+
+    
+// === Render ===
+function renderProfesionales(list){
+  const cont = document.getElementById("profesionales");
+  if (!list || list.length === 0) {
+    cont.innerHTML = `
+      <div class="note" style="text-align:center; margin:20px 0; padding:15px; border-radius:12px; background:#ffffff10;">
+        No hay profesionales creados.<br>
+        <b>Creá uno</b> para acceder a la configuración.
+      </div>
+    `;
+    return;
+  }
+  cont.innerHTML = "";
+
+  list.forEach(p => {
+    const box = document.createElement("div");
+    box.className = "profesional";
+
+    // 🔹 Construimos los chips de servicios leyendo hasta 10 columnas
+    const serviciosArr = [];
+    for (let i = 1; i <= 10; i++) {
+      const nombreServ = p[`servicio${i}`];
+      const tiempoServ = p[`tiempo${i}`];
+      if (nombreServ && tiempoServ) {
+        serviciosArr.push(`<span class="chip">${escapeHtml(nombreServ)} • ${fmtDur(tiempoServ)}</span>`);
       }
-      cont.innerHTML = "";
-
-      list.forEach(p => {
-        const box = document.createElement("div");
-        box.className = "profesional";
-        const serviciosChips = Array.isArray(p.servicios)
-          ? p.servicios.map(s => `<span class="chip">${escapeHtml(s?.nombre||'Servicio')} • ${fmtDur(s?.tiempo)}</span>`).join("")
-          : "";
-
-        box.innerHTML = `
-          <h3>${escapeHtml(p.nombre||'—')}</h3>
-          ${serviciosChips ? `<div class="chips" aria-label="Servicios">${serviciosChips}</div>` : `<div class="mini" style="opacity:.9;text-align:center;margin-top:6px;">Sin servicios cargados</div>`}
-          <div class="actions">
-            <button class="btn-edit">Configurar Turnos</button>
-            <button class="btn-danger btn-clear">Limpiar Turnos</button>
-            <button class="btn-danger btn-delete">Eliminar Profesional</button>
-          </div>
-          <div class="editor" style="display:none"></div>
-        `;
-
-        const btnEdit = box.querySelector(".btn-edit");
-        const editor = box.querySelector(".editor");
-
-        btnEdit.onclick = () => {
-          if (btnEdit.textContent === "Configurar Turnos") {
-            abrirEditor(editor, p);
-            editor.style.display = "block";
-            btnEdit.textContent = "Cerrar";
-          } else {
-            editor.style.display = "none";
-            btnEdit.textContent = "Configurar Turnos";
-          }
-        };
-
-        box.querySelector(".btn-clear").onclick = () => eliminarTurnos(p.profesionalId);
-        box.querySelector(".btn-delete").onclick = () => eliminarProfesional(p.profesionalId);
-
-        cont.appendChild(box);
-      });
     }
+    const serviciosChips = serviciosArr.join("");
 
+    box.innerHTML = `
+      <h3>${escapeHtml(p.nombre||'—')}</h3>
+      ${serviciosChips ? `<div class="chips" aria-label="Servicios">${serviciosChips}</div>` : `<div class="mini" style="opacity:.9;text-align:center;margin-top:6px;">Sin servicios cargados</div>`}
+      <div class="actions">
+        <button class="btn-edit">Configurar Turnos</button>
+        <button class="btn-danger btn-clear">Limpiar Turnos</button>
+        <button class="btn-danger btn-delete">Eliminar Profesional</button>
+      </div>
+      <div class="editor" style="display:none"></div>
+    `;
+
+    const btnEdit = box.querySelector(".btn-edit");
+    const editor = box.querySelector(".editor");
+
+    btnEdit.onclick = () => {
+      if (btnEdit.textContent === "Configurar Turnos") {
+        abrirEditor(editor, p);
+        editor.style.display = "block";
+        btnEdit.textContent = "Cerrar";
+      } else {
+        editor.style.display = "none";
+        btnEdit.textContent = "Configurar Turnos";
+      }
+    };
+
+    box.querySelector(".btn-clear").onclick = () => eliminarTurnos(p.profesionalId);
+    box.querySelector(".btn-delete").onclick = () => eliminarProfesional(p.profesionalId);
+
+    cont.appendChild(box);
+  });
+}
+
+    
     // === Editor de horarios (slots) ===
     function abrirEditor(editorEl, prof){
       if(editorEl.dataset.open==="1"){ editorEl.style.display="none"; editorEl.dataset.open=""; return; }
