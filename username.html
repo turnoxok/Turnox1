@@ -489,6 +489,8 @@ let profesionales = {};
 let selectedProfId = null;
 let selectedProf = "";
 let selectedHora = "";
+let selectedHoras = []; // array de horas reservadas
+let selectedServicio = null; // servicio elegido
 
 
 // ------------------ CARGAR LOGO ------------------
@@ -621,6 +623,17 @@ async function cargarTurnos(fechaStr) {
       Object.keys(turnosData).forEach(profId => {
         const profObj = turnosData[profId];
         html += `<div class="turnos"><h3>${profObj.nombre}</h3>`;
+
+        // nuevo: servicios disponibles
+if (profObj.servicios && profObj.servicios.length) {
+  html += `<label>Servicio: <select data-profid="${profId}" class="select-servicio">
+    <option value="">Selecciona un servicio</option>`;
+  profObj.servicios.forEach(s => {
+    html += `<option value="${s.nombre}" data-duracion="${s.duracion}">${s.nombre} (${s.duracion} min)</option>`;
+  });
+  html += `</select></label>`;
+}
+        
         if (!profObj.turnos || profObj.turnos.length === 0) {
           html += "<p>No hay turnos disponibles</p>";
         } else {
@@ -647,7 +660,13 @@ async function cargarTurnos(fechaStr) {
         seleccionarTurno(span.dataset.profid, span.dataset.hora);
       });
     });
-
+// listeners servicios
+document.querySelectorAll(".select-servicio").forEach(sel => {
+  sel.addEventListener("change", e => {
+    const dur = e.target.selectedOptions[0].dataset.duracion;
+    selectedServicio = {nombre: e.target.value, duracion: parseInt(dur)};
+  });
+});
   } catch (err) {
     console.error("Error cargando turnos:", err);
     turnosDiv.innerHTML = `
@@ -659,20 +678,30 @@ async function cargarTurnos(fechaStr) {
 
 // ------------------ SELECCIONAR TURNO ------------------
 function seleccionarTurno(profId, hora) {
+  if (!selectedServicio) {
+    alert("Selecciona un servicio primero");
+    return;
+  }
   selectedProfId = profId;
   selectedProf = turnosData[profId].nombre;
   selectedHora = hora;
 
-  // Quitar clase selected de cualquier hora previamente seleccionada
   document.querySelectorAll(".hora.disponible").forEach(el => el.classList.remove("selected"));
-
-  // Agregar clase selected a la hora clickeada
   const span = document.querySelector(`.hora.disponible[data-profid="${profId}"][data-hora="${hora}"]`);
   if (span) span.classList.add("selected");
 
+  // calcular horas necesarias según duración
+  const bloques = Math.ceil(selectedServicio.duracion / 30);
+  selectedHoras = [];
+  let [h,m] = hora.split(":").map(Number);
+  for (let i=0; i<bloques; i++){
+    selectedHoras.push(`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`);
+    m += 30;
+    if (m>=60){ m=0; h++; }
+  }
+
   mostrarFormReserva(selectedProfId, selectedHora);
 }
-
 
 // ------------------ MOSTRAR FORMULARIO ------------------
 function mostrarFormReserva(profId, hora) {
@@ -688,7 +717,9 @@ function mostrarFormReserva(profId, hora) {
   const formContainer = document.getElementById("reservaFormContainer");
   formContainer.style.display = "block";
   formContainer.innerHTML = `
-    <h2>Último paso! </h2><p style="font-size: 12px;">Completa tus datos y confirma la reserva con ${turnosData[profId].nombre} el ${fechaBonita} a las ${hora}</p>
+    <h2>Último paso! </h2><p style="font-size: 12px;">Completa tus datos y confirma la reserva con ${turnosData[profId].nombre} el ${fechaBonita} a las ${hora}
+    Servicio: ${selectedServicio.nombre} (${selectedServicio.duracion} min)<br>
+    Bloques: ${selectedHoras.join(", ")}</p>
    <form id="reservaForm">
   
   
@@ -758,6 +789,8 @@ function mostrarFormReserva(profId, hora) {
       whatsapp: formData.get("whatsapp"),
       dni: formData.get("dni"),
       comentario: formData.get("comentario"),
+      horas: selectedHoras,
+      servicio: selectedServicio.nombre,
       extra1: formData.get("extra1"),
       extra2: formData.get("extra2"),
       extra3: formData.get("extra3")
