@@ -886,7 +886,8 @@ function mostrarFormReserva(profId, hora) {
       profesional: selectedProf,
       profesionalId: selectedProfId,
       fecha: fechaStr,
-      hora: selectedHora,
+      hora: selectedHora,          // solo la primera
+      horas: selectedHoras.join(","),  // todas en string separadas por coma
       nombre: formData.get("nombre"),
       apellido: formData.get("apellido"),
       telefono: formData.get("telefono"),
