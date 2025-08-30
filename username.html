@@ -371,30 +371,31 @@ textarea::placeholder {
   font-family: "Montserrat", sans-serif;
 }
 
-     #servicioSelect {
+   .select-servicio {
+  display: block;
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
+  max-width: 300px;  /* ajustá al ancho que quieras */
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: 1px solid #ccc;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
-  color: #333;
   background: #f9f9f9;
+  color: #333;
   cursor: pointer;
 
-  /* ocultar flecha nativa */
+  /* ocultar la flecha nativa y meter una propia */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-
-  /* flechita custom */
   background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 16px;
 }
 
-#servicioSelect:focus {
+.select-servicio:focus {
   border-color: #2196F3;
   outline: none;
   box-shadow: 0 0 0 3px rgba(33,150,243,0.2);
@@ -487,16 +488,7 @@ textarea::placeholder {
 
 
   <div id="turnos">
-<label for="servicioSelect">Selecciona un servicio</label>
-<select id="servicioSelect" name="servicio">
-  <option value="">-- Elegir --</option>
-  <option value="corte">✂️ Corte de pelo</option>
-  <option value="color">🎨 Coloración</option>
-  <option value="peinado">💇 Peinado</option>
-  <option value="barba">🧔 Arreglo de barba</option>
-</select>
 
-    
   </div>
   <div id="reservaFormContainer" style="display:none;">
  
