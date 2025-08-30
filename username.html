@@ -759,30 +759,53 @@ function seleccionarTurno(profId, hora) {
     alert("Selecciona un servicio primero");
     return;
   }
+
+  const turnosProf = turnosData[profId]?.turnos || [];
+  if (!turnosProf.length) return;
+
+  // 🔹 calcular intervalo real según la grilla
+  let intervalo = null;
+  if (turnosProf.length > 1) {
+    const [h1, m1] = turnosProf[0].hora.split(":").map(Number);
+    const [h2, m2] = turnosProf[1].hora.split(":").map(Number);
+    intervalo = (h2*60 + m2) - (h1*60 + m1);
+  }
+  if (!intervalo) {
+    alert("No se pudo calcular el intervalo de turnos");
+    return;
+  }
+
+  // 🔹 calcular bloques necesarios según duración
+  const bloques = Math.ceil(selectedServicio.duracion / intervalo);
+
+  // 🔹 buscar turnos consecutivos
+  const idx = turnosProf.findIndex(t => t.hora === hora);
+  if (idx === -1) return;
+
+  const seleccionados = [];
+  for (let i = 0; i < bloques; i++) {
+    const turno = turnosProf[idx + i];
+    if (!turno || turno.estado !== "disponible") {
+      alert("No hay turnos consecutivos suficientes para este servicio.");
+      return;
+    }
+    seleccionados.push(turno.hora);
+  }
+
+  // 🔹 guardar selección global
   selectedProfId = profId;
   selectedProf = turnosData[profId].nombre;
   selectedHora = hora;
+  selectedHoras = seleccionados;
 
-  // limpiar selección previa
+  // 🔹 limpiar selección previa
   document.querySelectorAll(".hora.disponible").forEach(el => el.classList.remove("selected"));
 
-  const intervalo = turnosData[profId].intervalo || 30;
-  const bloques = Math.ceil(selectedServicio.duracion / intervalo);
-
-  selectedHoras = [];
-  let [h,m] = hora.split(":").map(Number);
-
-  for (let i=0; i<bloques; i++) {
-    const horaStr = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
-    selectedHoras.push(horaStr);
-
-    // marcar visualmente
-    const span = document.querySelector(`.hora.disponible[data-profid="${profId}"][data-hora="${horaStr}"]`);
+  // 🔹 marcar selección actual
+  seleccionados.forEach(h => {
+    const span = document.querySelector(`.hora.disponible[data-profid="${profId}"][data-hora="${h}"]`);
     if (span) span.classList.add("selected");
-
-    m += intervalo;
-    if (m>=60){ m=0; h++; }
-  }
+  });
 
   mostrarFormReserva(selectedProfId, selectedHora);
 }
