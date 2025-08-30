@@ -605,6 +605,9 @@ async function cargarTurnos(fechaStr) {
     const data = await res.json();
 
     if (data.status !== "ok") {
+      console.log("Respuesta completa:", data);
+console.log("Profesionales:", data.profesionales);
+console.log("Turnos:", data.turnos);
       turnosDiv.innerHTML = `
         <h2> ${fechaBonita}</h2>
         <p style="color:red;">Error al cargar: ${data.msg || "Error desconocido"}</p>
