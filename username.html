@@ -903,6 +903,7 @@ function mostrarFormReserva(profId, hora) {
       extra2: formData.get("extra2"),
       extra3: formData.get("extra3")
     };
+    console.log("Voy a enviar reserva:", dataToSend);
     const res = await fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({action:"saveReserva", data: JSON.stringify(dataToSend)})
