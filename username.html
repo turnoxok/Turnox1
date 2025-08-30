@@ -680,13 +680,19 @@ async function cargarTurnos(fechaStr) {
       });
     });
 
-    // listeners servicios
-    document.querySelectorAll(".select-servicio").forEach(sel => {
-      sel.addEventListener("change", e => {
-        const dur = e.target.selectedOptions[0].dataset.duracion;
-        selectedServicio = { nombre: e.target.value, duracion: parseInt(dur) };
-      });
-    });
+    // 🔽 listeners servicios (nuevo con recalculo de disponibilidad)
+document.querySelectorAll(".select-servicio").forEach(sel => {
+  sel.addEventListener("change", e => {
+    const dur = parseInt(e.target.selectedOptions[0].dataset.duracion);
+    const profId = e.target.dataset.profid;
+
+    selectedServicio = { nombre: e.target.value, duracion: dur };
+
+    // recalcular la disponibilidad de ese profesional
+    recalcularDisponibilidad(profId, dur);
+  });
+});
+
 
   } catch (err) {
     console.error("Error cargando turnos:", err);
@@ -695,6 +701,46 @@ async function cargarTurnos(fechaStr) {
       <p style="color:red;">No se pudieron cargar los turnos.</p>
     `;
   }
+}
+// ------------------ NUEVA FUNCIÓN ------------------
+function recalcularDisponibilidad(profId, duracion) {
+  const intervalo = turnosData[profId].intervalo || 30; // 👈 acá tomamos el intervalo real
+  const bloques = Math.ceil(duracion / intervalo);
+  const turnos = turnosData[profId].turnos;
+
+  turnos.forEach((t, idx) => {
+    const span = document.querySelector(`.hora[data-profid="${profId}"][data-hora="${t.hora}"]`);
+    if (!span) return;
+
+    if (t.estado !== "disponible") {
+      span.classList.remove("disponible","selected");
+      span.classList.add("bloqueado");
+      return;
+    }
+
+    // mirar hacia adelante si hay suficientes bloques disponibles
+    let ok = true;
+    for (let i=0; i<bloques; i++) {
+      const siguiente = turnos[idx+i];
+      if (!siguiente || siguiente.estado !== "disponible") {
+        ok = false;
+        break;
+      }
+    }
+
+    if (ok) {
+      span.classList.remove("bloqueado");
+      span.classList.add("disponible");
+    } else {
+      span.classList.remove("disponible","selected");
+      span.classList.add("bloqueado");
+    }
+  });
+
+  // volver a enganchar listeners solo a los disponibles
+  document.querySelectorAll(`.hora.disponible[data-profid="${profId}"]`).forEach(span => {
+    span.onclick = () => seleccionarTurno(profId, span.dataset.hora);
+  });
 }
 
 // ------------------ SELECCIONAR TURNO ------------------
