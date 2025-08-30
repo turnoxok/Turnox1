@@ -606,8 +606,8 @@ async function cargarTurnos(fechaStr) {
 
     if (data.status !== "ok") {
       console.log("Respuesta completa:", data);
-console.log("Profesionales:", data.profesionales);
-console.log("Turnos:", data.turnos);
+      console.log("Profesionales:", data.profesionales);
+      console.log("Turnos:", data.turnos);
       turnosDiv.innerHTML = `
         <h2> ${fechaBonita}</h2>
         <p style="color:red;">Error al cargar: ${data.msg || "Error desconocido"}</p>
@@ -627,15 +627,27 @@ console.log("Turnos:", data.turnos);
         const profObj = turnosData[profId];
         html += `<div class="turnos"><h3>${profObj.nombre}</h3>`;
 
-        // nuevo: servicios disponibles
-if (profObj.servicios && profObj.servicios.length) {
-  html += `<label>Servicio: <select data-profid="${profId}" class="select-servicio">
-    <option value="">Selecciona un servicio</option>`;
-  profObj.servicios.forEach(s => {
-    html += `<option value="${s.nombre}" data-duracion="${s.duracion}">${s.nombre} (${s.duracion} min)</option>`;
-  });
-  html += `</select></label>`;
-}
+        // 🔽 normalizar servicios (servicio1..10 + tiempo1..10)
+        let servicios = [];
+        for (let i = 1; i <= 10; i++) {
+          const nombre = profObj[`servicio${i}`];
+          const duracion = profObj[`tiempo${i}`];
+          if (nombre && nombre.trim() !== "" && duracion && duracion !== "") {
+            servicios.push({ nombre, duracion: parseInt(duracion) });
+          }
+        }
+
+        if (servicios.length) {
+          html += `<label>Servicio: 
+            <select data-profid="${profId}" class="select-servicio">
+              <option value="">Selecciona un servicio</option>`;
+          servicios.forEach(s => {
+            html += `<option value="${s.nombre}" data-duracion="${s.duracion}">
+                       ${s.nombre} (${s.duracion} min)
+                     </option>`;
+          });
+          html += `</select></label>`;
+        }
         
         if (!profObj.turnos || profObj.turnos.length === 0) {
           html += "<p>No hay turnos disponibles</p>";
@@ -663,13 +675,15 @@ if (profObj.servicios && profObj.servicios.length) {
         seleccionarTurno(span.dataset.profid, span.dataset.hora);
       });
     });
-// listeners servicios
-document.querySelectorAll(".select-servicio").forEach(sel => {
-  sel.addEventListener("change", e => {
-    const dur = e.target.selectedOptions[0].dataset.duracion;
-    selectedServicio = {nombre: e.target.value, duracion: parseInt(dur)};
-  });
-});
+
+    // 🔽 listeners servicios
+    document.querySelectorAll(".select-servicio").forEach(sel => {
+      sel.addEventListener("change", e => {
+        const dur = e.target.selectedOptions[0].dataset.duracion;
+        selectedServicio = { nombre: e.target.value, duracion: parseInt(dur) };
+      });
+    });
+
   } catch (err) {
     console.error("Error cargando turnos:", err);
     turnosDiv.innerHTML = `
