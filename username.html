@@ -468,7 +468,7 @@ textarea::placeholder {
 <!-- Nuevo: ticket fijo -->
 <div id="ticketContainer"></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzECDPKdNSk8ajElms759moe3IO40ffnQu2J8_yW6GCW9B0sM94RM77jndgdKz2by2RLg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyqRNtLDpy__ieJM0a0a3KIEIirzXCFLOOVe0h55gzBUNR7y4GyL_JUunfykyTgPfrZ/exec";
 
 // ------------------ OBTENER USERNAME ------------------
 let params = new URLSearchParams(window.location.search);
@@ -855,7 +855,7 @@ function mostrarFormReserva(profId, hora) {
   
   <textarea id="comentario" name="comentario" placeholder="Comentario (opcional)"></textarea>
   
-  <input type="hidden" name="extra1" value="">
+  <input type="hidden" name="servicio" value="${selectedServicio.nombre}">
   <input type="hidden" name="extra2" value="">
   <input type="hidden" name="extra3" value="">
   
@@ -899,7 +899,7 @@ function mostrarFormReserva(profId, hora) {
       comentario: formData.get("comentario"),
       horas: selectedHoras,
       servicio: selectedServicio.nombre,
-      extra1: formData.get("extra1"),
+     
       extra2: formData.get("extra2"),
       extra3: formData.get("extra3")
     };
