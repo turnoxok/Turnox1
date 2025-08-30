@@ -704,11 +704,14 @@ document.querySelectorAll(".select-servicio").forEach(sel => {
 }
 // ------------------ NUEVA FUNCIÓN ------------------
 function recalcularDisponibilidad(profId, duracion) {
-  const intervalo = turnosData[profId].intervalo || 30; // 👈 acá tomamos el intervalo real
-  const bloques = Math.ceil(duracion / intervalo);
+  const intervalo = turnosData[profId].intervalo || 30; // intervalo real
   const turnos = turnosData[profId].turnos;
 
-  turnos.forEach((t, idx) => {
+  // pasamos a mapa rápido para buscar por hora
+  const mapa = {};
+  turnos.forEach(t => mapa[t.hora] = t.estado);
+
+  turnos.forEach(t => {
     const span = document.querySelector(`.hora[data-profid="${profId}"][data-hora="${t.hora}"]`);
     if (!span) return;
 
@@ -718,14 +721,21 @@ function recalcularDisponibilidad(profId, duracion) {
       return;
     }
 
-    // mirar hacia adelante si hay suficientes bloques disponibles
+    // calcular cuántos bloques necesito
+    const bloques = Math.ceil(duracion / intervalo);
+
+    // verificar continuidad desde t.hora
     let ok = true;
+    let [h,m] = t.hora.split(":").map(Number);
+
     for (let i=0; i<bloques; i++) {
-      const siguiente = turnos[idx+i];
-      if (!siguiente || siguiente.estado !== "disponible") {
+      const horaStr = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+      if (mapa[horaStr] !== "disponible") {
         ok = false;
         break;
       }
+      m += intervalo;
+      if (m>=60) { m=0; h++; }
     }
 
     if (ok) {
@@ -749,39 +759,30 @@ function seleccionarTurno(profId, hora) {
     alert("Selecciona un servicio primero");
     return;
   }
-
-  const intervalo = turnosData[profId].intervalo || 30; // 👈 usamos el intervalo real
-  const bloques = Math.ceil(selectedServicio.duracion / intervalo);
-
   selectedProfId = profId;
   selectedProf = turnosData[profId].nombre;
   selectedHora = hora;
+
+  // limpiar selección previa
+  document.querySelectorAll(".hora.disponible").forEach(el => el.classList.remove("selected"));
+
+  const intervalo = turnosData[profId].intervalo || 30;
+  const bloques = Math.ceil(selectedServicio.duracion / intervalo);
+
   selectedHoras = [];
+  let [h,m] = hora.split(":").map(Number);
 
-  // buscamos la secuencia de bloques
-  let [h, m] = hora.split(":").map(Number);
-  for (let i = 0; i < bloques; i++) {
-    const slot = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+  for (let i=0; i<bloques; i++) {
+    const horaStr = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+    selectedHoras.push(horaStr);
 
-    // validar que el slot esté disponible
-    const turnoSlot = turnosData[profId].turnos.find(t => t.hora === slot);
-    if (!turnoSlot || turnoSlot.estado !== "disponible") {
-      alert(`El servicio necesita ${bloques} turnos seguidos y no hay disponibilidad completa.`);
-      return;
-    }
-
-    selectedHoras.push(slot);
+    // marcar visualmente
+    const span = document.querySelector(`.hora.disponible[data-profid="${profId}"][data-hora="${horaStr}"]`);
+    if (span) span.classList.add("selected");
 
     m += intervalo;
-    if (m >= 60) { m = 0; h++; }
+    if (m>=60){ m=0; h++; }
   }
-
-  // marcar en UI
-  document.querySelectorAll(".hora.disponible").forEach(el => el.classList.remove("selected"));
-  selectedHoras.forEach(hh => {
-    const span = document.querySelector(`.hora.disponible[data-profid="${profId}"][data-hora="${hh}"]`);
-    if (span) span.classList.add("selected");
-  });
 
   mostrarFormReserva(selectedProfId, selectedHora);
 }
