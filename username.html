@@ -636,7 +636,7 @@ async function cargarTurnos(fechaStr) {
             servicios.push({ nombre, duracion: parseInt(duracion) });
           }
         }
-
+console.log("Servicios para", profObj.nombre, servicios);
         if (servicios.length) {
           html += `<label>Servicio: 
             <select data-profid="${profId}" class="select-servicio">
