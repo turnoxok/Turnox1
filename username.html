@@ -627,15 +627,15 @@ async function cargarTurnos(fechaStr) {
         const profObj = turnosData[profId];
         html += `<div class="turnos"><h3>${profObj.nombre}</h3>`;
 
-      // nuevo: servicios disponibles desde "profesionales"
+   // nuevo: servicios disponibles desde "profesionales"
 let servicios = [];
 const profConfig = profesionales.find(p => p.profesionalId === profId);
 if (profConfig) {
   for (let i = 1; i <= 10; i++) {
     const nombre = profConfig[`servicio${i}`];
     const duracion = profConfig[`tiempo${i}`];
-    if (nombre && nombre.trim() !== "" && duracion && duracion !== "") {
-      servicios.push({ nombre, duracion: parseInt(duracion) });
+    if (typeof nombre === "string" && nombre.trim() !== "" && duracion) {
+      servicios.push({ nombre: nombre.trim(), duracion: parseInt(duracion) });
     }
   }
 }
