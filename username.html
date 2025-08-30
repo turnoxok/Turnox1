@@ -333,12 +333,12 @@ header {
 .rect {
   width: 80px;
   height: 120px;
-  border: 2px solid #5F48D750;
+  border: 2px solid #B0B0B050;
   border-radius: 12px;
 }
 
 .rect.filled {
-  background: #412866;
+  background: #3A3A3A;
 }
 
 .down .rect {
@@ -371,36 +371,36 @@ textarea::placeholder {
   font-family: "Montserrat", sans-serif;
 }
 
-   .select-servicio {
+  .select-servicio {
   display: block;
   width: 100%;
-  max-width: 300px;  /* ajustá al ancho que quieras */
+  max-width: 300px;
   margin: 10px 0;
   padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid #ccc;
+
+  border: 2px solid #B0B0B0;   /* gris claro contorno */
+  background: #3A3A3A;         /* gris oscuro pleno */
+  color: #f1f1f1;              /* texto en gris muy claro para contraste */
   font-size: 15px;
-  font-family: "Montserrat", sans-serif;
   font-weight: 500;
-  background: #f9f9f9;
-  color: #333;
   cursor: pointer;
 
-  /* ocultar la flecha nativa y meter una propia */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 16px;
 }
 
 .select-servicio:focus {
-  border-color: #2196F3;
+  border-color: #888; /* un gris medio al hacer foco */
   outline: none;
-  box-shadow: 0 0 0 3px rgba(33,150,243,0.2);
+  box-shadow: 0 0 0 3px rgba(180,180,180,0.3);
 }
+
 
 </style>
 
