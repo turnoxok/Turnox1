@@ -13,60 +13,128 @@
   <style>
    :root { color-scheme: light only; }
    body {
-     font-family: "Montserrat", sans-serif;
-     background-color: #4B2E78;
-     color: #fff;
-     margin: 0;
-     padding: 0;
+    font-family: "Montserrat", sans-serif;
+    background-color: #4B2E78;
+    color: #fff;
+    margin: 0; padding: 0;
    }
-   /* === estilos existentes (recorté lo innecesario para no repetir) === */
-   .header-info { position: absolute; top: 15px; right: 15px; display: flex; gap: 15px; align-items: center; }
-   .user-pill { padding: 6px 12px; border-radius: 999px; font-size: 14px; background: #ffffff25; border: 1px solid #ffffff40; }
-   .creditos-info { display: flex; gap: 6px; align-items: center; padding: 6px 10px; border-radius: 999px; background: #ffffff25; border: 1px solid #ffffff40; font-size: 14px; }
+   .header-info { position: absolute; top: 15px; right: 15px; display: flex; align-items: center; gap: 15px; }
+   .user-pill {
+    padding: 6px 12px; border-radius: 999px; font-size: 14px;
+    background: #ffffff25; border: 1px solid #ffffff40; margin: 0;
+   }
+   .creditos-info {
+    display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+    border-radius: 999px; background: #ffffff25; border: 1px solid #ffffff40; font-size: 14px;
+   }
+   .container {
+    font-family: "Montserrat", sans-serif; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; min-height: 100vh; text-align: center; gap: 20px;
+   }
+   .cantidad-wrapper { display: flex; align-items: center; gap: 10px; }
+   .cantidad-btn {
+     background: #25213C; color: #5F48D7; border: none; border-radius: 50%;
+     width: 40px; height: 40px; font-size: 20px; cursor: pointer; transition: background 0.2s;
+   }
+   .cantidad-btn:hover { background: #ffffff25; color: #fff; }
+   #cantidadCreditos {
+    font-family: "Montserrat", sans-serif; width: 160px; text-align: center;
+    font-size: 80px; padding: 5px; background: none; border: none; color: #fff;
+   }
+   .total-box { font-size: 18px; font-weight: bold; background: none; padding: 8px 16px; }
+   .precio-original { text-decoration: line-through; opacity: 0.6; margin-right: 8px; }
+   .precio-final { color: #00ffae; font-weight: bold; }
+   .btn-comprar {
+     font-family: "Montserrat", sans-serif; background: #25213C; color: #5F48D7;
+     border: none; padding: 12px 70px; border-radius: 0 0 20px 20px; font-size: 16px;
+     cursor: pointer; transition: background 0.2s;
+   }
+   .btn-comprar:hover { background: #ffffff25; color: #fff; }
+   .bottom-nav {
+     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+     display: flex; justify-content: space-around; align-items: center;
+     width: 100%; max-width: 500px; background: #1c1c1c;
+     border-top: 1px solid #ffffff25; padding: 10px 0; z-index: 1000;
+   }
+   .nav-item { flex: 1; text-align: center; text-decoration: none; color: #fff; font-size: 12px;
+     display: flex; flex-direction: column; align-items: center; gap: 4px;
+   }
+   .nav-item i { font-size: 20px; padding: 8px; border-radius: 50%; transition: all 0.3s ease; }
+   .nav-item span { font-size: 12px; transition: color 0.3s ease; }
+   .nav-item.active i { background: #25213C; color: #5F48D7; transform: scale(1.1); }
+   .nav-item.active span { color: #5F48D7; font-weight: 500; }
+   .nav-item:hover { opacity: 0.8; }
+   [hidden] { display: none !important; }
 
-   .container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 20px; text-align: center; }
+   /* Floating tab */
+   .floating-tab { position: fixed; top: 15%; left: 50%; transform: translateX(-50%);
+     z-index: 999; width: 280px; display: flex; flex-direction: column; align-items: center;
+   }
+   .floating-tab button {
+     background: #25213C; color: #5F48D7; border: none; padding: 10px 15px;
+     border-radius: 20px 20px 0 0; cursor: pointer; font-family: "Montserrat", sans-serif;
+     font-size: 16px; text-align: center; width: 280px;
+   }
+   .floating-tab button:hover { background: #ffffff25; color: #fff; }
+   .tab-content {
+     max-height: 0; overflow: hidden; background: #25213C50;
+     transition: max-height 0.4s ease, padding 0.4s ease; text-align: center;
+   }
+   .tab-content.open { max-height: 280px; width: 260px; padding: 10px; font-size: 14px; }
+   .tab-content a { font-weight: bold; color: #5F48D7; text-decoration: none; }
+   .tab-content a:hover { text-decoration: underline; }
 
-   .cantidad-wrapper { display: flex; gap: 10px; align-items: center; }
-   .cantidad-btn { background: #25213C; color: #5F48D7; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; }
-   #cantidadCreditos { font-family: "Montserrat"; width: 160px; text-align: center; font-size: 80px; background: none; border: none; color: #fff; }
-   .total-box { font-size: 18px; font-weight: bold; }
-   .btn-comprar { font-family: "Montserrat"; background: #25213C; color: #5F48D7; border: none; padding: 12px 70px; border-radius: 0 0 20px 20px; cursor: pointer; font-size: 16px; }
-
-   .descuento-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px; }
-   .descuento-wrapper input { padding: 8px; border-radius: 8px; border: none; font-size: 14px; text-align: center; }
-   .descuento-aplicado { font-size: 16px; font-weight: bold; color: #5F48D7; }
+   /* Código de descuento */
+   .descuento-box { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 10px; }
+   .descuento-input {
+     padding: 6px 10px; border-radius: 8px; border: none; outline: none;
+     font-family: "Montserrat", sans-serif; font-size: 14px; text-align: center;
+   }
+   .btn-descuento {
+     padding: 6px 15px; border-radius: 8px; border: none; background: #25213C; color: #5F48D7;
+     cursor: pointer; font-size: 14px;
+   }
+   .btn-descuento:hover { background: #ffffff25; color: #fff; }
   </style>
 </head>
 <body>
 
+<!-- Header -->
 <div class="header-info">
   <h2 class="user-pill">¡Hola! <span id="usernameDisplay"></span></h2>
   <div class="creditos-info">
-    <i class="fa fa-coins"></i>
-    <span id="creditosActuales">Cargando...</span>
+    <i class="fa fa-coins"></i><span id="creditosActuales">Cargando...</span>
   </div>
 </div>
 
 <div class="container">
+  <!-- Botón flotante -->
+  <div class="floating-tab">
+    <button onclick="toggleUserTab()">Ver Mi Sitio</button>
+    <div class="tab-content" id="tabContent">
+      <a id="userLink" href="#" target="_blank">https://turnox.pro/username</a>
+    </div>
+  </div>
+
   <div class="cantidad-wrapper">
     <button id="btnMenos" class="cantidad-btn">-</button>
     <input type="number" id="cantidadCreditos" min="0" value="10" step="10">
     <button id="btnMas" class="cantidad-btn">+</button>
   </div>
 
-  <p class="total-box">Total a pagar: <span id="totalPagar">$1700</span></p>
-
-  <!-- Campo de descuento -->
-  <div class="descuento-wrapper">
-    <input type="text" id="codigoDescuento" placeholder="Código de descuento">
-    <button onclick="aplicarDescuento()">Aplicar</button>
-    <p class="descuento-aplicado" id="totalConDescuento" hidden></p>
+  <div class="descuento-box">
+    <input type="text" id="codigoDescuento" class="descuento-input" placeholder="Código de descuento">
+    <button class="btn-descuento" onclick="aplicarDescuento()">Aplicar</button>
   </div>
 
+  <p class="total-box">
+    <span id="precioNormal"></span>
+    <span id="totalPagar" class="precio-final"></span>
+  </p>
   <button class="btn-comprar" onclick="comprarCreditos()">Agregar + Créditos</button>
 </div>
 
-<!-- nav inferior (recortado por espacio) -->
+<!-- Nav -->
 <div class="bottom-nav">
   <a href="#" class="nav-item active" id="btnCreditos"><i class="fa fa-plus-circle"></i><span>Créditos</span></a>
   <a href="#" class="nav-item" id="btnConfig"><i class="fa fa-tasks"></i><span>Config.</span></a>
@@ -78,9 +146,7 @@
 
 <script>
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwIRxWQYDBRLf0j6Nba9RR0KRQ4TJtv-3VrBNCb-pRa03TJuW46ohxTT1Q9ptqZzg2g/exec";
-let username, userId;
-const precioUnitario = 170;
-let descuentoAplicado = null; // porcentaje o monto
+let username, userId, descuento = 0;
 
 function init(data) {
   username = data.username;
@@ -94,15 +160,35 @@ function init(data) {
     });
 }
 
-function actualizarTotal() {
-  const cantidad = parseInt(document.getElementById("cantidadCreditos").value) || 0;
-  const total = cantidad * precioUnitario;
-  document.getElementById("totalPagar").textContent = `$${total}`;
+function comprarCreditos() {
+  const cantidad = parseInt(document.getElementById("cantidadCreditos").value, 10);
+  if (!cantidad || cantidad <= 0) return alert("Cantidad inválida");
 
-  if (descuentoAplicado) {
-    const totalConDescuento = Math.round(total * (1 - descuentoAplicado));
-    document.getElementById("totalConDescuento").hidden = false;
-    document.getElementById("totalConDescuento").textContent = `Con descuento: $${totalConDescuento}`;
+  fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}&cantidad=${cantidad}&codigo=${encodeURIComponent(document.getElementById("codigoDescuento").value)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Error al generar link de pago");
+      }
+    });
+}
+
+const precioUnitario = 170;
+
+function actualizarTotal() {
+  const cantidad = parseInt(document.getElementById("cantidadCreditos").value) || 1;
+  const total = cantidad * precioUnitario;
+  const totalConDesc = Math.max(total - descuento, 0);
+
+  if (descuento > 0) {
+    document.getElementById("precioNormal").textContent = `$${total}`;
+    document.getElementById("precioNormal").classList.add("precio-original");
+    document.getElementById("totalPagar").textContent = `$${totalConDesc}`;
+  } else {
+    document.getElementById("precioNormal").textContent = "";
+    document.getElementById("totalPagar").textContent = `$${total}`;
   }
 }
 
@@ -110,46 +196,80 @@ function aplicarDescuento() {
   const codigo = document.getElementById("codigoDescuento").value.trim();
   if (!codigo) return alert("Ingrese un código");
 
-  fetch(`${WEBAPP_URL}?action=validarCodigo&codigo=${encodeURIComponent(codigo)}`)
-    .then(r => r.json())
-    .then(res => {
-      if (res.valido) {
-        descuentoAplicado = res.descuento; // ej: 0.2 = 20%
-        actualizarTotal();
-      } else {
-        descuentoAplicado = null;
-        document.getElementById("totalConDescuento").hidden = true;
-        alert("Código inválido");
-      }
-    });
-}
-
-function comprarCreditos() {
-  const cantidad = parseInt(document.getElementById("cantidadCreditos").value, 10);
-  if (!cantidad || cantidad <= 0) return alert("Cantidad inválida");
-  const codigo = document.getElementById("codigoDescuento").value.trim();
-
-  fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}&cantidad=${cantidad}&codigo=${encodeURIComponent(codigo)}`)
+  fetch(`${WEBAPP_URL}?action=validarCodigo&codigo=${encodeURIComponent(codigo)}&username=${encodeURIComponent(username)}`)
     .then(r => r.json())
     .then(data => {
-      if (data.url) window.location.href = data.url;
-      else alert("Error al generar link de pago");
+      if (data.valido) {
+        descuento = data.descuento;
+        alert(`Código aplicado. Descuento: $${descuento}`);
+      } else {
+        descuento = 0;
+        alert("Código inválido");
+      }
+      actualizarTotal();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error validando código");
     });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   actualizarTotal();
-  document.getElementById("btnMenos").addEventListener("click", () => { document.getElementById("cantidadCreditos").stepDown(); actualizarTotal(); });
-  document.getElementById("btnMas").addEventListener("click", () => { document.getElementById("cantidadCreditos").stepUp(); actualizarTotal(); });
+  document.getElementById("btnMenos").addEventListener("click", () => {
+    document.getElementById("cantidadCreditos").stepDown();
+    actualizarTotal();
+  });
+  document.getElementById("btnMas").addEventListener("click", () => {
+    document.getElementById("cantidadCreditos").stepUp();
+    actualizarTotal();
+  });
   document.getElementById("cantidadCreditos").addEventListener("input", actualizarTotal);
+});
 
-  // Protege acceso
-  const storedUserId = localStorage.getItem("userId");
-  const storedUsername = localStorage.getItem("username");
-  if (!storedUserId || !storedUsername) window.location.href = "index.html";
-  userId = storedUserId; username = storedUsername;
-  init({ username, userId });
+// Sesión protegida
+const storedUserId = localStorage.getItem("userId");
+const storedUsername = localStorage.getItem("username");
+if (!storedUserId || !storedUsername) window.location.href = "index.html";
+userId = storedUserId; username = storedUsername;
+init({ username, userId });
+
+// Nav dinámico
+document.getElementById("btnCreditos").href   = `creditos.html`;
+document.getElementById("btnConfig").href     = `configuracion.html`;
+document.getElementById("btnClientes").href   = `clientes.html`;
+document.getElementById("btnTurnos").href     = `turnos.html`;
+document.getElementById("btnPerfil").href     = `perfil.html`;
+
+document.getElementById("btnLogout").addEventListener("click", e => {
+  e.preventDefault();
+  localStorage.removeItem("username");
+  localStorage.removeItem("userId");
+  window.location.href = "index.html";
+});
+
+const currentPage = window.location.pathname.split("/").pop();
+document.querySelectorAll(".nav-item").forEach(item => {
+  const hrefPage = item.getAttribute("href")?.split("/").pop();
+  if (hrefPage === currentPage) {
+    document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+    item.classList.add("active");
+  }
+});
+
+function toggleUserTab() {
+  document.getElementById("tabContent").classList.toggle("open");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const username = localStorage.getItem("username");
+  if (username) {
+    const link = document.getElementById("userLink");
+    link.href = "https://turnox.pro/" + encodeURIComponent(username);
+    link.textContent = "https://turnox.pro/" + username;
+  }
 });
 </script>
+
 </body>
 </html>
