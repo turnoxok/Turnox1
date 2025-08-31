@@ -406,7 +406,7 @@ width: 280px;
   </div>
 
     <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxKbjJtnJoepb1I3TJ92QZrP57U7jzfKWCRBqX-xNK7cfagEet1H0_3Gmz4-6Pt6S6v/exec"; // URL de tu Apps Script
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw2uL_hc0ECnjR_TgAf14shEjFHYAP0qorj4P3bgq_CeTOKwld2C54uJip3_Ihxu1df/exec"; // URL de tu Apps Script
 
 let username, userId;
 
@@ -417,29 +417,30 @@ function init(data) {
   document.getElementById("usernameDisplay").innerText = username;
 
   // Trae créditos actuales
-  fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${username}&cantidad=${cantidad}&codigo=${codigoIngresado}`)
-  .then(r => r.json())
-  .then(data => {
-    window.location.href = data.url;
-  });
+  fetch(`${WEBAPP_URL}?action=getCreditos&username=${encodeURIComponent(username)}`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("creditosActuales").innerText = data.creditos;
+    });
 }
-  
 
 function comprarCreditos() {
   const cantidad = parseInt(document.getElementById("cantidadCreditos").value, 10);
+  const codigo = document.getElementById("codigoDescuento").value.trim();
+  
   if (!cantidad || cantidad <= 0) return alert("Cantidad inválida");
 
-  // Crear preferencia
-  fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}&cantidad=${cantidad}`)
+  fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${encodeURIComponent(username)}&userId=${encodeURIComponent(userId)}&cantidad=${cantidad}&codigo=${encodeURIComponent(codigo)}`)
     .then(r => r.json())
     .then(data => {
       if (data.url) {
-        window.location.href = data.url; // abre Mercado Pago
+        window.location.href = data.url;
       } else {
         alert("Error al generar link de pago");
       }
     });
 }
+
 
 
 </script>
