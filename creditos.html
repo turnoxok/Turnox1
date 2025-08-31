@@ -406,7 +406,7 @@ width: 280px;
   </div>
 
     <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzRGVtMbeFygbgrloutHdNndoT_O8Du6fyreOgo_oiKKCmTcVWFrrJJDSwYBzUHZzI-/exec"; // URL de tu Apps Script
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxKbjJtnJoepb1I3TJ92QZrP57U7jzfKWCRBqX-xNK7cfagEet1H0_3Gmz4-6Pt6S6v/exec"; // URL de tu Apps Script
 
 let username, userId;
 
@@ -417,12 +417,13 @@ function init(data) {
   document.getElementById("usernameDisplay").innerText = username;
 
   // Trae créditos actuales
-  fetch(`${WEBAPP_URL}?action=getCreditos&username=${encodeURIComponent(username)}`)
-    .then(r => r.json())
-    .then(data => {
-      document.getElementById("creditosActuales").innerText = data.creditos;
-    });
-}
+  fetch(`${WEBAPP_URL}?action=crearPreferencia&username=${username}&cantidad=${cantidad}&codigo=${codigoIngresado}`)
+  .then(r => r.json())
+  .then(data => {
+    window.location.href = data.url;
+  });
+
+  
 
 function comprarCreditos() {
   const cantidad = parseInt(document.getElementById("cantidadCreditos").value, 10);
