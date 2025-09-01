@@ -169,37 +169,48 @@ async function cargarVentas() {
     const tbody = document.getElementById("tablaVentas");
     tbody.innerHTML = "";
 
-    if (!data.ok) {
-      console.warn("[VENTAS] Respuesta no OK:", data);
-      return;
-    }
+    let totalComisionSupervisor = 0;
 
-    data.ventas.forEach((v) => {
-      const tr = document.createElement("tr");
-      const fecha = v.HORAYFECHA ? new Date(v.HORAYFECHA).toLocaleString() : "";
-      const liq = v.LIQUIDACION || "";
-      const acciones = (usuario.cargo === "S")
-        ? `<button class="btn" onclick="marcarLiquidado(${v.FILA})">Liquidar</button>`
-        : "";
+    if (data.ok) {
+      data.ventas.forEach((v, idx) => {
+        // Calcular comisión supervisor (10% del total de la venta)
+        const comisionSupervisor = v.TOTAL * 0.1;
+        totalComisionSupervisor += comisionSupervisor;
 
-      tr.innerHTML = `
-        <td>${v.CODIGO ?? ""}</td>
-        <td>${v.Usuario ?? ""}</td>
-        <td>${v.CARGA ?? ""}</td>
-        <td>${v.CREDITOSANTES ?? ""}</td>
-        <td>${v.CREDITOSDESPUES ?? ""}</td>
-        <td>${fecha}</td>
-        <td>${v.TOTAL ?? ""}</td>
-        <td>${v.COMISION ?? ""}</td>
-        <td>${liq}</td>
-        ${usuario.cargo === "S" ? `<td>${acciones}</td>` : ""}
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${v.CODIGO}</td>
+          <td>${v.Usuario}</td>
+          <td>${v.CARGA}</td>
+          <td>${v.CREDITOSANTES}</td>
+          <td>${v.CREDITOSDESPUES}</td>
+          <td>${v.HORAYFECHA}</td>
+          <td>${v.TOTAL}</td>
+          <td>${v.COMISION}</td>
+          <td>${comisionSupervisor}</td>
+          <td>${v.LIQUIDACION || ""}</td>
+          ${usuario.cargo === "S" ? `<td><button class="btn" onclick="marcarLiquidado(${idx+2})">Liquidar</button></td>` : ""}
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Mostrar total de comisiones del supervisor
+      const trTotal = document.createElement("tr");
+      trTotal.innerHTML = `
+        <td colspan="8" style="text-align:right;font-weight:bold;">Total Comisión Supervisor:</td>
+        <td style="font-weight:bold;">${totalComisionSupervisor}</td>
+        <td colspan="2"></td>
       `;
-      tbody.appendChild(tr);
-    });
+      tbody.appendChild(trTotal);
+
+    } else {
+      console.warn("[VENTAS] Respuesta no OK:", data);
+    }
   } catch (e) {
     console.error("[VENTAS] Error:", e);
   }
 }
+
 
   async function marcarLiquidado(filaReal) {
   if (usuario.cargo !== "S") {
