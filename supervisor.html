@@ -171,12 +171,14 @@ async function cargarVentas() {
 
     let totalComisionSupervisor = 0;
 
-    if (data.ok) {
+     if (data.ok) {
       data.ventas.forEach((v, idx) => {
-        // Calcular comisión supervisor (10% del total de la venta)
-        const comisionSupervisor = v.TOTAL * 0.1;
-        totalComisionSupervisor += comisionSupervisor;
-
+        let comisionSupervisor = "";
+        if (usuario.cargo === "S") {
+          // solo los supervisores ven su comisión
+          comisionSupervisor = v.TOTAL * 0.1;
+          totalComisionSupervisor += comisionSupervisor;
+        }
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${v.CODIGO}</td>
