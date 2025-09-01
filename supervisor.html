@@ -114,42 +114,43 @@
   }
 
   // ➕ (opcional pero recomendable) agrega logs en cargarVentas también:
-  async function cargarVentas() {
-    const url = `${WEBAPP_URL}?action=getVentas&codigo=${encodeURIComponent(usuario.codigo)}`;
-    console.log("[VENTAS] GET", url);
-    try {
-      const res = await fetch(url);
-      const raw = await res.text();
-      console.log("[VENTAS] RAW:", raw);
-      const data = JSON.parse(raw);
-      console.log("[VENTAS] Parsed:", data);
+ async function cargarVentas() {
+  const url = `${WEBAPP_URL}?action=getVentas&codigo=${encodeURIComponent(usuario.codigo)}`;
+  console.log("[VENTAS] GET", url);
+  try {
+    const res = await fetch(url);
+    const raw = await res.text();
+    console.log("[VENTAS] RAW:", raw);
+    const data = JSON.parse(raw);
+    console.log("[VENTAS] Parsed:", data);
 
-      const tbody = document.getElementById("tablaVentas");
-      tbody.innerHTML = "";
-      if (data.ok) {
-        data.ventas.forEach((v, idx) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${v.CODIGO}</td>
-             <td>${venta.username}</td>
-            <td>${v.CARGA}</td>
-            <td>${v.CREDITOSANTES}</td>
-            <td>${v.CREDITOSDESPUES}</td>
-            <td>${v.HORAYFECHA}</td>
-            <td>${v.TOTAL}</td>
-            <td>${v.COMISION}</td>
-            <td>${v.LIQUIDACION || ""}</td>
-            ${usuario.cargo === "S" ? `<td><button class="btn" onclick="marcarLiquidado(${idx+2})">Liquidar</button></td>` : ""}
-          `;
-          tbody.appendChild(tr);
-        });
-      } else {
-        console.warn("[VENTAS] Respuesta no OK:", data);
-      }
-    } catch (e) {
-      console.error("[VENTAS] Error:", e);
+    const tbody = document.getElementById("tablaVentas");
+    tbody.innerHTML = "";
+    if (data.ok) {
+      data.ventas.forEach((v, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${v.CODIGO}</td>
+          <td>${v.Usuario || ""}</td>
+          <td>${v.CARGA}</td>
+          <td>${v.CREDITOSANTES}</td>
+          <td>${v.CREDITOSDESPUES}</td>
+          <td>${v.HORAYFECHA}</td>
+          <td>${v.TOTAL}</td>
+          <td>${v.COMISION}</td>
+          <td>${v.LIQUIDACION || ""}</td>
+          ${usuario.cargo === "S" ? `<td><button class="btn" onclick="marcarLiquidado(${idx+2})">Liquidar</button></td>` : ""}
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      console.warn("[VENTAS] Respuesta no OK:", data);
     }
+  } catch (e) {
+    console.error("[VENTAS] Error:", e);
   }
+}
+
 </script>
 </body>
 </html>
