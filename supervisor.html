@@ -30,13 +30,15 @@
     <p><strong>Código:</strong> <span id="codigoUser"></span></p>
     <p><strong>Cargo:</strong> <span id="cargoUser"></span></p>
 
-    <div id="accionesSupervisor" class="acciones hidden">
-      <h3>Crear vendedor</h3>
-      <input type="text" id="nuevoCodigo" placeholder="Nuevo Código">
-      <input type="password" id="nuevaClave" placeholder="Clave">
-      <button class="btn" onclick="crearVendedor()">Crear</button>
-      <p id="msgCrear"></p>
-    </div>
+    <div id="panelCrearVendedor" hidden style="margin:16px 0; padding:12px; background:#25213C50; border:1px solid #ffffff25; border-radius:12px; max-width:520px;">
+  <h3 style="margin:0 0 8px 0;">Crear vendedor</h3>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <input id="nuevoCodigo" type="text" placeholder="Código vendedor (ej: VEND9)" style="padding:8px; border-radius:8px; border:none; outline:none;">
+    <input id="nuevaClave" type="text" placeholder="Clave" style="padding:8px; border-radius:8px; border:none; outline:none;">
+    <button class="btn" onclick="crearVendedor()" style="padding:8px 12px; border:none; border-radius:10px; background:#25213C; color:#5F48D7; cursor:pointer;">Crear</button>
+  </div>
+  <small>Se crea con descuento 10% y cargo “V”.</small>
+</div>
 
     <h3>Ventas</h3>
     <table>
@@ -59,7 +61,7 @@
   </div>
 
 <script>
-  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzAmv132caKFjrjIVhjobT0j2YBCYpqy78Ds6ZdJICMZK9UM_A5pSlHRVxfGWB7PndJuA/exec"; // 👉 pegar aquí la URL del webapp
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxP3hUJKOgyf3Vv8TTxHDOcLqAG_Ac9z62R6zsD703osgGUarOEp5Gs2Tizr3bp6WPrkw/exec"; // 👉 pegar aquí la URL del webapp
 
   let usuario = null; // {codigo, cargo}
 
@@ -92,6 +94,9 @@
       if (data.ok) {
         usuario = { codigo: data.codigo, cargo: data.cargo };
         console.log("[LOGIN] OK → usuario:", usuario);
+        // si es supervisor, mostrar el panel de creación
+document.getElementById("panelCrearVendedor").hidden = (usuario.cargo !== "S");
+
 
         document.getElementById("loginBox").classList.add("hidden");
         document.getElementById("panelBox").classList.remove("hidden");
@@ -112,9 +117,46 @@
       document.getElementById("loginError").innerText = "No se pudo contactar al servidor.";
     }
   }
+async function crearVendedor() {
+  const nuevoCodigo = document.getElementById("nuevoCodigo").value.trim();
+  const clave = document.getElementById("nuevaClave").value.trim();
+
+  if (!nuevoCodigo || !clave) {
+    alert("Completá Código y Clave.");
+    return;
+  }
+  if (usuario.cargo !== "S") {
+    alert("No autorizado.");
+    return;
+  }
+
+  const url = `${WEBAPP_URL}?action=crearCodigo&codigo=${encodeURIComponent(usuario.codigo)}&nuevoCodigo=${encodeURIComponent(nuevoCodigo)}&clave=${encodeURIComponent(clave)}`;
+  console.log("[CREAR VENDEDOR] GET", url);
+
+  try {
+    const res = await fetch(url);
+    const raw = await res.text();
+    console.log("[CREAR VENDEDOR] RAW:", raw);
+    const data = JSON.parse(raw);
+
+    if (data.ok) {
+      alert("Vendedor creado.");
+      document.getElementById("nuevoCodigo").value = "";
+      document.getElementById("nuevaClave").value = "";
+      // opcional: recargar ventas si esperás ver algo nuevo
+      // await cargarVentas();
+    } else {
+      alert(data.error || "No se pudo crear el vendedor.");
+    }
+  } catch (e) {
+    console.error("[CREAR VENDEDOR] Error:", e);
+    alert("Error creando vendedor.");
+  }
+}
+window.crearVendedor = crearVendedor;
 
   // ➕ (opcional pero recomendable) agrega logs en cargarVentas también:
- async function cargarVentas() {
+async function cargarVentas() {
   const url = `${WEBAPP_URL}?action=getVentas&codigo=${encodeURIComponent(usuario.codigo)}`;
   console.log("[VENTAS] GET", url);
   try {
@@ -126,30 +168,65 @@
 
     const tbody = document.getElementById("tablaVentas");
     tbody.innerHTML = "";
-    if (data.ok) {
-      data.ventas.forEach((v, idx) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${v.CODIGO}</td>
-          <td>${v.Usuario || ""}</td>
-          <td>${v.CARGA}</td>
-          <td>${v.CREDITOSANTES}</td>
-          <td>${v.CREDITOSDESPUES}</td>
-          <td>${v.HORAYFECHA}</td>
-          <td>${v.TOTAL}</td>
-          <td>${v.COMISION}</td>
-          <td>${v.LIQUIDACION || ""}</td>
-          ${usuario.cargo === "S" ? `<td><button class="btn" onclick="marcarLiquidado(${idx+2})">Liquidar</button></td>` : ""}
-        `;
-        tbody.appendChild(tr);
-      });
-    } else {
+
+    if (!data.ok) {
       console.warn("[VENTAS] Respuesta no OK:", data);
+      return;
     }
+
+    data.ventas.forEach((v) => {
+      const tr = document.createElement("tr");
+      const fecha = v.HORAYFECHA ? new Date(v.HORAYFECHA).toLocaleString() : "";
+      const liq = v.LIQUIDACION || "";
+      const acciones = (usuario.cargo === "S")
+        ? `<button class="btn" onclick="marcarLiquidado(${v.FILA})">Liquidar</button>`
+        : "";
+
+      tr.innerHTML = `
+        <td>${v.CODIGO ?? ""}</td>
+        <td>${v.Usuario ?? ""}</td>
+        <td>${v.CARGA ?? ""}</td>
+        <td>${v.CREDITOSANTES ?? ""}</td>
+        <td>${v.CREDITOSDESPUES ?? ""}</td>
+        <td>${fecha}</td>
+        <td>${v.TOTAL ?? ""}</td>
+        <td>${v.COMISION ?? ""}</td>
+        <td>${liq}</td>
+        ${usuario.cargo === "S" ? `<td>${acciones}</td>` : ""}
+      `;
+      tbody.appendChild(tr);
+    });
   } catch (e) {
     console.error("[VENTAS] Error:", e);
   }
 }
+
+  async function marcarLiquidado(filaReal) {
+  if (usuario.cargo !== "S") {
+    alert("No autorizado.");
+    return;
+  }
+  const url = `${WEBAPP_URL}?action=marcarLiquidado&fila=${encodeURIComponent(filaReal)}`;
+  console.log("[LIQUIDAR] GET", url);
+
+  try {
+    const res = await fetch(url);
+    const raw = await res.text();
+    console.log("[LIQUIDAR] RAW:", raw);
+    const data = JSON.parse(raw);
+
+    if (data.ok) {
+      await cargarVentas(); // refrescar tabla
+    } else {
+      alert(data.error || "No se pudo liquidar.");
+    }
+  } catch (e) {
+    console.error("[LIQUIDAR] Error:", e);
+    alert("Error al liquidar.");
+  }
+}
+window.marcarLiquidado = marcarLiquidado;
+
 
 </script>
 </body>
