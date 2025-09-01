@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Supervisor/Vendedor</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .login-box, .panel { max-width: 600px; margin: auto; }
+    input, button { padding: 8px; margin: 5px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    th { background: #f0f0f0; }
+    .hidden { display: none; }
+    .btn { background: #333; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #555; }
+    .acciones { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="login-box" id="loginBox">
+    <h2>Login Supervisor / Vendedor</h2>
+    <input type="text" id="codigo" placeholder="Código">
+    <input type="password" id="clave" placeholder="Clave">
+    <button class="btn" onclick="login()">Ingresar</button>
+    <p id="loginError" style="color:red;"></p>
+  </div>
+
+  <div class="panel hidden" id="panelBox">
+    <h2 id="tituloPanel"></h2>
+    <p><strong>Código:</strong> <span id="codigoUser"></span></p>
+    <p><strong>Cargo:</strong> <span id="cargoUser"></span></p>
+
+    <div id="accionesSupervisor" class="acciones hidden">
+      <h3>Crear vendedor</h3>
+      <input type="text" id="nuevoCodigo" placeholder="Nuevo Código">
+      <input type="password" id="nuevaClave" placeholder="Clave">
+      <button class="btn" onclick="crearVendedor()">Crear</button>
+      <p id="msgCrear"></p>
+    </div>
+
+    <h3>Ventas</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Usuario</th>
+          <th>Carga</th>
+          <th>Antes</th>
+          <th>Después</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Comisión</th>
+          <th>Liquidación</th>
+          <th class="accionesSupervisor hidden">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaVentas"></tbody>
+    </table>
+  </div>
+
+<script>
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyVS0NWtRI5auPLxViHqXwh7qVvJXqeo4c7azNEhWMKjEMlzDwPogKNDliXbQ91tRdXDQ/exec"; // 👉 pegar aquí la URL del webapp
+
+  let usuario = null; // guarda {codigo, cargo}
+
+  async function login() {
+    const codigo = document.getElementById("codigo").value.trim();
+    const clave = document.getElementById("clave").value.trim();
+
+    const res = await fetch(`${WEBAPP_URL}?action=login&codigo=${codigo}&clave=${clave}`);
+    const data = await res.json();
+
+    if (data.ok) {
+      usuario = { codigo: data.codigo, cargo: data.cargo };
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("panelBox").classList.remove("hidden");
+      document.getElementById("tituloPanel").innerText = "Panel " + (data.cargo === "S" ? "Supervisor" : "Vendedor");
+      document.getElementById("codigoUser").innerText = data.codigo;
+      document.getElementById("cargoUser").innerText = data.cargo;
+
+      if (data.cargo === "S") {
+        document.querySelectorAll(".accionesSupervisor").forEach(e => e.classList.remove("hidden"));
+      }
+      cargarVentas();
+    } else {
+      document.getElementById("loginError").innerText = data.error || "Error en login";
+    }
+  }
+
+  async function cargarVentas() {
+    const res = await fetch(`${WEBAPP_URL}?action=getVentas&codigo=${usuario.codigo}`);
+    const data = await res.json();
+
+    const tbody = document.getElementById("tablaVentas");
+    tbody.innerHTML = "";
+
+    if (data.ok) {
+      data.ventas.forEach((v, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${v.CODIGO}</td>
+          <td>${v.USERNAME}</td>
+          <td>${v.CARGA}</td>
+          <td>${v.CREDITOSANTES}</td>
+          <td>${v.CREDITOSDESPUES}</td>
+          <td>${v.HORAYFECHA}</td>
+          <td>${v.TOTAL}</td>
+          <td>${v.COMISION}</td>
+          <td>${v.LIQUIDACION || ""}</td>
+          ${usuario.cargo === "S" ? `<td><button class="btn" onclick="marcarLiquidado(${idx+2})">Liquidar</button></td>` : ""}
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  }
+
+  async function crearVendedor() {
+    const nuevoCodigo = document.getElementById("nuevoCodigo").value.trim();
+    const nuevaClave = document.getElementById("nuevaClave").value.trim();
+
+    const res = await fetch(`${WEBAPP_URL}?action=crearCodigo&codigo=${usuario.codigo}&nuevoCodigo=${nuevoCodigo}&clave=${nuevaClave}`);
+    const data = await res.json();
+    document.getElementById("msgCrear").innerText = data.mensaje || data.error;
+  }
+
+  async function marcarLiquidado(fila) {
+    if (!confirm("¿Marcar liquidado?")) return;
+    const res = await fetch(`${WEBAPP_URL}?action=marcarLiquidado&fila=${fila}`);
+    const data = await res.json();
+    if (data.ok) {
+      cargarVentas();
+    }
+  }
+</script>
+</body>
+</html>
