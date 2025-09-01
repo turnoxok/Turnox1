@@ -61,74 +61,93 @@
 <script>
   const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyVS0NWtRI5auPLxViHqXwh7qVvJXqeo4c7azNEhWMKjEMlzDwPogKNDliXbQ91tRdXDQ/exec"; // 👉 pegar aquí la URL del webapp
 
-  let usuario = null; // guarda {codigo, cargo}
+  let usuario = null; // {codigo, cargo}
 
   async function login() {
     const codigo = document.getElementById("codigo").value.trim();
-    const clave = document.getElementById("clave").value.trim();
+    const clave  = document.getElementById("clave").value.trim();
 
-    const res = await fetch(`${WEBAPP_URL}?action=login&codigo=${codigo}&clave=${clave}`);
-    const data = await res.json();
+    // 🔎 Logs de entrada (no mostramos la clave en claro)
+    console.log("[LOGIN] Intentando", { codigo, claveLength: clave.length, WEBAPP_URL });
 
-    if (data.ok) {
-      usuario = { codigo: data.codigo, cargo: data.cargo };
-      document.getElementById("loginBox").classList.add("hidden");
-      document.getElementById("panelBox").classList.remove("hidden");
-      document.getElementById("tituloPanel").innerText = "Panel " + (data.cargo === "S" ? "Supervisor" : "Vendedor");
-      document.getElementById("codigoUser").innerText = data.codigo;
-      document.getElementById("cargoUser").innerText = data.cargo;
+    const url = `${WEBAPP_URL}?action=login&codigo=${encodeURIComponent(codigo)}&clave=${encodeURIComponent(clave)}`;
+    console.log("[LOGIN] GET", url);
 
-      if (data.cargo === "S") {
-        document.querySelectorAll(".accionesSupervisor").forEach(e => e.classList.remove("hidden"));
+    try {
+      const res = await fetch(url);
+      const raw = await res.text();
+      console.log("[LOGIN] RAW response:", raw);
+
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch (e) {
+        console.error("[LOGIN] Error parseando JSON:", e);
+        document.getElementById("loginError").innerText = "Respuesta no válida del servidor.";
+        return;
       }
-      cargarVentas();
-    } else {
-      document.getElementById("loginError").innerText = data.error || "Error en login";
+
+      console.log("[LOGIN] Parsed JSON:", data);
+
+      if (data.ok) {
+        usuario = { codigo: data.codigo, cargo: data.cargo };
+        console.log("[LOGIN] OK → usuario:", usuario);
+
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("panelBox").classList.remove("hidden");
+        document.getElementById("tituloPanel").innerText = "Panel " + (data.cargo === "S" ? "Supervisor" : "Vendedor");
+        document.getElementById("codigoUser").innerText = data.codigo;
+        document.getElementById("cargoUser").innerText = data.cargo;
+
+        if (data.cargo === "S") {
+          document.querySelectorAll(".accionesSupervisor").forEach(e => e.classList.remove("hidden"));
+        }
+        await cargarVentas();
+      } else {
+        console.warn("[LOGIN] Falló:", data.error);
+        document.getElementById("loginError").innerText = data.error || "Código o clave incorrectos";
+      }
+    } catch (err) {
+      console.error("[LOGIN] Error de red/fetch:", err);
+      document.getElementById("loginError").innerText = "No se pudo contactar al servidor.";
     }
   }
 
+  // ➕ (opcional pero recomendable) agrega logs en cargarVentas también:
   async function cargarVentas() {
-    const res = await fetch(`${WEBAPP_URL}?action=getVentas&codigo=${usuario.codigo}`);
-    const data = await res.json();
+    const url = `${WEBAPP_URL}?action=getVentas&codigo=${encodeURIComponent(usuario.codigo)}`;
+    console.log("[VENTAS] GET", url);
+    try {
+      const res = await fetch(url);
+      const raw = await res.text();
+      console.log("[VENTAS] RAW:", raw);
+      const data = JSON.parse(raw);
+      console.log("[VENTAS] Parsed:", data);
 
-    const tbody = document.getElementById("tablaVentas");
-    tbody.innerHTML = "";
-
-    if (data.ok) {
-      data.ventas.forEach((v, idx) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${v.CODIGO}</td>
-          <td>${v.USERNAME}</td>
-          <td>${v.CARGA}</td>
-          <td>${v.CREDITOSANTES}</td>
-          <td>${v.CREDITOSDESPUES}</td>
-          <td>${v.HORAYFECHA}</td>
-          <td>${v.TOTAL}</td>
-          <td>${v.COMISION}</td>
-          <td>${v.LIQUIDACION || ""}</td>
-          ${usuario.cargo === "S" ? `<td><button class="btn" onclick="marcarLiquidado(${idx+2})">Liquidar</button></td>` : ""}
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-  }
-
-  async function crearVendedor() {
-    const nuevoCodigo = document.getElementById("nuevoCodigo").value.trim();
-    const nuevaClave = document.getElementById("nuevaClave").value.trim();
-
-    const res = await fetch(`${WEBAPP_URL}?action=crearCodigo&codigo=${usuario.codigo}&nuevoCodigo=${nuevoCodigo}&clave=${nuevaClave}`);
-    const data = await res.json();
-    document.getElementById("msgCrear").innerText = data.mensaje || data.error;
-  }
-
-  async function marcarLiquidado(fila) {
-    if (!confirm("¿Marcar liquidado?")) return;
-    const res = await fetch(`${WEBAPP_URL}?action=marcarLiquidado&fila=${fila}`);
-    const data = await res.json();
-    if (data.ok) {
-      cargarVentas();
+      const tbody = document.getElementById("tablaVentas");
+      tbody.innerHTML = "";
+      if (data.ok) {
+        data.ventas.forEach((v, idx) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${v.CODIGO}</td>
+            <td>${v.USERNAME}</td>
+            <td>${v.CARGA}</td>
+            <td>${v.CREDITOSANTES}</td>
+            <td>${v.CREDITOSDESPUES}</td>
+            <td>${v.HORAYFECHA}</td>
+            <td>${v.TOTAL}</td>
+            <td>${v.COMISION}</td>
+            <td>${v.LIQUIDACION || ""}</td>
+            ${usuario.cargo === "S" ? `<td><button class="btn" onclick="marcarLiquidado(${idx+2})">Liquidar</button></td>` : ""}
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        console.warn("[VENTAS] Respuesta no OK:", data);
+      }
+    } catch (e) {
+      console.error("[VENTAS] Error:", e);
     }
   }
 </script>
