@@ -98,7 +98,11 @@ header .login-btn:active {
     margin-bottom: 20px;
     font-size: 2rem;
   }
- /* Calendario */
+
+  
+
+
+/* Calendario */
 #calendario {
   margin: 20px auto 10px auto;
   max-width: 600px;
@@ -119,49 +123,7 @@ header .login-btn:active {
   text-transform: capitalize;
 }
 
-/* 🔹 Caja de días scrollable */
-#calendario table {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 10px 0;
-  border-collapse: separate; /* evita que se rompa */
-}
-
-#calendario th {
-  display: none; /* ocultamos cabecera de días de la semana */
-}
-
-#calendario td {
-  min-width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 10%;
-  background: #222;
-  text-align: center;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-#calendario td:hover {
-  background: #ffffff33;
-}
-
-#calendario td.hoy {
-  border: 2px solid #ffffff99;
-}
-
-#calendario td.seleccionado {
-  background-color: #fff;
-  color: #000;
-}
-
-#calendario td.bloqueado {
-  cursor: not-allowed;
-  color: #999;
-  pointer-events: none;
-}
+/* 🔹 Contenedor de días scrollable */
 #dias {
   display: flex;
   gap: 8px;
@@ -172,10 +134,6 @@ header .login-btn:active {
 
 #dias .dia {
   min-width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 10%;
-  background: #222;
   text-align: center;
   flex-shrink: 0;
   scroll-snap-align: center;
@@ -183,27 +141,38 @@ header .login-btn:active {
   transition: all 0.2s;
 }
 
-#dias .dia:hover {
+#dias .dia-numero {
+  height: 40px;
+  line-height: 40px;
+  border-radius: 10%;
+  background: #222;
+  margin-bottom: 4px;
+}
+
+#dias .dia-letra {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+#dias .dia-numero:hover {
   background: #ffffff33;
 }
 
-#dias .dia.hoy {
+#dias .hoy .dia-numero {
   border: 2px solid #ffffff99;
 }
 
-#dias .dia.seleccionado {
+#dias .seleccionado .dia-numero {
   background-color: #fff;
   color: #000;
 }
 
-#dias .dia.bloqueado {
+#dias .bloqueado {
   cursor: not-allowed;
   color: #999;
   pointer-events: none;
 }
 
- 
- 
 
      
 #turnos {
@@ -585,17 +554,18 @@ textarea::placeholder {
   <img id="userLogo"></div>
 </div>
    <!-- Botón Login -->
-    <a href="login.html" class="login-btn">Acceso Profesionales</a>
+    <a href="login.html" class="login-btn">Acceso</a>
  </header>
   
 <!-- Bienvenida -->
 <div class="welcome" style="text-align: center;">
-  <p>Bienvenido a</p>
-  <h2><span id="businessName" style="text-transform: uppercase; color: #000; text-align: center;"></span></h2>
+  <p style="text-align: center; margin-bottom: -21px;">Bienvenido a</p>
+  <h2><span id="businessName" style="margin-top: 1px; text-transform: uppercase; color: #000; text-align: center;"></span></h2>
 </div>
   
 
-  <div id="calendario"></div>
+ <div id="calendario"></div>
+
 <div style="display:flex; gap:20px; align-items:center; justify-content:center;">
   <!-- Botón Mes anterior -->
   <button id="prevMonth" style="display:flex; align-items:center; gap:6px; padding:0; background:none; border:none; color:#000; cursor:pointer; font-size:16px;">
@@ -615,7 +585,6 @@ textarea::placeholder {
     </svg>
   </button>
 </div>
-
 
   <div id="turnos">
 
@@ -669,7 +638,7 @@ let selectedServicio = null; // servicio elegido
     console.log("Perfil recibido del backend:", perfil);
 
     if (perfil.status === "ok") {
-      let logoUrl = perfil.logo || "https://i.ibb.co/p6Ycq6XC/Turnox-logo.png";
+      let logoUrl = perfil.logo || "https://www.shutterstock.com/image-illustration/front-view-barber-shop-modern-600nw-723232468.jpg";
 
       // Si es un link de Drive tipo "https://drive.google.com/file/d/ID/view?usp=..."
       const driveMatch = logoUrl.match(/\/d\/([a-zA-Z0-9_-]+)\//);
@@ -704,13 +673,28 @@ function renderCalendario(year, month) {
   const diasContainer = document.createElement("div");
   diasContainer.id = "dias";
 
+  const letrasDias = ["D","L","M","M","J","V","S"]; // primeras letras
+
+  let diaCentrar = null; // guardamos qué día centrar
+
   for (let d = 1; d <= lastDay.getDate(); d++) {
     const fecha = new Date(year, month, d);
     const fechaStr = fecha.toISOString().split("T")[0];
+    const letra = letrasDias[fecha.getDay()];
 
     const dia = document.createElement("div");
-    dia.textContent = d;
     dia.classList.add("dia");
+
+    const diaNumero = document.createElement("div");
+    diaNumero.classList.add("dia-numero");
+    diaNumero.textContent = d;
+
+    const diaLetra = document.createElement("div");
+    diaLetra.classList.add("dia-letra");
+    diaLetra.textContent = letra;
+
+    dia.appendChild(diaNumero);
+    dia.appendChild(diaLetra);
 
     if (fecha < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
       dia.classList.add("bloqueado");
@@ -721,8 +705,14 @@ function renderCalendario(year, month) {
         fecha.getDate() === today.getDate()
       ) {
         dia.classList.add("hoy");
+        diaCentrar = dia; // en mes actual → hoy
       }
       dia.onclick = () => seleccionarDia(dia, fechaStr);
+    }
+
+    // si no es el mes actual y aún no tenemos referencia, centramos el 1
+    if (!diaCentrar && d === 1) {
+      diaCentrar = dia;
     }
 
     diasContainer.appendChild(dia);
@@ -733,18 +723,24 @@ function renderCalendario(year, month) {
   // botones mes anterior/siguiente
   document.getElementById("prevMonth").onclick = () => renderCalendario(year, month - 1);
   document.getElementById("nextMonth").onclick = () => renderCalendario(year, month + 1);
+
+  // 🔹 Centrar el día elegido después de renderizar
+  if (diaCentrar) {
+    setTimeout(() => {
+      diaCentrar.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }, 100);
+  }
 }
 
 // ------------------ SELECCIONAR DÍA ------------------
-function seleccionarDia(td, fechaStr) {
+function seleccionarDia(diaDiv, fechaStr) {
   // quitar selección anterior
-  document.querySelectorAll("#calendario td.seleccionado").forEach(el => el.classList.remove("seleccionado"));
+  document.querySelectorAll("#dias .dia.seleccionado").forEach(el => el.classList.remove("seleccionado"));
   // marcar día seleccionado
-  td.classList.add("seleccionado");
+  diaDiv.classList.add("seleccionado");
   // cargar turnos
   cargarTurnos(fechaStr);
 }
-
 // ------------------ CARGAR TURNOS ------------------
 async function cargarTurnos(fechaStr) {
   selectedDate = new Date(fechaStr + "T00:00:00");
@@ -1106,17 +1102,16 @@ document.addEventListener("DOMContentLoaded", () => {
 const todayStr = selectedDate.toLocaleDateString("fr-CA"); // yyyy-mm-dd sin UTC
   cargarTurnos(todayStr).then(() => {
     const turnosDiv = document.getElementById("turnos");
-    if (turnosDiv) turnosDiv.scrollIntoView({ behavior: "smooth" });
+    // if (turnosDiv) turnosDiv.scrollIntoView({ behavior: "smooth" });
   });
 });
 </script>
-<script>
- setTimeout(() => {
-  document.getElementById('floatingLogo').style.transform = 'translateX(0)';
-}, 1000);
-</script>
+
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
  
 </body>
 </html>
+
+
+
