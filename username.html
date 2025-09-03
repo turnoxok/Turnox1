@@ -44,6 +44,8 @@
      display: flex;
     flex-direction: column;
     min-height: 100vh;
+     height: 100%;
+ 
     }
 
     
@@ -511,14 +513,16 @@ textarea::placeholder {
 }
 
      #compartirCard {
-      text-align: center;
-      padding: 30px 20px;
-      border-radius: 12px;
-      max-width: 600px;
-      width: 90%;
-      background: #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
+  text-align: center;
+  padding: 30px 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  /* quitar cualquier margin externo */
+  margin: 0;
+}
     #qrContainer {
       margin: 20px 0;
     }
