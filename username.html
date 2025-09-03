@@ -40,16 +40,12 @@
   padding: 0;
   background-color: #000;
      color: #fff;
-    }
-
-     /* --- Vista mobile: portada con logo full screen --- */
-@media (max-width: 650px) {
-  body {
-    display: flex;
+     display: flex;
     flex-direction: column;
     min-height: 100vh;
-  }
+    }
 
+    
   header {
     position: relative;
     height: 100vh; /* portada ocupa toda la pantalla */
@@ -82,7 +78,7 @@
     padding: 12px 24px;
     border-radius: 12px;
   }
-}
+
 
   h1 {
     text-align: center;
@@ -288,71 +284,7 @@
   background: #00000099;
 }
 
-#floatingLogo {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  margin-left: 5px;
-  max-width: 60%;            /* nunca supere el 60% del ancho del header */
-  transition: transform 0.9s ease;
-  transform: translateX(-150px); /* empieza fuera de pantalla */
-}
 
-#floatingLogo img {
-  max-height: 60px;
-  max-width: 100%;
-  object-fit: contain;
-  display: block;
-}
-header {
-      position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 70px;              
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px;
-  box-sizing: border-box;
-  z-index: 1000;
-       background: 
-        linear-gradient(
-            135deg,
-            #9f9da1 0%, 
-            #fff 25%, 
-            #dedede 50%, 
-            #fff 75%, 
-            #9f9da1 100%
-        ),
-        repeating-linear-gradient(
-            0deg,
-            rgba(255,255,255,0.05) 0px,
-            rgba(255,255,255,0.05) 2px,
-            transparent 2px,
-            transparent 4px
-        );
-   
-    background-blend-mode: overlay;
-      
-    }
-     /* Botón Login */
-    .login-btn {
-      padding: 8px 16px;
-      background-color: #575757;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.3s ease;
-    }
-
-    .login-btn:hover {
-      background-color: #533482;
-    }
         .grid {
   position: fixed;
   top: 0;
