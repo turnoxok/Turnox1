@@ -550,7 +550,17 @@ textarea::placeholder {
     button:hover {
       opacity: 0.8;
     }
-    
+    #cardParaDescarga {
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* centra QR, link y botones dentro del card */
+  justify-content: center;
+  max-width: 600px;
+  width: 100%;
+  padding: 30px 20px;
+  border-radius: 12px;
+  background: #fff;
+}
     #descargarQR { background-color: #000000; color: white; }
     #compartirWhatsApp { background-color: #000000; color: white; }
 </style>
@@ -1182,6 +1192,7 @@ const todayStr = selectedDate.toLocaleDateString("fr-CA"); // yyyy-mm-dd sin UTC
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+<script>
 function generarQR() {
   const qrContainer = document.getElementById("qrContainer");
   qrContainer.innerHTML = "";
@@ -1202,10 +1213,15 @@ function generarQR() {
 // Generar QR al cargar
 generarQR();
 
-// Descargar tarjeta (solo QR + link)
+// Descargar tarjeta (solo QR + link) centrada y nítida en PC y móvil
 document.getElementById("descargarQR").addEventListener("click", function() {
   const card = document.getElementById("cardParaDescarga");
-  html2canvas(card).then(canvas => {
+  
+  html2canvas(card, { 
+    scale: 2,                  // aumenta resolución de la imagen
+    width: card.offsetWidth,
+    windowWidth: card.scrollWidth,
+  }).then(canvas => {
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
     link.download = "turnox-qr.png";
@@ -1213,12 +1229,14 @@ document.getElementById("descargarQR").addEventListener("click", function() {
   });
 });
 
-// WhatsApp solo comparte link
+// WhatsApp solo comparte link clicable
 document.getElementById("compartirWhatsApp").addEventListener("click", function() {
   const urlActual = window.location.href;
   const texto = encodeURIComponent(`Ingresá al sitio: ${urlActual}`);
   window.open("https://wa.me/?text=" + texto, "_blank");
 });
+</script>
+
 </script>
   
  
