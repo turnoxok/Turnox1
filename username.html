@@ -162,6 +162,45 @@ header .login-btn:active {
   color: #999;
   pointer-events: none;
 }
+#dias {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scroll-snap-type: x mandatory;
+}
+
+#dias .dia {
+  min-width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 10%;
+  background: #222;
+  text-align: center;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#dias .dia:hover {
+  background: #ffffff33;
+}
+
+#dias .dia.hoy {
+  border: 2px solid #ffffff99;
+}
+
+#dias .dia.seleccionado {
+  background-color: #fff;
+  color: #000;
+}
+
+#dias .dia.bloqueado {
+  cursor: not-allowed;
+  color: #999;
+  pointer-events: none;
+}
 
  
  
@@ -657,51 +696,43 @@ function renderCalendario(year, month) {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const calendarDiv = document.getElementById("calendario");
+
+  // título del mes
   calendarDiv.innerHTML = `<h2>${firstDay.toLocaleString("es-ES",{month:"long", year:"numeric"})}</h2>`;
 
-  let table = "<table><tr>";
-  const diasSemana = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-  diasSemana.forEach(d => table += `<th>${d}</th>`);
-  table += "</tr><tr>";
-
-  for (let i = 0; i < firstDay.getDay(); i++) table += "<td></td>";
+  // contenedor de días en fila horizontal
+  const diasContainer = document.createElement("div");
+  diasContainer.id = "dias";
 
   for (let d = 1; d <= lastDay.getDate(); d++) {
     const fecha = new Date(year, month, d);
     const fechaStr = fecha.toISOString().split("T")[0];
 
-    let clases = "";
+    const dia = document.createElement("div");
+    dia.textContent = d;
+    dia.classList.add("dia");
 
-    // marcar día bloqueado (no se puede clickear)
     if (fecha < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
-      clases = "bloqueado";
-      table += `<td class="${clases}">${d}</td>`;
+      dia.classList.add("bloqueado");
     } else {
-      // marcar día de hoy
       if (
         fecha.getFullYear() === today.getFullYear() &&
         fecha.getMonth() === today.getMonth() &&
         fecha.getDate() === today.getDate()
       ) {
-        clases += (clases ? " " : "") + "hoy";
+        dia.classList.add("hoy");
       }
-
-      table += `<td class="${clases}" onclick="seleccionarDia(this, '${fechaStr}')">${d}</td>`;
+      dia.onclick = () => seleccionarDia(dia, fechaStr);
     }
 
-    if (fecha.getDay() === 6 && d !== lastDay.getDate()) table += "</tr><tr>";
+    diasContainer.appendChild(dia);
   }
 
-  table += "</tr></table>";
-  calendarDiv.innerHTML += table;
+  calendarDiv.appendChild(diasContainer);
 
   // botones mes anterior/siguiente
-  document.getElementById("prevMonth").onclick = () => {
-    renderCalendario(year, month - 1);
-  };
-  document.getElementById("nextMonth").onclick = () => {
-    renderCalendario(year, month + 1);
-  };
+  document.getElementById("prevMonth").onclick = () => renderCalendario(year, month - 1);
+  document.getElementById("nextMonth").onclick = () => renderCalendario(year, month + 1);
 }
 
 // ------------------ SELECCIONAR DÍA ------------------
