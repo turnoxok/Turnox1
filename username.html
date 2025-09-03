@@ -154,21 +154,22 @@ header .login-btn:active {
   border-radius: 16px;
   backdrop-filter: blur(3px);
 
-  display: flex;           /* nuevo */
-  flex-direction: column;  /* apila de arriba hacia abajo */
-  gap: 8px;                /* espacio entre turnos */
+  display: grid;                /* usamos grid */
+  grid-template-columns: repeat(4, 1fr); /* 4 columnas iguales */
+  gap: 10px;                    /* espacio entre horarios */
+  justify-items: center;        /* centra cada turno en su celda */
 }
 
 .hora {
-  display: block;          /* ocupa todo el ancho del contenedor */
-  margin: 5px auto;        /* centrado horizontalmente */
+  display: block;
   padding: 8px 12px;
   border-radius: 10px;
   font-weight: 600;
   transition: all 0.2s;
-  width: 120px;            /* opcional: ancho fijo para alinear */
-  text-align: center;      /* centra el contenido */
+  text-align: center;           /* centra el contenido */
+  min-width: 80px;              /* opcional: ancho mínimo para que queden uniformes */
 }
+
 
   
   .hora.disponible { background: #ffffff99; color: #000000; border-radius: 10px; }
