@@ -98,37 +98,63 @@ header .login-btn:active {
     margin-bottom: 20px;
     font-size: 2rem;
   }
-
-  
-
-  /* Calendario */
-  #calendario {
-   margin: 20px auto 10px auto; /* arriba - lados - abajo - lados */
-  max-width: 600px;             /* ancho máximo */
+ /* Calendario */
+#calendario {
+  margin: 20px auto 10px auto;
+  max-width: 600px;
   width: 100%;  
-    background: #000000;
-    background-blend-mode: overlay;
+  background: #000000;
+  background-blend-mode: overlay;
   color: #fff; 
-    border: 1px solid #00000030;
-    border-radius: 16px;
-    overflow: hidden;
-    padding: 15px;
-    backdrop-filter: blur(3px);
-  }
-  #calendario h2 { text-align: center; margin-bottom: 10px; text-transform: capitalize; }
-  #calendario table { width: 100%; border-collapse: collapse; }
-  #calendario th, #calendario td { width: 14.28%; text-align: center; padding: 10px 0; }
-  #calendario td:hover { border-color: #ffffff99; cursor: pointer; border-radius: 10%; }
-  #calendario td[style*="not-allowed"] { cursor: not-allowed; color: #999; }
+  border: 1px solid #00000030;
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 15px;
+  backdrop-filter: blur(3px);
+}
+
+#calendario h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+/* 🔹 Caja de días scrollable */
+#calendario table {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 10px 0;
+  border-collapse: separate; /* evita que se rompa */
+}
+
+#calendario th {
+  display: none; /* ocultamos cabecera de días de la semana */
+}
+
+#calendario td {
+  min-width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 10%;
+  background: #222;
+  text-align: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#calendario td:hover {
+  background: #ffffff33;
+}
+
 #calendario td.hoy {
   border: 2px solid #ffffff99;
-  border-radius: 10%;
 }
 
 #calendario td.seleccionado {
   background-color: #fff;
   color: #000;
-  border-radius: 10%;
 }
 
 #calendario td.bloqueado {
@@ -136,6 +162,11 @@ header .login-btn:active {
   color: #999;
   pointer-events: none;
 }
+
+ 
+ 
+
+     
 #turnos {
   text-align: center;
  
