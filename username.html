@@ -41,6 +41,49 @@
   background-color: #000;
      color: #fff;
     }
+
+     /* --- Vista mobile: portada con logo full screen --- */
+@media (max-width: 650px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    position: relative;
+    height: 100vh; /* portada ocupa toda la pantalla */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #floatingLogo {
+    position: static;
+    transform: none;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 400px;
+  }
+
+  #floatingLogo img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  header .login-btn {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+  }
+}
+
   h1 {
     text-align: center;
     margin-bottom: 20px;
