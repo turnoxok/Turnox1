@@ -723,16 +723,14 @@ async function cargarTurnos(fechaStr) {
     } else {
       Object.keys(turnosData).forEach(profId => {
         const profObj = turnosData[profId];
-
-        // guardamos el intervalo de este profesional
         const profConfig = profesionales.find(p => p.profesionalId === profId);
         if (profConfig) {
-          profObj.intervalo = parseInt(profConfig.intervalo) || 30; // 👈 ahora cada prof tiene su intervalo
+          profObj.intervalo = parseInt(profConfig.intervalo) || 30;
         }
 
         html += `<div class="turnos"><h3>${profObj.nombre}</h3>`;
 
-        // --- servicios ---
+        // --- Servicios ---
         let servicios = [];
         if (profConfig) {
           for (let i = 1; i <= 10; i++) {
@@ -743,7 +741,6 @@ async function cargarTurnos(fechaStr) {
             }
           }
         }
-        console.log("Servicios para", profObj.nombre, servicios);
 
         if (servicios.length) {
           html += `<label>Servicio: <select data-profid="${profId}" class="select-servicio">
@@ -754,9 +751,11 @@ async function cargarTurnos(fechaStr) {
           html += `</select></label>`;
         }
 
+        // --- Turnos ---
         if (!profObj.turnos || profObj.turnos.length === 0) {
           html += "<p>No hay turnos disponibles</p>";
         } else {
+          html += `<div class="hora-container">`; // contenedor de grilla 2 columnas
           profObj.turnos.forEach(t => {
             const clase = t.estado === "bloqueado" ? "bloqueado" : "disponible";
             const horaFormateada = t.hora.padStart(5, "0");
@@ -767,13 +766,14 @@ async function cargarTurnos(fechaStr) {
                         ${horaFormateada}
                      </span>`;
           });
+          html += `</div>`; // cierre del contenedor de grilla
         }
-        html += `</div>`;
+
+        html += `</div>`; // cierre del contenedor .turnos
       });
     }
 
     turnosDiv.innerHTML = html;
-
     // listeners turnos
     document.querySelectorAll(".hora.disponible").forEach(span => {
       span.addEventListener("click", () => {
