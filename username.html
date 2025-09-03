@@ -513,16 +513,15 @@ textarea::placeholder {
 }
 
      #compartirCard {
-  text-align: center;
-  padding: 30px 20px;
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  /* quitar cualquier margin externo */
-  margin: 0;
-}
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin: 0;
+    }
     #qrContainer {
       margin: 20px 0;
     }
@@ -532,9 +531,14 @@ textarea::placeholder {
       color: #333;
       margin-bottom: 20px;
     }
+    #buttonsContainer {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
     button {
       padding: 10px 16px;
-      margin: 5px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -546,12 +550,7 @@ textarea::placeholder {
     button:hover {
       opacity: 0.8;
     }
-    #buttonsContainer {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    
     #descargarQR { background-color: #000000; color: white; }
     #compartirWhatsApp { background-color: #000000; color: white; }
 </style>
@@ -668,8 +667,8 @@ textarea::placeholder {
     <p id="linkTexto"></p>
   </div>
   <div id="buttonsContainer">
-    <button id="descargarQR">Descargar QR</button>
-    <button id="compartirWhatsApp">Compartir Sitio</button>
+    <button id="descargarQR">📥 Descargar QR</button>
+    <button id="compartirWhatsApp">📲 Compartir WhatsApp</button>
   </div>
 </div>
 <script>
