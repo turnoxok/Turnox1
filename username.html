@@ -617,7 +617,7 @@ textarea::placeholder {
 <!-- Nuevo: ticket fijo -->
 <div id="ticketContainer"></div>
 
-   <div id="compartirCard" style="text-align:center; padding:20px; border:1px solid #ccc; border-radius:12px; width:250px; margin:auto; background:#fff;">
+  <div id="compartirCard" style="text-align:center; padding:20px; border:1px solid #ccc; border-radius:12px; width:250px; margin:auto; background:#fff;">
   <h3>Compartí este sitio</h3>
   <div id="qrContainer" style="margin:15px 0;"></div>
   <p id="linkTexto" style="word-wrap:break-word; font-size:14px; color:#333;"></p>
@@ -1131,19 +1131,19 @@ const todayStr = selectedDate.toLocaleDateString("fr-CA"); // yyyy-mm-dd sin UTC
   });
 });
 </script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <script>
 function generarQR() {
   const qrContainer = document.getElementById("qrContainer");
   qrContainer.innerHTML = ""; // limpiar si ya había un QR
   const urlActual = window.location.href;
 
-  // Mostrar link en texto
   document.getElementById("linkTexto").textContent = urlActual;
 
-  // Crear QR
-  new QRCode(qrContainer, {
+  // Generar QR en canvas
+  const qr = new QRCode(qrContainer, {
     text: urlActual,
     width: 200,
     height: 200,
@@ -1151,47 +1151,49 @@ function generarQR() {
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H
   });
-}
-generarQR();
 
-   document.getElementById("descargarQR").addEventListener("click", function() {
-      const qrImg = document.querySelector("#qrContainer img");
-      if (qrImg) {
-        const link = document.createElement("a");
-        link.href = qrImg.src;
-        link.download = "turnox-qr.png";
-        link.click();
+  return qr;
+}
+
+const qr = generarQR();
+
+// 🔹 Descargar QR
+document.getElementById("descargarQR").addEventListener("click", function() {
+  const canvas = document.querySelector("#qrContainer canvas");
+  if (canvas) {
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "turnox-qr.png";
+    link.click();
+  }
+});
+
+// 🔹 Compartir QR por WhatsApp
+document.getElementById("compartirWhatsApp").addEventListener("click", async function() {
+  const urlActual = window.location.href;
+  const canvas = document.querySelector("#qrContainer canvas");
+
+  if (navigator.canShare && canvas) {
+    canvas.toBlob(async function(blob) {
+      const file = new File([blob], "turnox-qr.png", { type: blob.type });
+      try {
+        await navigator.share({
+          title: "TurnoX",
+          text: "Ingresá al sitio: " + urlActual,
+          files: [file]
+        });
+      } catch (err) {
+        console.log("Compartir cancelado:", err);
       }
     });
-
-  document.getElementById("compartirWhatsApp").addEventListener("click", async function() {
-  const urlActual = window.location.href;
-  const qrImg = document.querySelector("#qrContainer img");
-
-  if (navigator.share && qrImg) {
-    const response = await fetch(qrImg.src);
-    const blob = await response.blob();
-    const file = new File([blob], "turnox-qr.png", { type: blob.type });
-
-    try {
-      await navigator.share({
-        title: "TurnoX",
-        text: "Ingresá al sitio: " + urlActual,
-        files: [file]
-      });
-    } catch (err) {
-      console.log("Compartir cancelado:", err);
-    }
   } else {
-    // Fallback: abrir WhatsApp con el link
+    // Fallback: abrir WhatsApp con link escrito
     const texto = encodeURIComponent("Ingresá al sitio: " + urlActual);
     window.open("https://wa.me/?text=" + texto, "_blank");
   }
 });
-
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
+  
  
 </body>
 </html>
