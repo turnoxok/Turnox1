@@ -733,28 +733,36 @@ async function cargarTurnos(fechaStr) {
         html += `<div class="turnos"><h3>${profObj.nombre}</h3>`;
 
         // --- servicios ---
-        let servicios = [];
-        if (profConfig) {
-          for (let i = 1; i <= 10; i++) {
-            const nombre = profConfig[`servicio${i}`];
-            const duracion = profConfig[`tiempo${i}`];
-            if (typeof nombre === "string" && nombre.trim() !== "" && duracion) {
-              servicios.push({ nombre: nombre.trim(), duracion: parseInt(duracion) });
-            }
-          }
-        }
-        console.log("Servicios para", profObj.nombre, servicios);
+let servicios = [];
+if (profConfig) {
+  for (let i = 1; i <= 10; i++) {
+    const nombre = profConfig[`servicio${i}`];
+    const duracion = profConfig[`tiempo${i}`];
+    if (typeof nombre === "string" && nombre.trim() !== "" && duracion) {
+      servicios.push({ nombre: nombre.trim(), duracion: parseInt(duracion) });
+    }
+  }
+}
+console.log("Servicios para", profObj.nombre, servicios);
 
-        if (servicios.length) {
-          html += `<label>Servicio: <select data-profid="${profId}" class="select-servicio">
-            <option value="">Selecciona un servicio</option>`;
-          servicios.forEach(s => {
-            html += `<option value="${s.nombre}" data-duracion="${s.duracion}">${s.nombre} (${s.duracion} min)</option>`;
-          });
-          html += `</select></label>`;
-        }
+html += `<div class="turnos">`; // 🔹 inicio del contenedor de cada profesional
+html += `<h3>${profObj.nombre}</h3>`;
 
-        if (!profObj.turnos || profObj.turnos.length === 0) {
+// --- servicios ---
+if (servicios.length) {
+  html += `<label>Servicio: 
+             <select data-profid="${profId}" class="select-servicio">
+               <option value="">Selecciona un servicio</option>`;
+  servicios.forEach(s => {
+    html += `<option value="${s.nombre}" data-duracion="${s.duracion}">
+               ${s.nombre} (${s.duracion} min)
+             </option>`;
+  });
+  html += `</select></label>`;
+}
+
+// --- turnos ---
+if (!profObj.turnos || profObj.turnos.length === 0) {
   html += "<p>No hay turnos disponibles</p>";
 } else {
   html += `<div class="hora-container">`; // 🔹 contenedor de grilla 2 columnas
@@ -768,8 +776,10 @@ async function cargarTurnos(fechaStr) {
                 ${horaFormateada}
              </span>`;
   });
-  html += `</div>`; // 🔹 cierre del contenedor
+  html += `</div>`; // 🔹 cierre del contenedor de horas
 }
+
+html += `</div>`; // 🔹 cierre del contenedor de cada profesional
 
     turnosDiv.innerHTML = html;
 
