@@ -8,6 +8,7 @@
   <!-- Fuentes -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
  
+ 
 
   <!-- Iconos -->
   <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
@@ -567,6 +568,8 @@ textarea::placeholder {
 </div>
    <!-- Botón Login -->
     <a href="login.html" class="login-btn">Acceso</a>
+   <button id="compartirBtn">Compartir sitio</button>
+<div id="qrContainer" style="margin-top:20px; text-align:center;"></div>
  </header>
   
 <!-- Bienvenida -->
@@ -1118,7 +1121,26 @@ const todayStr = selectedDate.toLocaleDateString("fr-CA"); // yyyy-mm-dd sin UTC
   });
 });
 </script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
+<script>
+document.getElementById("compartirBtn").addEventListener("click", function() {
+  const qrContainer = document.getElementById("qrContainer");
+  qrContainer.innerHTML = ""; // limpiar si ya había un QR
 
+  // Capturamos la URL actual (incluye dominio + /username o lo que sea)
+  const urlActual = window.location.href;
+
+  new QRCode(qrContainer, {
+    text: urlActual,
+    width: 200,
+    height: 200,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+});
+</script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
  
