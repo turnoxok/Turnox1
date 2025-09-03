@@ -470,7 +470,10 @@ textarea::placeholder {
     <a href="login.html" class="login-btn">Acceso</a>
  </header>
   
-
+<!-- Bienvenida -->
+<div class="welcome">
+  <h2>Bienvenido a: <span id="businessName"></span></h2>
+</div>
   
 
   <div id="calendario"></div>
@@ -522,7 +525,10 @@ if (!username) {
   if (lastSegment && lastSegment !== "username.html") username = lastSegment;
 }
 if (!username) alert("Falta username en la URL");
-
+// Mostrar el username en la bienvenida
+if (username) {
+  document.getElementById("businessName").textContent = username;
+}
 // ------------------ VARIABLES GLOBALES ------------------
 let selectedDate;      // Fecha seleccionada
 let turnosData = {};   // Turnos cargados
