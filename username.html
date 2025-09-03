@@ -509,6 +509,34 @@ textarea::placeholder {
   background-color: #5A5A5A !important; /* gris medio */
   color: #fff !important;
 }
+
+     #compartirCard {
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      width: 260px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    #qrContainer {
+      margin: 15px 0;
+    }
+    #linkTexto {
+      word-wrap: break-word;
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 8px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #descargarQR { background-color: #4caf50; color: white; }
+    #compartirWhatsApp { background-color: #25d366; color: white; }
 </style>
 
 </head>
@@ -617,11 +645,11 @@ textarea::placeholder {
 <!-- Nuevo: ticket fijo -->
 <div id="ticketContainer"></div>
 
-  <div id="compartirCard" style="text-align:center; padding:20px; border:1px solid #ccc; border-radius:12px; width:250px; margin:auto; background:#fff;">
+  <div id="compartirCard">
   <h3>Compartí este sitio</h3>
-  <div id="qrContainer" style="margin:15px 0;"></div>
-  <p id="linkTexto" style="word-wrap:break-word; font-size:14px; color:#333;"></p>
-  <button id="descargarQR">📥 Descargar QR</button>
+  <div id="qrContainer"></div>
+  <p id="linkTexto"></p>
+  <button id="descargarQR">📥 Descargar tarjeta</button>
   <button id="compartirWhatsApp">📲 Compartir WhatsApp</button>
 </div>
 <script>
@@ -1131,19 +1159,18 @@ const todayStr = selectedDate.toLocaleDateString("fr-CA"); // yyyy-mm-dd sin UTC
   });
 });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 function generarQR() {
   const qrContainer = document.getElementById("qrContainer");
-  qrContainer.innerHTML = ""; // limpiar si ya había un QR
+  qrContainer.innerHTML = "";
   const urlActual = window.location.href;
 
   document.getElementById("linkTexto").textContent = urlActual;
 
-  // Generar QR en canvas
-  const qr = new QRCode(qrContainer, {
+  new QRCode(qrContainer, {
     text: urlActual,
     width: 200,
     height: 200,
@@ -1151,46 +1178,50 @@ function generarQR() {
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H
   });
-
-  return qr;
 }
 
-const qr = generarQR();
+// Generar QR al cargar
+generarQR();
 
-// 🔹 Descargar QR
+// Descargar tarjeta completa como imagen
 document.getElementById("descargarQR").addEventListener("click", function() {
-  const canvas = document.querySelector("#qrContainer canvas");
-  if (canvas) {
+  const card = document.getElementById("compartirCard");
+  html2canvas(card).then(canvas => {
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
-    link.download = "turnox-qr.png";
+    link.download = "turnox-card.png";
     link.click();
-  }
+  });
 });
 
-// 🔹 Compartir QR por WhatsApp
+// Compartir tarjeta por WhatsApp
 document.getElementById("compartirWhatsApp").addEventListener("click", async function() {
+  const card = document.getElementById("compartirCard");
   const urlActual = window.location.href;
-  const canvas = document.querySelector("#qrContainer canvas");
+  const mensaje = `Ingresá al sitio: ${urlActual}`;
 
-  if (navigator.canShare && canvas) {
+  html2canvas(card).then(async canvas => {
     canvas.toBlob(async function(blob) {
-      const file = new File([blob], "turnox-qr.png", { type: blob.type });
-      try {
-        await navigator.share({
-          title: "TurnoX",
-          text: "Ingresá al sitio: " + urlActual,
-          files: [file]
-        });
-      } catch (err) {
-        console.log("Compartir cancelado:", err);
+      const file = new File([blob], "turnox-card.png", { type: blob.type });
+
+      // Web Share API con archivos (móvil)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: "TurnoX",
+            text: mensaje,
+            files: [file]
+          });
+        } catch (err) {
+          console.log("Compartir cancelado:", err);
+        }
+      } else {
+        // Fallback: WhatsApp Web con link clicable
+        const texto = encodeURIComponent(mensaje);
+        window.open("https://wa.me/?text=" + texto, "_blank");
       }
     });
-  } else {
-    // Fallback: abrir WhatsApp con link escrito
-    const texto = encodeURIComponent("Ingresá al sitio: " + urlActual);
-    window.open("https://wa.me/?text=" + texto, "_blank");
-  }
+  });
 });
 </script>
   
