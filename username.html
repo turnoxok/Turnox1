@@ -568,8 +568,16 @@ textarea::placeholder {
 </div>
    <!-- Botón Login -->
     <a href="login.html" class="login-btn">Acceso</a>
-   <button id="compartirBtn">Compartir sitio</button>
-<div id="qrContainer" style="margin-top:20px; text-align:center;"></div>
+
+   
+  <div id="compartirCard" style="text-align:center; padding:20px; border:1px solid #ccc; border-radius:12px; width:250px; margin:auto; background:#fff;">
+  <h3>Compartí este sitio</h3>
+  <div id="qrContainer" style="margin:15px 0;"></div>
+  <p id="linkTexto" style="word-wrap:break-word; font-size:14px; color:#333;"></p>
+  <button id="descargarQR">📥 Descargar QR</button>
+  <button id="compartirWhatsApp">📲 Compartir WhatsApp</button>
+</div>
+
  </header>
   
 <!-- Bienvenida -->
@@ -1124,13 +1132,15 @@ const todayStr = selectedDate.toLocaleDateString("fr-CA"); // yyyy-mm-dd sin UTC
    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   
 <script>
-document.getElementById("compartirBtn").addEventListener("click", function() {
+function generarQR() {
   const qrContainer = document.getElementById("qrContainer");
   qrContainer.innerHTML = ""; // limpiar si ya había un QR
-
-  // Capturamos la URL actual (incluye dominio + /username o lo que sea)
   const urlActual = window.location.href;
 
+  // Mostrar link en texto
+  document.getElementById("linkTexto").textContent = urlActual;
+
+  // Crear QR
   new QRCode(qrContainer, {
     text: urlActual,
     width: 200,
@@ -1139,7 +1149,44 @@ document.getElementById("compartirBtn").addEventListener("click", function() {
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H
   });
+}
+generarQR();
+
+   document.getElementById("descargarQR").addEventListener("click", function() {
+      const qrImg = document.querySelector("#qrContainer img");
+      if (qrImg) {
+        const link = document.createElement("a");
+        link.href = qrImg.src;
+        link.download = "turnox-qr.png";
+        link.click();
+      }
+    });
+
+  document.getElementById("compartirWhatsApp").addEventListener("click", async function() {
+  const urlActual = window.location.href;
+  const qrImg = document.querySelector("#qrContainer img");
+
+  if (navigator.share && qrImg) {
+    const response = await fetch(qrImg.src);
+    const blob = await response.blob();
+    const file = new File([blob], "turnox-qr.png", { type: blob.type });
+
+    try {
+      await navigator.share({
+        title: "TurnoX",
+        text: "Ingresá al sitio: " + urlActual,
+        files: [file]
+      });
+    } catch (err) {
+      console.log("Compartir cancelado:", err);
+    }
+  } else {
+    // Fallback: abrir WhatsApp con el link
+    const texto = encodeURIComponent("Ingresá al sitio: " + urlActual);
+    window.open("https://wa.me/?text=" + texto, "_blank");
+  }
 });
+
 </script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
