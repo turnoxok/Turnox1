@@ -830,6 +830,7 @@ async function cargarTurnos(fechaStr) {
         // --- Servicios ---
         let servicios = [];
         if (profConfig) {
+          console.log("profConfig recibido:", profConfig); // <--- acá agregalo
           for (let i = 1; i <= 10; i++) {
             const nombre = profConfig[`servicio${i}`];
             const duracion = profConfig[`tiempo${i}`];
