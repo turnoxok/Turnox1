@@ -645,12 +645,13 @@ textarea::placeholder {
 <!-- Nuevo: ticket fijo -->
 <div id="ticketContainer"></div>
 
-  <div id="compartirCard">
-  <h3>Compartí este sitio</h3>
-  <div id="qrContainer"></div>
-  <p id="linkTexto"></p>
-  <button id="descargarQR">📥 Descargar tarjeta</button>
-  <button id="compartirWhatsApp">📲 Compartir WhatsApp</button>
+ <div id="compartirCard" style="text-align:center;">
+  <div id="cardParaDescarga" style="padding:20px; border-radius:12px; background:#fff; display:inline-block;">
+    <div id="qrContainer"></div>
+    <p id="linkTexto" style="word-wrap:break-word; font-size:14px; color:#333;"></p>
+  </div>
+  <button id="descargarQR">Descargar QR</button>
+  <button id="compartirWhatsApp">Compartir Link</button>
 </div>
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyqRNtLDpy__ieJM0a0a3KIEIirzXCFLOOVe0h55gzBUNR7y4GyL_JUunfykyTgPfrZ/exec";
@@ -1180,48 +1181,24 @@ function generarQR() {
   });
 }
 
-// Generar QR al cargar
 generarQR();
 
-// Descargar tarjeta completa como imagen
+// Descargar solo QR + link
 document.getElementById("descargarQR").addEventListener("click", function() {
-  const card = document.getElementById("compartirCard");
+  const card = document.getElementById("cardParaDescarga");
   html2canvas(card).then(canvas => {
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
-    link.download = "turnox-card.png";
+    link.download = "turnox-qr.png";
     link.click();
   });
 });
 
-// Compartir tarjeta por WhatsApp
-document.getElementById("compartirWhatsApp").addEventListener("click", async function() {
-  const card = document.getElementById("compartirCard");
+// WhatsApp solo comparte link
+document.getElementById("compartirWhatsApp").addEventListener("click", function() {
   const urlActual = window.location.href;
-  const mensaje = `Ingresá al sitio: ${urlActual}`;
-
-  html2canvas(card).then(async canvas => {
-    canvas.toBlob(async function(blob) {
-      const file = new File([blob], "turnox-card.png", { type: blob.type });
-
-      // Web Share API con archivos (móvil)
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            title: "TurnoX",
-            text: mensaje,
-            files: [file]
-          });
-        } catch (err) {
-          console.log("Compartir cancelado:", err);
-        }
-      } else {
-        // Fallback: WhatsApp Web con link clicable
-        const texto = encodeURIComponent(mensaje);
-        window.open("https://wa.me/?text=" + texto, "_blank");
-      }
-    });
-  });
+  const texto = encodeURIComponent(`Ingresá al sitio: ${urlActual}`);
+  window.open("https://wa.me/?text=" + texto, "_blank");
 });
 </script>
   
