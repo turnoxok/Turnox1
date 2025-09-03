@@ -69,15 +69,24 @@
   }
 
   header .login-btn {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.6);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 12px;
-  }
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 0px 0px 12px 12px;
+  text-decoration: none;     /* saca subrayado */
+  transition: background 0.3s ease, opacity 0.3s ease;
+  display: inline-block;
+}
+
+/* hover: pierde transparencia */
+header .login-btn:hover,
+header .login-btn:active {
+  background: rgba(0,0,0,1);
+}
 
 
   h1 {
