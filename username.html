@@ -141,11 +141,9 @@ header .login-btn:active {
  
 }
   /* Turnos */
-
-     .turnos {
+.turnos {
   margin: 15px auto;
   max-width: 600px;
-  text-align: center;
   padding: 15px;
   background: #000000;
   background-blend-mode: overlay;
@@ -154,10 +152,26 @@ header .login-btn:active {
   border-radius: 16px;
   backdrop-filter: blur(3px);
 
-  display: grid;                /* usamos grid */
-  grid-template-columns: repeat(4, 1fr); /* 4 columnas iguales */
-  gap: 10px;                    /* espacio entre horarios */
-  justify-items: center;        /* centra cada turno en su celda */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.turnos h3 {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.select-servicio {
+  margin-bottom: 15px;
+}
+
+.hora-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columnas para turnos */
+  gap: 10px;
+  width: 100%;
 }
 
 .hora {
@@ -165,21 +179,44 @@ header .login-btn:active {
   padding: 8px 12px;
   border-radius: 10px;
   font-weight: 600;
+  text-align: center;
+  min-width: 80px;
   transition: all 0.2s;
-  text-align: center;           /* centra el contenido */
-  min-width: 80px;              /* opcional: ancho mínimo para que queden uniformes */
 }
 
+.hora.disponible {
+  background: #ffffff99;
+  color: #000000;
+}
 
-  
-  .hora.disponible { background: #ffffff99; color: #000000; border-radius: 10px; }
-  .hora.disponible:hover { background: #000000; color: #fff;  cursor: pointer; transform: translateY(-2px); }
-  .hora.bloqueado { background: #ccc; color: #F7F7F7; cursor: not-allowed; text-decoration: line-through; opacity: 0.6; border-radius: 10px; }
-.hora.selected {
-  background-color: #000000; /* fondo del seleccionado */
-  color: #fff;               /* texto */
+.hora.disponible:hover {
+  background: #000000;
+  color: #fff;
+  cursor: pointer;
   transform: translateY(-2px);
 }
+
+.hora.bloqueado {
+  background: #ccc;
+  color: #F7F7F7;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.hora.selected {
+  background-color: #000000;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Responsivo */
+@media(max-width: 500px){
+  .hora-container {
+    grid-template-columns: 1fr; /* 1 columna en móvil */
+  }
+}
+
  /* Formulario de reserva */
 #reservaFormContainer {
   margin: 20px auto;
@@ -718,22 +755,21 @@ async function cargarTurnos(fechaStr) {
         }
 
         if (!profObj.turnos || profObj.turnos.length === 0) {
-          html += "<p>No hay turnos disponibles</p>";
-        } else {
-          profObj.turnos.forEach(t => {
-            const clase = t.estado === "bloqueado" ? "bloqueado" : "disponible";
-            const horaFormateada = t.hora.padStart(5, "0");
-            html += `<span 
-                        class="hora ${clase}" 
-                        data-profid="${profId}" 
-                        data-hora="${horaFormateada}">
-                        ${horaFormateada}
-                     </span>`;
-          });
-        }
-        html += `</div>`;
-      });
-    }
+  html += "<p>No hay turnos disponibles</p>";
+} else {
+  html += `<div class="hora-container">`; // 🔹 contenedor de grilla 2 columnas
+  profObj.turnos.forEach(t => {
+    const clase = t.estado === "bloqueado" ? "bloqueado" : "disponible";
+    const horaFormateada = t.hora.padStart(5, "0");
+    html += `<span 
+                class="hora ${clase}" 
+                data-profid="${profId}" 
+                data-hora="${horaFormateada}">
+                ${horaFormateada}
+             </span>`;
+  });
+  html += `</div>`; // 🔹 cierre del contenedor
+}
 
     turnosDiv.innerHTML = html;
 
