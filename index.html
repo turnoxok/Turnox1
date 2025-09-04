@@ -8,73 +8,74 @@
   <!-- Fuentes -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Iconos -->
+  <!-- Icono -->
   <link rel="icon" type="image/png" href="https://i.ibb.co/p6Ycq6XC/Turnox-logo.png">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Montserrat", sans-serif; color: #333; background: #f9f9f9; }
 
-    body {
-      font-family: "Montserrat", sans-serif;
-      color: #333;
-      background: #f9f9f9;
-      line-height: 1.6;
-    }
-
+    /* Hero */
     header {
-      background: linear-gradient(135deg, #533482, #6d42a6);
+      background: linear-gradient(135deg, #533482, #6d42a6, #8756c7);
       color: #fff;
-      padding: 60px 20px;
+      padding: 80px 20px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-
+    header::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 20%, transparent 70%);
+      animation: rotateBg 20s linear infinite;
+      z-index: 0;
+    }
+    @keyframes rotateBg {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
     header h1 {
       font-size: 3rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
     }
-
     header p {
       font-size: 1.2rem;
-      color: #ddd;
+      margin-bottom: 25px;
+      color: #eee;
+      z-index: 1;
+      position: relative;
     }
-
     .btn-primary {
       display: inline-block;
       background: #fff;
       color: #533482;
-      padding: 12px 25px;
-      border-radius: 8px;
-      font-weight: 600;
-      margin-top: 20px;
+      padding: 14px 30px;
+      border-radius: 50px;
+      font-weight: 700;
       text-decoration: none;
       transition: 0.3s;
+      z-index: 1;
+      position: relative;
     }
-
     .btn-primary:hover {
       background: #f2f2f2;
-      transform: translateY(-2px);
+      transform: scale(1.05);
     }
 
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 40px 20px;
-    }
-
-    .section {
-      margin-bottom: 60px;
-    }
-
+    /* Secciones */
+    .container { max-width: 1100px; margin: auto; padding: 60px 20px; }
+    .section { margin-bottom: 80px; }
     .section h2 {
-      color: #533482;
-      margin-bottom: 20px;
-      font-size: 2rem;
-      text-align: center;
+      color: #533482; text-align: center; margin-bottom: 30px;
+      font-size: 2rem; font-weight: 700;
     }
 
     .grid {
@@ -82,34 +83,65 @@
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
     }
-
     .card {
       background: #fff;
       padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card h3 {
-      margin-bottom: 10px;
-      font-size: 1.2rem;
-      color: #533482;
-    }
-
-    .actions {
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
       text-align: center;
     }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    }
+    .card h3 { color: #533482; margin-bottom: 10px; }
 
+    /* Carrusel */
+    .carousel {
+      position: relative;
+      max-width: 800px;
+      margin: auto;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+    .carousel img {
+      width: 100%;
+      flex-shrink: 0;
+    }
+    .carousel-buttons {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+    .carousel-buttons button {
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: #fff;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+    .carousel-buttons button:hover {
+      background: rgba(0,0,0,0.8);
+    }
+
+    /* Accesos */
+    .actions { text-align: center; }
     .actions a, .actions button {
       display: inline-block;
       background: #533482;
       color: #fff;
-      padding: 12px 20px;
+      padding: 12px 25px;
       margin: 8px;
       border-radius: 8px;
       text-decoration: none;
@@ -118,7 +150,6 @@
       border: none;
       cursor: pointer;
     }
-
     .actions a:hover, .actions button:hover {
       background: #6d42a6;
     }
@@ -127,54 +158,49 @@
       background: #533482;
       color: #fff;
       text-align: center;
-      padding: 20px;
-      margin-top: 40px;
+      padding: 25px;
     }
 
-    /* Responsive portada */
     @media (max-width: 768px) {
-      header h1 {
-        font-size: 2rem;
-      }
-      header p {
-        font-size: 1rem;
-      }
+      header h1 { font-size: 2rem; }
+      header p { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Portada -->
+  <!-- Hero -->
   <header>
     <h1>TurnoX</h1>
-    <p>Sistema PRE-PAGO de Turnos Online para tu negocio</p>
+    <p>El sistema PRE-PAGO de turnos online más fácil de usar</p>
     <a href="/register" class="btn-primary">Crear mi cuenta</a>
   </header>
 
-  <!-- Cómo funciona -->
+  <!-- Sección Cómo funciona -->
   <div class="container">
     <section class="section">
       <h2>¿Cómo funciona?</h2>
       <div class="grid">
-        <div class="card">
-          <h3>1. Crear cuenta</h3>
-          <p>Registrate gratis en TurnoX y obtené acceso a tu panel de configuración.</p>
+        <div class="card"><h3>1. Crear cuenta</h3><p>Registrate gratis y accedé a tu panel.</p></div>
+        <div class="card"><h3>2. Cargar créditos</h3><p>Mantené activa tu cuenta con recargas rápidas.</p></div>
+        <div class="card"><h3>3. Configurar turnos</h3><p>Definí horarios, servicios y duración.</p></div>
+        <div class="card"><h3>4. Personalizar portada</h3><p>Mostrá tu logo y mensaje de bienvenida.</p></div>
+        <div class="card"><h3>5. Visualizar reservas</h3><p>Accedé a las reservas en tiempo real.</p></div>
+      </div>
+    </section>
+
+    <!-- Carrusel -->
+    <section class="section">
+      <h2>Ejemplo de uso</h2>
+      <div class="carousel">
+        <div class="carousel-track" id="carouselTrack">
+          <img src="https://via.placeholder.com/800x400/533482/fff?text=Panel+de+Turnos" alt="Ejemplo 1">
+          <img src="https://via.placeholder.com/800x400/6d42a6/fff?text=Configuración+de+Servicios" alt="Ejemplo 2">
+          <img src="https://via.placeholder.com/800x400/8756c7/fff?text=Vista+Cliente" alt="Ejemplo 3">
         </div>
-        <div class="card">
-          <h3>2. Cargar créditos</h3>
-          <p>Recargá tu cuenta y asegurá disponibilidad para tus clientes.</p>
-        </div>
-        <div class="card">
-          <h3>3. Configurar turnos</h3>
-          <p>Definí horarios, servicios y duración de cada turno según tu negocio.</p>
-        </div>
-        <div class="card">
-          <h3>4. Personalizar portada</h3>
-          <p>Subí tu logo, imagen y mensaje de bienvenida para tus clientes.</p>
-        </div>
-        <div class="card">
-          <h3>5. Visualizar reservas</h3>
-          <p>Accedé al panel para ver los turnos reservados en tiempo real.</p>
+        <div class="carousel-buttons">
+          <button id="prevBtn">❮</button>
+          <button id="nextBtn">❯</button>
         </div>
       </div>
     </section>
@@ -195,15 +221,14 @@
   </footer>
 
   <script>
+    // Instalar App
     let deferredPrompt;
     const instalarBtn = document.getElementById("instalarApp");
-
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;
       instalarBtn.style.display = "inline-block";
     });
-
     instalarBtn.addEventListener("click", async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -212,6 +237,26 @@
         deferredPrompt = null;
       }
     });
+
+    // Carrusel
+    const track = document.getElementById("carouselTrack");
+    const slides = track.children;
+    let index = 0;
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      index = (index + 1) % slides.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+    });
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      index = (index - 1 + slides.length) % slides.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+    });
+
+    // Auto-slide cada 5 seg
+    setInterval(() => {
+      index = (index + 1) % slides.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+    }, 5000);
   </script>
 </body>
 </html>
