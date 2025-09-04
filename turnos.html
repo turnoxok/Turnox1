@@ -563,6 +563,7 @@ function renderTickets(fechaStr){
   grid.className="ticketsGrid";
 
   turnos.forEach(t=>{
+    console.log("Turno recibido:", t);  // 👈 Acá vas a ver todas las propiedades disponibles
     const div = document.createElement("div");
     div.className="ticket";
 
