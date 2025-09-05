@@ -1180,8 +1180,9 @@ function hideLoading() {
   setTimeout(() => loading.remove(), 500);
 }
 // ------------------ INIT ------------------
-document.addEventListener("DOMContentLoaded", () => {
-  cargarLogo(username);
+document.addEventListener("DOMContentLoaded", async () => {
+  // Cargar logo
+  await cargarLogo(username);
 
   // Inicializamos selectedDate al día de hoy
   selectedDate = new Date();
@@ -1190,12 +1191,13 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCalendario(selectedDate.getFullYear(), selectedDate.getMonth());
 
   // Cargamos turnos del día actual
-const todayStr = selectedDate.toLocaleDateString("fr-CA"); // yyyy-mm-dd sin UTC
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
   await cargarTurnos(todayStr);
 
-  hideLoading(); // Oculta loading al terminar
-    const turnosDiv = document.getElementById("turnos");
+  // Ocultar loading
+  hideLoading();
+
+
     // if (turnosDiv) turnosDiv.scrollIntoView({ behavior: "smooth" });
   });
 });
